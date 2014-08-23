@@ -15,7 +15,7 @@ db = conn.igemdata0822
 def add_node(request):
     if request.method == "POST":
         # request.POST is all information of the node
-        if validate_node(request.POST['info']) and request.POST['group'] in request.user.groups:
+        if validate_node(request.POST['info']) and request.POST['group'] in [g.name for g in request.user.groups.all()]:
             # all the information is valid(including the group)
             node_id = db.node.insert(request.POST['info'])
             noderef_id = db.node_ref.insert({'owner': request.POST['group'], 'x': request.POST['x'], 'y': request.POST['y']})
@@ -47,19 +47,27 @@ def add_node(request):
 def delete_node(request):
     if request.POST == 'POST':
         # request.POST: {'ref_id': '<id>'}
-        noderef = db.node_ref.find_one({'_id': ObjectId(request.POST['ref_id'])})
 
-        # not found
-        if noderef == None:
-            return HttpResponse("{'status':'error', 'reason':'no record match that id'}")
+        if request.POST['group'] in [g.name for g in request.user.groups.all()]:
+            # the user belongs to the right group
 
-        # remove ref in specific node record
-        db.node.update({'_id': noderef['node_id']}, {'$pull', {"node_refs", noderef['_id']}})
+            noderef = db.node_ref.find_one({'_id': ObjectId(request.POST['ref_id'])})
 
-        # remove node_ref record
-        db.node_ref.remove({'_id': noderef['_id']})
+            # not found
+            if noderef == None:
+                return HttpResponse("{'status':'error', 'reason':'no record match that id'}")
 
-        return HttpResponse("{'status': 'success'}")
+            # remove ref in specific node record
+            db.node.update({'_id': noderef['node_id']}, {'$pull', {"node_refs", noderef['_id']}})
+
+            # remove node_ref record
+            db.node_ref.remove({'_id': noderef['_id']})
+
+            return HttpResponse("{'status': 'success'}")
+
+        else:
+            # the user group is incorrect
+            return HttpResponse("{'status':'error', 'reason':'user is not in the right group having that access'}")
 
     else:
         # method is not POST
@@ -106,7 +114,7 @@ def search_json_node(request):
 def add_link(request):
     if request.method == "POST":
         # request.POST is all information of the link
-        if validate_link(request.POST['info']) and request.POST['group'] in request.user.groups:
+        if validate_link(request.POST['info']) and request.POST['group'] in [g.name for g in request.user.groups.all()]:
             # all the information is valid(including the group)
             link_id = db.link.insert(request.POST['info'])
             linkref_id = db.link_ref.insert({'owner': request.POST['group']})
@@ -140,19 +148,27 @@ def add_link(request):
 def delete_link(request):
     if request.POST == 'POST':
         # request.POST: {'ref_id': '<id>'}
-        linkref = db.link_ref.find_one({'_id': ObjectId(request.POST['ref_id'])})
 
-        # not found
-        if linkref == None:
-            return HttpResponse("{'status':'error', 'reason':'no record match that id'}")
+        if request.POST['group'] in [g.name for g in request.user.groups.all()]:
+            # the user belongs to the right group
+            linkref = db.link_ref.find_one({'_id': ObjectId(request.POST['ref_id'])})
 
-        # remove ref in specific node record
-        db.link.update({'_id': linkref['link_id']}, {'$pull', {"link_refs", linkref['_id']}})
+            # not found
+            if linkref == None:
+                return HttpResponse("{'status':'error', 'reason':'no record match that id'}")
 
-        # remove node_ref record
-        db.link_ref.remove({'_id': linkref['_id']})
+            # remove ref in specific node record
+            db.link.update({'_id': linkref['link_id']}, {'$pull', {"link_refs", linkref['_id']}})
 
-        return HttpResponse("{'status': 'success'}")
+            # remove node_ref record
+            db.link_ref.remove({'_id': linkref['_id']})
+
+            return HttpResponse("{'status': 'success'}")
+
+        else:
+            # the user group is incorrect
+            return HttpResponse("{'status':'error', 'reason':'user is not in the right group having that access'}")
+
 
     else:
         # method is not POST

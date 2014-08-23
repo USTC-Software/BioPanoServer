@@ -48,6 +48,52 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
+# LDAP configure
+AUTH_LDAP_SERVER_URI = "ldap://ldap.ailuropoda.org"
+import ldap
+from django_auth_ldap.config import LDAPSearch, PosixGroupType, GroupOfNamesType, ActiveDirectoryGroupType
+
+AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
+AUTH_LDAP_BIND_DN = "cn=admin,dc=ailuropoda,dc=org"
+AUTH_LDAP_BIND_PASSWORD = "SyntheticBiology"
+AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=people,dc=ailuropoda,dc=org",
+        ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
+
+AUTH_LDAP_CONNECTION_OPTIONS = {
+        ldap.OPT_DEBUG_LEVEL: 0,
+        ldap.OPT_REFERRALS: 0,
+}
+# mapping
+
+AUTH_LDAP_USER_ATTR_MAP = {
+      "first_name": "givenName",
+      "last_name": "sn",
+      "email": "mail"
+}
+
+AUTH_LDAP_MIRROR_GROUPS = True
+AUTH_LDAP_ALWAYS_UPDATE_USER = True
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch("ou=groups,dc=ailuropoda,dc=org", ldap.SCOPE_SUBTREE, "(objectClass=top)")
+
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+    "is_active": "cn=active,ou=groups,dc=ailuropoda,dc=org",
+    "is_staff": "cn=staff,ou=groups,dc=ailuropoda,dc=org",
+    "is_superuser": "cn=superuser,ou=groups,dc=ailuropoda,dc=org",
+}
+
+import logging
+logger = logging.getLogger('django_auth_ldap')
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.DEBUG)
+# end ldap log
+
 ROOT_URLCONF = 'IGEMServer.urls'
 
 WSGI_APPLICATION = 'IGEMServer.wsgi.application'
@@ -58,8 +104,13 @@ WSGI_APPLICATION = 'IGEMServer.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'backend_master',                      # Or path to database file if using sqlite3.
+        # The following settings are not used with sqlite3:
+        'USER': 'master',
+        'PASSWORD': 'SyntheticBiology',
+        'HOST': 'localhost',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': '3306',                      # Set to empty string for default.
     }
 }
 
