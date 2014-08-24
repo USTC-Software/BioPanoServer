@@ -8,7 +8,7 @@ import json
 
 # connect the database
 conn = Connection()
-db = conn.igemdata0822
+db = conn.igemdata_new
 
 
 @login_required
