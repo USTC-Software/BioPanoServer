@@ -174,6 +174,8 @@ response:
 
 request:
 
+	POST /api/(node|link)/search/
+	
 	'spec':
 	{
 		"age":
@@ -197,6 +199,8 @@ explain:
 
 request:
 
+	POST /api/(node|link)/search/
+	
 	'spec':
 	{
 	}
@@ -214,6 +218,8 @@ request:
 
 request:
 
+	POST /api/(node|link)/search/
+	
 	'spec':
 	{
 	}
