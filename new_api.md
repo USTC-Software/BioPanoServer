@@ -1,11 +1,54 @@
 # NEW API
+
+## LOGIN:
+
+request:
+
+	POST /login/
+	
+	'username':'...'
+	'password':'...'
+
+success response:
+
+	{
+		'status': 'success‘,
+	}
+	
+fail response:
+	
+	{
+		'status': 'error',
+		'reason': '<err_reason>',
+	}
+	
+## LOGOUT:
+
+success request:
+	
+	POST /logout/
+
+success response:
+
+	{
+		'status': 'success‘,
+	}
+	
+fail response:
+	
+	{
+		'status': 'error',
+		'reason': '<err_reason>',
+	}
+	
+
 ## ADD:
 
 request:
 
 	POST /api/(node|link)/
 	
-	'info': 
+	info: 
 	{
 		'TYPE': 'Gene',
 		'NAME': 'trnL',
