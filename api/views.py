@@ -77,12 +77,19 @@ def delete_node(request):
 @login_required
 def search_json_node(request):
     if request.method == 'POST':
-        # POST: {'query': <json query>, 'filter': <filter in json format>}
+        ''' POST: {
+            'query': <json query>,
+            'filter': <filter in json format>,
+            'limit': <the max amount to return(INTEGER)>
+        }
+        '''
 
         # verify paras
         if 'query' not in request.POST.keys():
             return HttpResponse("{'status':'error', 'reason':'POST request does not have para QUERY'}")
         if 'filter' not in request.POST.keys():
+            return HttpResponse("{'status':'error', 'reason':'POST request does not have para FILTER'}")
+        if 'limit' not in request.POST.keys():
             return HttpResponse("{'status':'error', 'reason':'POST request does not have para FILTER'}")
 
         # try if query conform to JSON format
@@ -96,12 +103,16 @@ def search_json_node(request):
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'filter not conform to JSON format'}")
 
+        try:
+            limit = int(request.POST['limit'])
+        except ValueError:
+            return HttpResponse("{'status':'error', 'reason':'limit must be a integer'}")
 
         # vague search
         for key in queryinstance.keys():
             if key == 'NAME' or key == "TYPE":
                 queryinstance[key] = {"$regex": queryinstance[key]}
-        results = db.node.find(queryinstance, filterinstance).limit(20)
+        results = db.node.find(queryinstance, filterinstance).limit(limit)
 
         # Pack data into xml format
         lists = []
@@ -191,7 +202,20 @@ def delete_link(request):
 @login_required
 def search_json_link(request):
     if request.method == 'POST':
-        # POST: {'query': <json query>, 'filter': <filter in json format>}
+        ''' POST: {
+            'query': <json query>,
+            'filter': <filter in json format>,
+            'limit': <the max amount to return(INTEGER)>
+        }
+        '''
+
+        # verify paras
+        if 'query' not in request.POST.keys():
+            return HttpResponse("{'status':'error', 'reason':'POST request does not have para QUERY'}")
+        if 'filter' not in request.POST.keys():
+            return HttpResponse("{'status':'error', 'reason':'POST request does not have para FILTER'}")
+        if 'limit' not in request.POST.keys():
+            return HttpResponse("{'status':'error', 'reason':'POST request does not have para FILTER'}")
 
         # try if query conform to JSON format
         try:
@@ -204,11 +228,17 @@ def search_json_link(request):
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'filter not conform to JSON format'}")
 
+        try:
+            limit = int(request.POST['limit'])
+        except ValueError:
+            return HttpResponse("{'status':'error', 'reason':'limit must be a integer'}")
+
+
         # vague search
         for key in queryinstance.keys():
             if key in ['NAME', 'TYPE']:
                 queryinstance[key] = {"$regex": queryinstance[key]}
-        results = db.link.find(queryinstance, filterinstance).limit(20)
+        results = db.link.find(queryinstance, filterinstance).limit(limit)
 
         # Pack data into xml format
         lists = []
