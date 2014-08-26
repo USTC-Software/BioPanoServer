@@ -79,6 +79,12 @@ def search_json_node(request):
     if request.method == 'POST':
         # POST: {'query': <json query>, 'filter': <filter in json format>}
 
+        # verify paras
+        if 'query' not in request.POST.keys():
+            return HttpResponse("{'status':'error', 'reason':'POST request does not have para QUERY'}")
+        if 'filter' not in request.POST.keys():
+            return HttpResponse("{'status':'error', 'reason':'POST request does not have para FILTER'}")
+
         # try if query conform to JSON format
         try:
             queryinstance = json.loads(request.POST['query'])
