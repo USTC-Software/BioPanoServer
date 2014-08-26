@@ -84,14 +84,6 @@ def search_json_node(request):
         }
         '''
 
-        # verify paras
-        if 'query' not in request.POST.keys():
-            return HttpResponse("{'status':'error', 'reason':'POST request does not have para QUERY'}")
-        if 'filter' not in request.POST.keys():
-            return HttpResponse("{'status':'error', 'reason':'POST request does not have para FILTER'}")
-        if 'limit' not in request.POST.keys():
-            return HttpResponse("{'status':'error', 'reason':'POST request does not have para FILTER'}")
-
         # try if query conform to JSON format
         try:
             queryinstance = json.loads(request.POST['query'])
@@ -100,11 +92,17 @@ def search_json_node(request):
 
         try:
             filterinstance = json.loads(request.POST['filter'])
+        except KeyError:
+            # set a default value
+            filterinstance = {'_id': 1, 'NAME': 1, 'TYPE': 1}
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'filter not conform to JSON format'}")
 
         try:
             limit = int(request.POST['limit'])
+        except KeyError:
+            # set a default value
+            limit = 20
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'limit must be a integer'}")
 
@@ -209,14 +207,6 @@ def search_json_link(request):
         }
         '''
 
-        # verify paras
-        if 'query' not in request.POST.keys():
-            return HttpResponse("{'status':'error', 'reason':'POST request does not have para QUERY'}")
-        if 'filter' not in request.POST.keys():
-            return HttpResponse("{'status':'error', 'reason':'POST request does not have para FILTER'}")
-        if 'limit' not in request.POST.keys():
-            return HttpResponse("{'status':'error', 'reason':'POST request does not have para FILTER'}")
-
         # try if query conform to JSON format
         try:
             queryinstance = json.loads(request.POST['query'])
@@ -225,11 +215,17 @@ def search_json_link(request):
 
         try:
             filterinstance = json.loads(request.POST['query'])
+        except KeyError:
+            # set a default value
+            filterinstance = {'_id': 1, 'NAME': 1, 'TYPE': 1}
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'filter not conform to JSON format'}")
 
         try:
             limit = int(request.POST['limit'])
+        except KeyError:
+            # set a default value
+            limit = 20
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'limit must be a integer'}")
 
