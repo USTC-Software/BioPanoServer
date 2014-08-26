@@ -1,11 +1,9 @@
-#NEW API
-##ADD_URL:
+# NEW API
+## ADD:
 
-POST
-
-	^$host/api/node/add/$
-	
 request:
+
+	POST /api/(node|link)/
 	
 	'info': 
 	{
@@ -13,46 +11,61 @@ request:
 		'NAME': 'trnL',
 		...
 	}
-	
-	'group':
-	<group_name>	
 		
-response:
+success response:
 
 	{
-		'status': 'success',
 		'ref_id': '<ref_id>'	
 	}
 	
-	OR
+fail response:
 	
 	{
 		'status': 'error',
 		'reason': '<err_reason>',
 	}
 
-	
-##DELETE_URL:
-
-POST
-
-	^$host/api/node/delete/<ref_id>/$
+## REF:
 
 request:
 
+	POST /api/(node|link)/
+	
+	'info':
+	{
+		'id': '123'
+	}
+
+success response:
+
+	{
+		'ref_id': '<ref_id>'	
+	}
+	
+fail response:
+	
+	{
+		'status': 'error',
+		'reason': '<err_reason>',
+	}
+	
+## DELETE:
+
+request:
+
+	DELETE /api/(node|link)/<ref_id>/
+	
 	{
 		'ref_id': '<ref_id>'
 	}			
 	
-response:
+success response:
 
 	{
 		'status': 'success‘,
 	}
 	
-	OR
-	
-	OR
+fail response:
 	
 	{
 		'status': 'error',
@@ -62,12 +75,37 @@ response:
 			
 ##SEARCH_URL
 
-	POST
-	^$host/api/search/$
+request:
 
-###request(json)
+	POST /api/(node|link)/search/
 	
-	'query':
+	'spec':{}
+	'fields':{}
+	'skip':[INTEGER]
+	'limit':[INTEGER]
+
+response:
+
+	<results>
+  		<result>
+    		<NAME>thrL</NAME>
+    		<TYPE>Gene</TYPE>
+    		<_id>53f455e1af4bd63ddccee4a3</_id>
+  		</result>
+  		<result>
+    		<NAME>thrA</NAME>
+    		<TYPE>Gene</TYPE>
+    		<_id>53f455e1af4bd63ddccee4a4</_id>
+  		</result>
+  	</results>
+
+### ex1
+
+request :
+
+	POST /api/(node|link)/search/
+		
+	'spec':
 	{
 		"$and":
 		{
@@ -84,42 +122,62 @@ response:
 explanation: 
 	
 	(key1 || key2 || key3) && key4
+
+response:
+
+	//TO DO
 	
+### ex2
 
-####others usages:
+request:
 
-	'query':
+	'spec':
 	{
 		"age":
 		{
 			"$gt":18
 		}
 	}
-	
-	age>18
+
+
+explain:
+
 	< : "$lt"
 	> : "$gt"
 	<= : "$le"
 	>= : "$ge"
 	!= : "$ne"
-	
-	
-	
-###response
 
-	<results>
-  		<result>
-    		<NAME>thrL</NAME>
-    		<TYPE>Gene</TYPE>
-    		<_id>53f455e1af4bd63ddccee4a3</_id>
-  		</result>
-  		<result>
-    		<NAME>thrA</NAME>
-    		<TYPE>Gene</TYPE>
-    		<_id>53f455e1af4bd63ddccee4a4</_id>
-  		</result>
-  	</results>
-  	
+### ex3
+
+仅返回NAME和TYPE字段
+
+request:
+
+	'spec':
+	{
+	}
+	'field':
+	{
+		'NAME':True,
+		'TYPE':True
+	}
+
+
+
+### ex4
+
+返回除了_ID以外的所有字段
+
+request:
+
+	'spec':
+	{
+	}
+	'field':
+	{
+		'_ID':False
+	}
 
 	
 	
