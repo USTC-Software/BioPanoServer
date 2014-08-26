@@ -88,7 +88,7 @@ def search_json_node(request):
         # vague search
         for key in queryinstance.keys():
             queryinstance[key] = {"$regex": queryinstance[key]}
-        results = db.node.find(queryinstance, {'_id': 1, 'TYPE': 1, 'NAME': 1}.limit(20))
+        results = db.node.find(queryinstance, {'_id': 1, 'TYPE': 1, 'NAME': 1}).limit(20)
 
         # Pack data into xml format
         lists = []
