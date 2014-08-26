@@ -97,11 +97,7 @@ fail response:
 request:
 
 	DELETE /api/(node|link)/<ref_id>/
-	
-	{
-		'ref_id': '<ref_id>'
-	}			
-	
+
 success response:
 
 	{
@@ -165,10 +161,6 @@ request :
 explanation: 
 	
 	(key1 || key2 || key3) && key4
-
-response:
-
-	//TO DO
 	
 ### ex2
 
