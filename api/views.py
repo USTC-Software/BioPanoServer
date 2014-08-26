@@ -77,18 +77,25 @@ def delete_node(request):
 @login_required
 def search_json_node(request):
     if request.method == 'POST':
-        # POST: {'query': <json query>}
+        # POST: {'query': <json query>, 'filter': <filter in json format>}
 
         # try if query conform to JSON format
         try:
             queryinstance = json.loads(request.POST['query'])
         except ValueError:
-            return HttpResponse("{'status':'error', 'reason':'not conform to JSON format'}")
+            return HttpResponse("{'status':'error', 'reason':'query not conform to JSON format'}")
+
+        try:
+            filterinstance = json.loads(request.POST['filter'])
+        except ValueError:
+            return HttpResponse("{'status':'error', 'reason':'filter not conform to JSON format'}")
+
 
         # vague search
         for key in queryinstance.keys():
-            queryinstance[key] = {"$regex": queryinstance[key]}
-        results = db.node.find(queryinstance, {'_id': 1, 'TYPE': 1, 'NAME': 1}).limit(20)
+            if key == 'NAME' or key == "TYPE":
+                queryinstance[key] = {"$regex": queryinstance[key]}
+        results = db.node.find(queryinstance, filterinstance).limit(20)
 
         # Pack data into xml format
         lists = []
@@ -178,18 +185,24 @@ def delete_link(request):
 @login_required
 def search_json_link(request):
     if request.method == 'POST':
-        # POST: {'query': <json query>}
+        # POST: {'query': <json query>, 'filter': <filter in json format>}
 
         # try if query conform to JSON format
         try:
             queryinstance = json.loads(request.POST['query'])
         except ValueError:
-            return HttpResponse("{'status':'error', 'reason':'not conform to JSON format'}")
+            return HttpResponse("{'status':'error', 'reason':'query not conform to JSON format'}")
+
+        try:
+            filterinstance = json.loads(request.POST['query'])
+        except ValueError:
+            return HttpResponse("{'status':'error', 'reason':'filter not conform to JSON format'}")
 
         # vague search
         for key in queryinstance.keys():
-            queryinstance[key] = {"$regex": queryinstance[key]}
-        results = db.link.find(queryinstance, {'_id': 1, 'TYPE': 1, 'NAME': 1}.limit(20))
+            if key in ['NAME', 'TYPE']:
+                queryinstance[key] = {"$regex": queryinstance[key]}
+        results = db.link.find(queryinstance, filterinstance).limit(20)
 
         # Pack data into xml format
         lists = []
