@@ -14,7 +14,10 @@ db = conn.igemdata_new
 @login_required
 def add_node(request):
     if request.method == "POST":
-        # request.POST is all information of the node
+        '''
+            add a node id collection <node>
+            request.POST is all information of the node
+        '''
         if validate_node(request.POST['info']) and request.POST['group'] in [g.name for g in request.user.groups.all()]:
             # all the information is valid(including the group)
             node_id = db.node.insert(request.POST['info'])
@@ -38,9 +41,38 @@ def add_node(request):
             # node info is incorrect
             return HttpResponse("{'status':'error', 'reason':'node info invalid'}")
 
-    else:
-        # method is not POST
-        return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
+    elif request.method == 'DELETE':
+        '''
+            DELETE a ref in collection <node_ref>
+        '''
+        if request.POST['group'] in [g.name for g in request.user.groups.all()]:
+            # the user belongs to the right group
+
+            noderef = db.node_ref.find_one({'_id': ObjectId(request.POST['ref_id'])})
+
+            # not found
+            if noderef == None:
+                return HttpResponse("{'status':'error', 'reason':'no record match that id'}")
+
+            # remove ref in specific node record
+            db.node.update({'_id': noderef['node_id']}, {'$pull', {"node_refs", noderef['_id']}})
+
+            # remove node_ref record
+            db.node_ref.remove({'_id': noderef['_id']})
+
+            return HttpResponse("{'status': 'success'}")
+
+        else:
+            # the user group is incorrect
+            return HttpResponse("{'status':'error', 'reason':'user is not in the right group having that access'}")
+
+        # return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
+
+    elif request.method == 'PUT':
+        '''
+            add a ref to collection
+        '''
+        request.
 
 
 @login_required
@@ -129,6 +161,34 @@ def search_json_node(request):
 
     else:
         # method is not POST
+        return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
+
+
+@login_required
+def addref_node(request):
+    if request.method == 'POST':
+        '''
+        with this method a ref record will be created, connecting to object <_id>
+        POST:
+            '_id': '<_id>'
+        '''
+        try:
+            node = db.node.find_one({'_id': ObjectId(request.POST['_id'])})
+        except KeyError:
+            return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
+
+        # not found
+        if node == None:
+            return HttpResponse("{'status':'error', 'reason':'object not found'}")
+
+        # node exists
+        noderef_id = db.node_ref.insert({'owner': request.POST['group'], 'x': request.POST['x'],
+                                         'y': request.POST['y'], 'node_id': node['_id']})
+
+        return HttpResponse("{'status': 'success'}")
+
+    else:
+        # not using method POST
         return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
 
 
@@ -253,4 +313,33 @@ def search_json_link(request):
 
     else:
         # method is not POST
+        return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
+
+
+def addref_link(request):
+    if request.method == 'POST':
+        '''
+        with this method a ref record will be created, connecting to object <_id>
+        POST:
+            '_id': '<_id>'
+        '''
+        try:
+            link = db.link.find_one({'_id': ObjectId(request.POST['_id'])})
+        except KeyError:
+            return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
+
+        # not found
+        if link == None:
+            return HttpResponse("{'status':'error', 'reason':'object not found'}")
+
+        # link exists
+        db.link_ref.insert({'owner': request.POST['group'], 'link_id': request.POST['_id'],
+                                                            'id1': ObjectId(request.POST['id1']),
+                                                            'id2': ObjectId(request.POST['id2'])}
+        )
+
+        return HttpResponse("{'status': 'success'}")
+
+    else:
+        # not using method POST
         return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")

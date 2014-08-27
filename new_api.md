@@ -72,7 +72,7 @@ fail response:
 
 request:
 
-	POST /api/(node|link)/
+	POST /api/(node|link)/ref/
 	
 	'info':
 	{
@@ -96,7 +96,7 @@ fail response:
 
 request:
 
-	DELETE /api/(node|link)/<ref_id>/
+	DELETE /api/(node|link)/ref/<ref_id>/
 
 success response:
 
