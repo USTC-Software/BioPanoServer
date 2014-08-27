@@ -5,11 +5,9 @@ import views
 
 urlpatterns = patterns('',
     url(r'^node/$', views.add_node),    # POST
-    url(r"^node/(?P<id>[^/]+)/$", views.delete_node),  # DELETE
+    url(r"^node/(?P<id>[^/]+)/$", views.del_or_addref_node),  # DELETE / PUT
     url(r'^node/search/$', views.search_json_node),    # POST
-    url(r'^node/$', views.addref_node),    # PUT
-    url(r'^link/add/$', views.add_link),    # POST
-    url(r'^link/delete/$', views.delete_link),  # DELETE
+    url(r'^link/$', views.add_link),    # POST
+    url(r'^link/(?P<id>[^/]+)/$', views.del_or_addref_link),  # DELETE / PUT
     url(r'^link/search/$', views.search_json_link),  # POST
-    url(r'^link/add_ref/$', views.addref_link),  # PUT
 )
