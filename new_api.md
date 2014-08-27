@@ -1,52 +1,79 @@
 # NEW API
+## Instruction
 
-## LOGIN:
+all the following API must have access_token parameter. 
+
+For GET request, it should be added in URL, like:
+
+	GET /api/groups&access_token=1a6b7dbd428f731035f771b8d15063f618640012929220002346678124328
+
+For POST request, it should be added as a POST form parameter in request body.
+
+## OAUTH:
 
 request:
 
-	POST /login/
+	POST /oauth/authorize
 	
-	'username':'...'
-	'password':'...'
+	'client_id':保留参数
+	'response_type':'token'
+	'redirect_uri':回调地址
+
+When the user login in sucessfully, the pages will redict to the “redict_url” with the following parameters:
+success :
+
+	'status': 'success‘,
+	‘access_token': '...',
+	'refresh_token': '...',
+	'expires_in':'18000'
+	
+fail:
+	
+	'status': 'error',
+	'reason': '<err_reason>'
+	
+	
+## list GROUP
+
+request:
+
+	GET /api/groups
+
+response:
+
+	groups:{
+		'gname':
+		[
+			'staff','admin',...
+		]
+	}
+
+
+
+## choose GROUPS
+
+request:
+
+	GET /api/groups/<gname>
 
 success response:
 
 	{
-		'status': 'success‘,
+		'status': 'success‘
 	}
 	
 fail response:
 	
 	{
 		'status': 'error',
-		'reason': '<err_reason>',
+		'reason': '<err_reason>'
 	}
-	
-## LOGOUT:
 
-success request:
-	
-	POST /logout/
-
-success response:
-
-	{
-		'status': 'success‘,
-	}
-	
-fail response:
-	
-	{
-		'status': 'error',
-		'reason': '<err_reason>',
-	}
-	
-
-## ADD:
+## ADD
 
 request:
 
-	POST /api/(node|link)/
+	POST /api/(node|link)
 	
 	info: 
 	{
@@ -68,11 +95,11 @@ fail response:
 		'reason': '<err_reason>',
 	}
 
-## REF:
+## REF
 
 request:
 
-	POST /api/(node|link)/
+	POST /api/(node|link)
 	
 	'info':
 	{
@@ -92,11 +119,11 @@ fail response:
 		'reason': '<err_reason>',
 	}
 	
-## DELETE:
+## DELETE
 
 request:
 
-	DELETE /api/(node|link)/<ref_id>/
+	DELETE /api/(node|link)/<ref_id>
 
 success response:
 
@@ -112,11 +139,11 @@ fail response:
 	}
 			
 			
-##SEARCH_URL
+##SEARCH
 
 request:
 
-	POST /api/(node|link)/search/
+	POST /api/(node|link)/search
 	
 	'spec':{}
 	'fields':{}
@@ -142,7 +169,7 @@ response:
 
 request :
 
-	POST /api/(node|link)/search/
+	POST /api/(node|link)/search
 		
 	'spec':
 	{
@@ -166,7 +193,7 @@ explanation:
 
 request:
 
-	POST /api/(node|link)/search/
+	POST /api/(node|link)/search
 	
 	'spec':
 	{
@@ -191,7 +218,7 @@ explain:
 
 request:
 
-	POST /api/(node|link)/search/
+	POST /api/(node|link)/search
 	
 	'spec':
 	{
@@ -210,7 +237,7 @@ request:
 
 request:
 
-	POST /api/(node|link)/search/
+	POST /api/(node|link)/search
 	
 	'spec':
 	{
