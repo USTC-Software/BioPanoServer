@@ -49,10 +49,23 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+'''
+following are:
+    AUTH CONFIG------GOOGLE & LDAP
+'''
+
 AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.google.GoogleOAuth2Backend',
     'django_auth_ldap.backend.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
+LOGIN_REDIRECT_URL = '/'
+
+GOOGLE_OAUTH2_CLIENT_ID = os.environ['GOOGLE_OAUTH2_CLIENT_ID']
+GOOGLE_OAUTH2_CLIENT_SECRET = os.environ['GOOGLE_OAUTH2_CLIENT_SECRET']
+# GOOGLE_WHITE_LISTED_DOMAINS = ['ailuropoda.org']
+SOCIAL_AUTH_USER_MODEL = 'auth.User'
+
 
 
 # LDAP configure
