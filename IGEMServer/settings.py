@@ -72,6 +72,7 @@ SOCIAL_AUTH_USER_MODEL = 'auth.User'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     "social_auth.context_processors.social_auth_by_type_backends",
+    'django.contrib.auth.context_processors.auth',
 )
 
 
