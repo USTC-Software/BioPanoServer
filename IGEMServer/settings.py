@@ -61,8 +61,8 @@ AUTHENTICATION_BACKENDS = (
 )
 LOGIN_REDIRECT_URL = '/'
 
-GOOGLE_OAUTH2_CLIENT_ID = os.environ['GOOGLE_OAUTH2_CLIENT_ID']
-GOOGLE_OAUTH2_CLIENT_SECRET = os.environ['GOOGLE_OAUTH2_CLIENT_SECRET']
+GOOGLE_OAUTH2_CLIENT_ID = '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com'  # os.environ['GOOGLE_OAUTH2_CLIENT_ID']
+GOOGLE_OAUTH2_CLIENT_SECRET = 'OlSa44n2HuYPfXyGPoCsXEeb'  # os.environ['GOOGLE_OAUTH2_CLIENT_SECRET']
 # GOOGLE_WHITE_LISTED_DOMAINS = ['ailuropoda.org']
 SOCIAL_AUTH_USER_MODEL = 'auth.User'
 
@@ -127,7 +127,14 @@ DATABASES = {
         'PORT': '3306',                      # Set to empty string for default.
     }
 }
-
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+'''
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
