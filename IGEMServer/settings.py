@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'api',
     'IGEMServer',
+    'social_auth',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -59,12 +61,18 @@ AUTHENTICATION_BACKENDS = (
     'django_auth_ldap.backend.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
-LOGIN_REDIRECT_URL = '/'
+
+LOGIN_REDIRECT_URL = '/auth/logged-in/'
+LOGIN_ERROR_URL = '/auth/login-error/'
 
 GOOGLE_OAUTH2_CLIENT_ID = '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com'  # os.environ['GOOGLE_OAUTH2_CLIENT_ID']
 GOOGLE_OAUTH2_CLIENT_SECRET = 'OlSa44n2HuYPfXyGPoCsXEeb'  # os.environ['GOOGLE_OAUTH2_CLIENT_SECRET']
 # GOOGLE_WHITE_LISTED_DOMAINS = ['ailuropoda.org']
 SOCIAL_AUTH_USER_MODEL = 'auth.User'
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "social_auth.context_processors.social_auth_by_type_backends",
+)
 
 
 
@@ -77,18 +85,18 @@ AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
 AUTH_LDAP_BIND_DN = "cn=admin,dc=ailuropoda,dc=org"
 AUTH_LDAP_BIND_PASSWORD = "SyntheticBiology"
 AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=people,dc=ailuropoda,dc=org",
-        ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
+                                   ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
 
 AUTH_LDAP_CONNECTION_OPTIONS = {
-        ldap.OPT_DEBUG_LEVEL: 0,
-        ldap.OPT_REFERRALS: 0,
+    ldap.OPT_DEBUG_LEVEL: 0,
+    ldap.OPT_REFERRALS: 0,
 }
 # mapping
 
 AUTH_LDAP_USER_ATTR_MAP = {
-      "first_name": "givenName",
-      "last_name": "sn",
-      "email": "mail"
+    "first_name": "givenName",
+    "last_name": "sn",
+    "email": "mail"
 }
 
 AUTH_LDAP_MIRROR_GROUPS = True
@@ -103,6 +111,7 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 }
 
 import logging
+
 logger = logging.getLogger('django_auth_ldap')
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
@@ -118,13 +127,13 @@ WSGI_APPLICATION = 'IGEMServer.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'backend_master',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'backend_master',  # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': 'master',
         'PASSWORD': 'SyntheticBiology',
-        'HOST': 'localhost',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '3306',                      # Set to empty string for default.
+        'HOST': 'localhost',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': '3306',  # Set to empty string for default.
     }
 }
 '''
@@ -155,5 +164,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR,  'templates'),
+    os.path.join(BASE_DIR, 'templates'),
 )
