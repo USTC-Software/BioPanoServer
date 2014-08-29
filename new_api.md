@@ -13,7 +13,7 @@ For POST request, it should be added as a POST form parameter in request body.
 
 request:
 
-	POST /oauth/authorize
+	POST /auth/oauth/authorize
 	
 	'client_id':保留参数
 	'response_type':'token'
@@ -73,7 +73,7 @@ fail response:
 
 request:
 
-	POST /login/
+	POST /auth/login/
 	
 	'username':'...'
 	'password':'...'
@@ -95,7 +95,7 @@ fail response:
 
 success request:
 	
-	POST /logout/
+	POST /auth/logout/
 
 success response:
 
@@ -116,7 +116,7 @@ fail response:
 
 request:
 
-	POST /(node|link)
+	POST /data/<species>/(node|link)
 	
 	info: 
 	{
@@ -142,7 +142,7 @@ fail response:
 
 request:
 
-	POST /(node|link)/
+	POST /data/<species>/(node|link)/
 	
 	'info':
 	{
@@ -166,7 +166,7 @@ fail response:
 
 request:
 
-	DELETE /(node|link)/<ref_id>/
+	DELETE /data/<species>/(node|link)/<ref_id>
 
 success response:
 
@@ -186,7 +186,7 @@ fail response:
 
 request:
 
-	POST /search/(node|link)/
+	POST /search/<species>/(node|link)
 	
 	'spec':{}
 	'fields':{}
@@ -212,7 +212,7 @@ response:
 
 request :
 
-	POST /search/(node|link)/
+	POST /search/<species>/(node|link)
 		
 	'spec':
 	{
@@ -236,7 +236,7 @@ explanation:
 
 request:
 
-	POST /search/(node|link)/
+	POST /search/<species>/(node|link)/
 	
 	'spec':
 	{
@@ -261,7 +261,7 @@ explain:
 
 request:
 
-	POST /search/(node|link)/
+	POST /search/<species>/(node|link)/
 	
 	'spec':
 	{
@@ -280,7 +280,7 @@ request:
 
 request:
 
-	POST /search/(node|link)/
+	POST /search/<species>/(node|link)/
 	
 	'spec':
 	{
@@ -295,7 +295,7 @@ request:
 
 request:
 
-	POST /search/relation
+	POST /search/<species>/relation
 	
 	'ID':[_ID]
 	'spec':{}
