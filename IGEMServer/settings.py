@@ -87,7 +87,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_login_redirect',
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH_SCOPE = ['email', 'profile']
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
 
 SOCIAL_AUTH_PIPELINE = (
     # 'social.pipeline.social_auth.social_details',
