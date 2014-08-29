@@ -5,7 +5,7 @@ all the following API must have access_token parameter.
 
 For GET request, it should be added in URL, like:
 
-	GET /api/groups&access_token=1a6b7dbd428f731035f771b8d15063f618640012929220002346678124328
+	GET /groups&access_token=7dbd428f731035f771b8d15063f61864
 
 For POST request, it should be added as a POST form parameter in request body.
 
@@ -37,7 +37,7 @@ fail:
 
 request:
 
-	GET /api/groups
+	GET /groups
 
 response:
 
@@ -54,7 +54,7 @@ response:
 
 request:
 
-	GET /api/groups/<gname>
+	GET /groups/<gname>
 
 success response:
 
@@ -116,7 +116,7 @@ fail response:
 
 request:
 
-	POST /api/(node|link)
+	POST /(node|link)
 	
 	info: 
 	{
@@ -142,7 +142,7 @@ fail response:
 
 request:
 
-	POST /api/(node|link)/
+	POST /(node|link)/
 	
 	'info':
 	{
@@ -166,7 +166,7 @@ fail response:
 
 request:
 
-	DELETE /api/(node|link)/<ref_id>/
+	DELETE /(node|link)/<ref_id>/
 
 success response:
 
@@ -182,11 +182,11 @@ fail response:
 	}
 			
 			
-##SEARCH
+##SEARCH ENTRY
 
 request:
 
-	POST /api/(node|link)/search
+	POST /search/(node|link)/
 	
 	'spec':{}
 	'fields':{}
@@ -212,7 +212,7 @@ response:
 
 request :
 
-	POST /api/(node|link)/search
+	POST /search/(node|link)/
 		
 	'spec':
 	{
@@ -236,7 +236,7 @@ explanation:
 
 request:
 
-	POST /api/(node|link)/search
+	POST /search/(node|link)/
 	
 	'spec':
 	{
@@ -261,7 +261,7 @@ explain:
 
 request:
 
-	POST /api/(node|link)/search
+	POST /search/(node|link)/
 	
 	'spec':
 	{
@@ -280,7 +280,7 @@ request:
 
 request:
 
-	POST /api/(node|link)/search
+	POST /search/(node|link)/
 	
 	'spec':
 	{
@@ -291,17 +291,14 @@ request:
 	}
 
 	
-	
-	
-	
-	
-	
-	
+## SEARCH RELATION
 
-			
-			
-			
-			
-			
-			
-			
+request:
+
+	POST /search/relation
+	
+	'ID':[_ID]
+	'spec':{}
+	'fields':{}
+	'skip':[INTEGER]
+	'limit':[INTEGER]
