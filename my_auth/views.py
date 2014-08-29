@@ -1,5 +1,5 @@
 __author__ = 'feiyicheng'
-from django.shortcuts import  HttpResponse, HttpResponseRedirect
+from django.shortcuts import  HttpResponse, HttpResponseRedirect, render_to_response
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -53,4 +53,10 @@ class AuthComplete(View):
 class LoginError(View):
     def get(self, request, *args, **kwargs):
         return HttpResponse(status=401)
+
+
+# google login
+def google_login(request):
+    return render_to_response('google_login.html')
+
 

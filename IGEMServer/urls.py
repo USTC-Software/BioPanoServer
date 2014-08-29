@@ -15,4 +15,5 @@ urlpatterns = patterns('',
     url(r'^login/', 'my_auth.views.login_view'),    # POST
     url(r'^logout/', 'my_auth.views.logout_view'),  # POST
     url(r'^auth/', include('my_auth.urls')),
+    url(r'^google-login', 'my_auth.views.google_login'),
 )
