@@ -62,7 +62,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-LOGIN_REDIRECT_URL = '/auth/logged-in/'
+LOGIN_REDIRECT_URL = '/'
 LOGIN_ERROR_URL = '/auth/login-error/'
 
 GOOGLE_OAUTH2_CLIENT_ID = '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com'  # os.environ['GOOGLE_OAUTH2_CLIENT_ID']
@@ -71,9 +71,12 @@ GOOGLE_OAUTH2_CLIENT_SECRET = 'OlSa44n2HuYPfXyGPoCsXEeb'  # os.environ['GOOGLE_O
 SOCIAL_AUTH_USER_MODEL = 'auth.User'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "social_auth.context_processors.social_auth_by_type_backends",
     'django.contrib.auth.context_processors.auth',
-
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.contrib.messages.context_processors.messages',
+    'social_auth.context_processors.social_auth_by_type_backends',
 )
 
 SOCIAL_AUTH_PIPELINE = (
