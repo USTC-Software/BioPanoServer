@@ -12,8 +12,8 @@ conn = Connection()
 db = conn.igemdata_new
 
 
-@login_required
-@group_authenticated
+# @login_required
+# @group_authenticated
 def add_node(request):
     if request.method == "POST":
         '''
@@ -49,8 +49,8 @@ def add_node(request):
         return HttpResponse("{'status':'error', 'reason':'pls use method POST'}")
 
 
-@login_required
-@group_authenticated
+# @login_required
+# @group_authenticated
 def del_or_addref_node(request, **kwargs):
     if request.method == 'DELETE':
         '''
@@ -95,7 +95,7 @@ def del_or_addref_node(request, **kwargs):
         return HttpResponse("{'status': 'error','reason':'pls use method DELETE/PUT '}")
 
 
-@login_required
+# @login_required
 def search_json_node(request):
     if request.method == 'POST':
         ''' POST: {
@@ -153,8 +153,8 @@ def search_json_node(request):
         return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
 
 
-@login_required
-@group_authenticated
+# @login_required
+# @group_authenticated
 def add_link(request):
     if request.method == "POST":
         # request.POST is all information of the link
@@ -188,8 +188,8 @@ def add_link(request):
         return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
 
 
-@login_required
-@group_authenticated
+# @login_required
+# @group_authenticated
 def del_or_addref_link(request, **kwargs):
     if request.method == 'DELETE':
         '''
@@ -236,7 +236,7 @@ def del_or_addref_link(request, **kwargs):
         return HttpResponse("{'status': 'error','reason':'pls use method DELETE/PUT '}")
 
 
-@login_required
+# @login_required
 def search_json_link(request):
     if request.method == 'POST':
         ''' POST: {
