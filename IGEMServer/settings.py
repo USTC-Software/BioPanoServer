@@ -62,13 +62,13 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-SOCIAL_AUTH_LOGIN_URL = '/auth/login-url/'
+SOCIAL_AUTH_LOGIN_URL = '/google-login/'
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/auth/login-error/'
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/auth/logged-in/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/google-login/'
 # LOGIN_REDIRECT_URL = '/'
 # LOGIN_ERROR_URL = '/auth/login-error/'
-SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/auth/new-users-redirect-url/'
-SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/auth/new-association-redirect-url/'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/google-login/'
+SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/google-login/'
 
 
 
