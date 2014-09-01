@@ -307,7 +307,7 @@ request:
 
 request:
 	
-	POST /algorithm/shortestpath
+	POST /algorithm/<species>/shortestpath
 	
 	'ID1':
 	'ID2':
