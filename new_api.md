@@ -302,3 +302,28 @@ request:
 	'fields':{}
 	'skip':[INTEGER]
 	'limit':[INTEGER]
+
+## ShortestPath
+
+request:
+	
+	POST /algorithm/shortestpath
+	
+	'ID1':
+	'ID2':
+
+response:
+
+	{
+		results:
+		[
+			{
+				node:[1,2,3,4,5],
+				link:[12,23,34,45]
+			},
+			{
+				node:[1,2,7,8,9,10,11],
+				link:[......]
+			}
+		]
+	}
