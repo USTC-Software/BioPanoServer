@@ -99,20 +99,21 @@ def del_or_addref_node(request, **kwargs):
 def search_json_node(request):
     if request.method == 'POST':
         ''' POST: {
-            'query': <json query>,
-            'filter': <filter in json format>,
+            'spec': <json query>,
+            'fields': <filter in json format>,
+            'skip': <INTEGER>,
             'limit': <the max amount to return(INTEGER)>
         }
         '''
 
         # try if query conform to JSON format
         try:
-            queryinstance = json.loads(request.POST['query'])
+            queryinstance = json.loads(request.POST['spec'])
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'query not conform to JSON format'}")
 
         try:
-            filterinstance = json.loads(request.POST['filter'])
+            filterinstance = json.loads(request.POST['fields'])
         except KeyError:
             # set a default value
             filterinstance = {'_id': 1, 'NAME': 1, 'TYPE': 1}
@@ -121,30 +122,36 @@ def search_json_node(request):
 
         try:
             limit = int(request.POST['limit'])
+            skip = int(request.POST['skip'])
         except KeyError:
             # set a default value
             limit = 20
+            skip = 0
         except ValueError:
-            return HttpResponse("{'status':'error', 'reason':'limit must be a integer'}")
+            return HttpResponse("{'status':'error', 'reason':'limit/skip must be a integer'}")
 
         # vague search
         for key in queryinstance.keys():
             if key == 'NAME' or key == "TYPE":
                 queryinstance[key] = {"$regex": queryinstance[key]}
-        results = db.node.find(queryinstance, filterinstance).limit(limit)
+        results = db.node.find(queryinstance, filterinstance).skip(skip).limit(limit)
 
-        # Pack data into xml format
-        lists = []
-        for item in results:
-            newitem = {}
-            for key in item.keys():
-                newitem[key] = item[key]
-            lists.append(newitem)
-        inss = {}
-        inss['result'] = lists
-        final = {}
-        final['results'] = inss
-        data = dict2xml(final)
+        if 'format' in request.POST.keys():
+            if request.POST['format'] == 'xml':
+                # Pack data into xml format
+                lists = []
+                for item in results:
+                    newitem = {}
+                    for key in item.keys():
+                        newitem[key] = item[key]
+                    lists.append(newitem)
+                inss = {}
+                inss['result'] = lists
+                final = {}
+                final['results'] = inss
+                data = dict2xml(final)
+        else:
+            data = json.dumps({'result': [result for result in results]})
 
         return HttpResponse(data)
 
@@ -240,20 +247,21 @@ def del_or_addref_link(request, **kwargs):
 def search_json_link(request):
     if request.method == 'POST':
         ''' POST: {
-            'query': <json query>,
-            'filter': <filter in json format>,
+            'spec': <json query>,
+            'fields': <filter in json format>,
+            'skip': <INTEGER>,
             'limit': <the max amount to return(INTEGER)>
         }
         '''
 
         # try if query conform to JSON format
         try:
-            queryinstance = json.loads(request.POST['query'])
+            queryinstance = json.loads(request.POST['spec'])
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'query not conform to JSON format'}")
 
         try:
-            filterinstance = json.loads(request.POST['query'])
+            filterinstance = json.loads(request.POST['fields'])
         except KeyError:
             # set a default value
             filterinstance = {'_id': 1, 'NAME': 1, 'TYPE': 1}
@@ -262,6 +270,7 @@ def search_json_link(request):
 
         try:
             limit = int(request.POST['limit'])
+            skip = int(request.POST['skip'])
         except KeyError:
             # set a default value
             limit = 20
@@ -273,20 +282,25 @@ def search_json_link(request):
         for key in queryinstance.keys():
             if key in ['NAME', 'TYPE']:
                 queryinstance[key] = {"$regex": queryinstance[key]}
-        results = db.link.find(queryinstance, filterinstance).limit(limit)
+        results = db.link.find(queryinstance, filterinstance).skip(skip).limit(limit)
 
-        # Pack data into xml format
-        lists = []
-        for item in results:
-            newitem = {}
-            for key in item.keys():
-                newitem[key] = item[key]
-            lists.append(newitem)
-        inss = {}
-        inss['result'] = lists
-        final = {}
-        final['results'] = inss
-        data = dict2xml(final)
+
+        if 'format' in request.POST.keys():
+            if request.POST['format'] == 'xml':
+                # Pack data into xml format
+                lists = []
+                for item in results:
+                    newitem = {}
+                    for key in item.keys():
+                        newitem[key] = item[key]
+                    lists.append(newitem)
+                inss = {}
+                inss['result'] = lists
+                final = {}
+                final['results'] = inss
+                data = dict2xml(final)
+        else:
+            data = json.dumps({'result': [result for result in results]})
 
         return HttpResponse(data)
 
