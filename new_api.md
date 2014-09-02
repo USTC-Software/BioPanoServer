@@ -1,13 +1,16 @@
-# NEW API
+# API document
+
 ## Instruction
 
-all the following API must have access_token parameter. 
+All the following API(expect OAUTH) must have access_token parameter. 
 
 For GET request, it should be added in URL, like:
 
 	GET /groups&access_token=7dbd428f731035f771b8d15063f61864
 
 For POST request, it should be added as a POST form parameter in request body.
+
+The default response is in json, if you want the response in other format, please add parameter "format=XML", "format=YAML", etc. 
 
 ## OAUTH:
 
@@ -33,16 +36,16 @@ fail:
 	'reason': '<err_reason>'
 	
 	
-## list GROUP
+## LIST GROUP
 
 request:
 
-	GET /groups
+	GET /group
 
 response:
 
-	groups:{
-		'gname':
+	{
+		'groups':
 		[
 			'staff','admin',...
 		]
@@ -50,11 +53,11 @@ response:
 
 
 
-## choose GROUPS
+## CHOOSE GROUP
 
 request:
 
-	GET /groups/<gname>
+	GET /group/<gname>
 
 success response:
 
@@ -69,11 +72,11 @@ fail response:
 		'reason': '<err_reason>'
 	}
 
-## LOGIN:
+## LOGIN(overdue):
 
 request:
 
-	POST /auth/login/
+	POST /auth/login
 	
 	'username':'...'
 	'password':'...'
@@ -95,7 +98,7 @@ fail response:
 
 success request:
 	
-	POST /auth/logout/
+	POST /auth/logout
 
 success response:
 
@@ -110,6 +113,25 @@ fail response:
 		'reason': '<err_reason>',
 	}
 	
+## DETAIL
+
+request:
+
+	GET /data/<species>/(node|link)/<ref_id>
+
+success response:
+
+	{
+		I'm results
+	}
+	
+fail response:
+	
+	{
+		'status': 'error',
+		'reason': '<err_reason>',
+	}
+
 
 
 ## ADD
@@ -138,11 +160,11 @@ fail response:
 		'reason': '<err_reason>',
 	}
 
-## REF
+## REFERENCE
 
 request:
 
-	POST /data/<species>/(node|link)/
+	POST /data/<species>/(node|link)
 	
 	'info':
 	{
@@ -161,7 +183,8 @@ fail response:
 		'status': 'error',
 		'reason': '<err_reason>',
 	}
-	
+
+
 ## DELETE
 
 request:
@@ -182,19 +205,41 @@ fail response:
 	}
 			
 			
-##SEARCH ENTRY
+## SEARCH ENTRY
 
 request:
 
 	POST /search/<species>/(node|link)
 	
-	'spec':{}
-	'fields':{}
-	'skip':[INTEGER]
-	'limit':[INTEGER]
+	spec:{}
+	fields:{}
+	skip:[INTEGER]
+	limit:[INTEGER]
+
+default:
+
+	skip:0
+	limit:infinite
 
 response:
 
+	{
+		result:
+		[
+			{
+				'_id':'53f455e1af4bd63ddccee4a3',
+				'NAME':'ehrL',
+				'TYPE':'Gene'
+
+			},
+			{
+				'_id':'53f455e1af4bd63ddccee4a4'
+				'NAME':'thrA',
+				'TYPE':'Gene'
+			}
+		]
+	}
+	
 	<results>
   		<result>
     		<NAME>thrL</NAME>
@@ -236,7 +281,7 @@ explanation:
 
 request:
 
-	POST /search/<species>/(node|link)/
+	POST /search/<species>/(node|link)
 	
 	'spec':
 	{
@@ -261,12 +306,12 @@ explain:
 
 request:
 
-	POST /search/<species>/(node|link)/
+	POST /search/<species>/(node|link)
 	
-	'spec':
+	spec:
 	{
 	}
-	'field':
+	field:
 	{
 		'NAME':True,
 		'TYPE':True
@@ -280,7 +325,7 @@ request:
 
 request:
 
-	POST /search/<species>/(node|link)/
+	POST /search/<species>/(node|link)
 	
 	'spec':
 	{
@@ -291,26 +336,36 @@ request:
 	}
 
 	
-## SEARCH RELATION
+## SEARCH RELATION(Developing):
 
 request:
 
 	POST /search/<species>/relation
 	
-	'ID':[_ID]
-	'spec':{}
-	'fields':{}
-	'skip':[INTEGER]
-	'limit':[INTEGER]
+	ID:<_ID>
+	spec:{}
+	fields:{}
+	skip:[INTEGER]
+	limit:[INTEGER]
 
-## ShortestPath
+default:
+
+	skip:0
+	limit:infinite
+
+## SHORTESTPATH
 
 request:
 	
 	POST /algorithm/<species>/shortestpath
 	
-	'ID1':
-	'ID2':
+	ID1:<string>
+	ID2:<string>
+	global:[boolean]
+
+default:
+
+	global:False
 
 response:
 
