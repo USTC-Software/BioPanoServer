@@ -47,10 +47,39 @@ response:
 	{
 		'groups':
 		[
-			'staff','admin',...
+			{
+				'group_name':'staff',
+				'species_id':'Ecoli'
+			},
+			{
+				‘group_name':'regulation',
+				'species_id':'Pseudomonas'
+			}
 		]
 	}
 
+
+## ADD GROUP
+
+request:
+
+	POST /group
+	
+	group_name:<string>
+	species:<string>
+
+success response:
+
+	{
+		'status': 'success‘
+	}
+	
+fail response:
+	
+	{
+		'status': 'error',
+		'reason': '<err_reason>'
+	}
 
 
 ## CHOOSE GROUP
@@ -71,6 +100,52 @@ fail response:
 		'status': 'error',
 		'reason': '<err_reason>'
 	}
+
+
+## LIST SPECIES
+
+request:
+
+	GET /species
+
+response:
+
+	{
+		'species':
+		[
+			{
+				'species_id': <string>,
+				'species_name':'Ecolo'
+			},
+			{
+				'species_id': <string>,
+				'species_name':'Pseudomonas'
+			}
+		]
+	}
+
+
+## ADD SPECIES
+
+request:
+
+	POST /species
+	
+	species_name: <string>
+
+success response:
+
+	{
+		'species_id': <string>
+	}
+	
+fail response:
+	
+	{
+		'status': 'error',
+		'reason': '<err_reason>'
+	}
+
 
 ## LOGIN(overdue):
 
