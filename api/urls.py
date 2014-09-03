@@ -4,11 +4,10 @@ from django.conf.urls import patterns, include, url
 import views
 
 urlpatterns = patterns('',
-    url(r'^node/$', views.add_node),    # POST
-    url(r'^node/search/$', views.search_json_node),    # POST
-    url(r"^node/(?P<id>[^/]+)/$", views.del_or_addref_node),  # DELETE / PUT
-    url(r'^link/$', views.add_link),    # POST
-    url(r'^link/search/$', views.search_json_link),  # POST
-    url(r'^link/(?P<id>[^/]+)/$', views.del_or_addref_link),  # DELETE / PUT
+    url(r'^(?P<species>[\w]+)/node/$', views.add_node),    # POST
+    url(r"^(?P<species>[\w]+)/node/(?P<id>[\w]+)/$", views.del_or_addref_node),  # DELETE / PUT
+
+    url(r'^(?P<species>[\w]+)/link/$', views.add_link),    # POST
+    url(r'^(?P<species>[\w]+)/link/(?P<id>[\w]+)/$', views.del_or_addref_link),  # DELETE / PUT
 
 )
