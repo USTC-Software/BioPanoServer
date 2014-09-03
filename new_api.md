@@ -117,7 +117,7 @@ fail response:
 
 request:
 
-	GET /data/<species>/(node|link)/<ref_id>
+	GET /data/(node|link)/<ref_id>
 
 success response:
 
@@ -138,7 +138,7 @@ fail response:
 
 request:
 
-	POST /data/<species>/(node|link)
+	POST /data/(node|link)
 	
 	info: 
 	{
@@ -164,7 +164,7 @@ fail response:
 
 request:
 
-	POST /data/<species>/(node|link)
+	POST /data/(node|link)
 	
 	'info':
 	{
@@ -189,7 +189,7 @@ fail response:
 
 request:
 
-	DELETE /data/<species>/(node|link)/<ref_id>
+	DELETE /data/(node|link)/<ref_id>
 
 success response:
 
@@ -209,7 +209,7 @@ fail response:
 
 request:
 
-	POST /search/<species>/(node|link)
+	POST /search/(node|link)
 	
 	spec:{}
 	fields:{}
@@ -257,7 +257,7 @@ response:
 
 request :
 
-	POST /search/<species>/(node|link)
+	POST /search/(node|link)
 		
 	'spec':
 	{
@@ -281,7 +281,7 @@ explanation:
 
 request:
 
-	POST /search/<species>/(node|link)
+	POST /search/(node|link)
 	
 	'spec':
 	{
@@ -306,7 +306,7 @@ explain:
 
 request:
 
-	POST /search/<species>/(node|link)
+	POST /search/(node|link)
 	
 	spec:
 	{
@@ -325,7 +325,7 @@ request:
 
 request:
 
-	POST /search/<species>/(node|link)
+	POST /search/(node|link)
 	
 	'spec':
 	{
@@ -340,7 +340,7 @@ request:
 
 request:
 
-	POST /search/<species>/relation
+	POST /search/relation
 	
 	ID:<_ID>
 	spec:{}
@@ -357,7 +357,7 @@ default:
 
 request:
 	
-	POST /algorithm/<species>/shortestpath
+	POST /algorithm/shortestpath
 	
 	ID1:<string>
 	ID2:<string>
