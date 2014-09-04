@@ -175,9 +175,9 @@ def search_json_node(request, **kwargs):
                 final['results'] = inss
                 data = dict2xml(final)
         else:
-            data = json.dumps([result for result in results])
+            data = json.dumps()
 
-        return HttpResponse(data + str(tag))
+        return HttpResponse(data)
 
     else:
         # method is not POST
