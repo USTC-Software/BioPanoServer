@@ -115,7 +115,7 @@ def get_del_addref_node(request, **kwargs):
 
 
 # @login_required
-def search_json_node(request):
+def search_json_node(request, **kwargs):
     if request.method == 'POST':
         ''' POST: {
             'spec': <json query>,
@@ -279,7 +279,7 @@ def get_del_addref_link(request, **kwargs):
 
 
 # @login_required
-def search_json_link(request):
+def search_json_link(request, **kwargs):
     if request.method == 'POST':
         ''' POST: {
             'spec': <json query>,
