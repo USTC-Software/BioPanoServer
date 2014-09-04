@@ -255,13 +255,13 @@ response:
 		]
 	}
 	
-
-## SEARCH ENTRY
+## BATCH QUERY
 
 request:
 
-	POST /search/(node|link)
+	POST /batch/(node|link)
 	
+	method:query
 	spec:{}
 	fields:{}
 	skip:[INTEGER]
@@ -275,40 +275,29 @@ default:
 response:
 
 	{
-		result:
+		results:
 		[
 			{
 				'_id':'53f455e1af4bd63ddccee4a3',
 				'NAME':'ehrL',
-				'TYPE':'Gene'
+				'TYPE':'Gene',
+				'....':'...'
 
 			},
 			{
 				'_id':'53f455e1af4bd63ddccee4a4'
 				'NAME':'thrA',
-				'TYPE':'Gene'
+				'TYPE':'Gene',
+				'....':'...'
 			}
 		]
 	}
-	
-	<results>
-  		<result>
-    		<NAME>thrL</NAME>
-    		<TYPE>Gene</TYPE>
-    		<_id>53f455e1af4bd63ddccee4a3</_id>
-  		</result>
-  		<result>
-    		<NAME>thrA</NAME>
-    		<TYPE>Gene</TYPE>
-    		<_id>53f455e1af4bd63ddccee4a4</_id>
-  		</result>
-  	</results>
 
 ### ex1
 
 request :
 
-	POST /search/(node|link)
+	POST /batch/(node|link)
 		
 	'spec':
 	{
@@ -324,7 +313,7 @@ request :
 		}
 	}
 	
-explanation: 
+explain: 
 	
 	(key1 || key2 || key3) && key4
 	
@@ -332,7 +321,7 @@ explanation:
 
 request:
 
-	POST /search/(node|link)
+	POST /batch/(node|link)
 	
 	'spec':
 	{
@@ -353,11 +342,11 @@ explain:
 
 ### ex3
 
-仅返回NAME和TYPE字段
+only return ID, NAME and TYPE fileds
 
 request:
 
-	POST /search/(node|link)
+	POST /batch/(node|link)
 	
 	spec:
 	{
@@ -372,7 +361,7 @@ request:
 
 ### ex4
 
-返回除了_ID以外的所有字段
+return all fileds except NAME
 
 request:
 
@@ -383,26 +372,18 @@ request:
 	}
 	'field':
 	{
-		'_ID':False
+		'NAME':False
 	}
 
-	
-## SEARCH RELATION(Developing):
+## SEARCH
 
 request:
 
-	POST /search/relation
-	
-	ID:<_ID>
-	spec:{}
-	fields:{}
-	skip:[INTEGER]
-	limit:[INTEGER]
+	POST /search/(node|link|node_ref|link_ref)
 
-default:
+instructions:
 
-	skip:0
-	limit:infinite
+	find record in the database directly
 
 ## SHORTESTPATH
 
