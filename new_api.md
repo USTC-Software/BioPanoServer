@@ -6,11 +6,28 @@ All the following API(expect OAUTH) must have access_token parameter.
 
 For GET request, it should be added in URL, like:
 
-	GET /groups&access_token=7dbd428f731035f771b8d15063f61864
+	GET /projects&access_token=7dbd428f731035f771b8d15063f61864
 
 For POST request, it should be added as a POST form parameter in request body.
 
 The default response is in json, if you want the response in other format, please add parameter "format=XML", "format=YAML", etc. 
+
+## DIRECTORY
+
+	POST	/auth/oauth/authorize
+	GET		/project
+	POST	/project
+	GET		/project/<project_id>
+	GET		/species
+	POST	/species
+	GET		/species/<species_id>
+	GET		/data/(node|link)/<ref_id>
+	POST	/data/(node|link)
+	DELETE	/data/(node|link)/<ref_id>
+	GET		/data/(node|link)/<ref_id>/<field>
+	POST	/batch/(node|link)
+	POST	/search/(node|link|node_ref|link_ref)
+	POST	/algorithm/shortestpath
 
 ## OAUTH:
 
@@ -36,36 +53,36 @@ fail:
 	'reason': '<err_reason>'
 	
 	
-## LIST GROUP
+## LIST project
 
 request:
 
-	GET /group
+	GET /project
 
 response:
 
 	{
-		'groups':
+		'projects':
 		[
 			{
-				'group_name':'staff',
+				'project_name':'staff',
 				'species_id':'Ecoli'
 			},
 			{
-				‘group_name':'regulation',
+				‘project_name':'regulation',
 				'species_id':'Pseudomonas'
 			}
 		]
 	}
 
 
-## ADD GROUP
+## ADD project
 
 request:
 
-	POST /group
+	POST /project
 	
-	group_name:<string>
+	project_name:<string>
 	species:<string>
 
 success response:
@@ -82,11 +99,11 @@ fail response:
 	}
 
 
-## CHOOSE GROUP
+## CHOOSE project
 
 request:
 
-	GET /group/<gname>
+	GET /project/<gname>
 
 success response:
 
