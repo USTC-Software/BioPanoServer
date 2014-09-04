@@ -155,6 +155,9 @@ def search_json_node(request, **kwargs):
                 queryinstance[key] = {"$regex": queryinstance[key]}
         results = db.node.find(queryinstance, filterinstance).skip(skip).limit(limit)
 
+        for result in results:
+            result['_id'] = str(result['_id'])
+
         if 'format' in request.POST.keys():
             if request.POST['format'] == 'xml':
                 # Pack data into xml format
@@ -319,7 +322,9 @@ def search_json_link(request, **kwargs):
                 queryinstance[key] = {"$regex": queryinstance[key]}
         results = db.link.find(queryinstance, filterinstance).skip(skip).limit(limit)
 
-
+        for result in results:
+            result['_id'] = str(result['_id'])
+            
         if 'format' in request.POST.keys():
             if request.POST['format'] == 'xml':
                 # Pack data into xml format
