@@ -155,8 +155,10 @@ def search_json_node(request, **kwargs):
                 queryinstance[key] = {"$regex": queryinstance[key]}
         results = db.node.find(queryinstance, filterinstance).limit(limit)
 
+        tag = 0
         for result in results:
             result['_id'] = str(result['_id'])
+            tag += 1
 
         if 'format' in request.POST.keys():
             if request.POST['format'] == 'xml':
@@ -175,7 +177,7 @@ def search_json_node(request, **kwargs):
         else:
             data = json.dumps({'result': [result for result in results]})
 
-        return HttpResponse(data + str(limit))
+        return HttpResponse(data + str(tag))
 
     else:
         # method is not POST
