@@ -101,7 +101,7 @@ def login_complete(request):
         print('first login')
         User.objects.create_user(username=profile['email'], password=None, email=profile['email'])
         user = User.objects.get(email=profile['email'])
-        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        # user.backend =
         user.save()
         print('new user created!')
         login(request=request, user=user)
@@ -110,7 +110,7 @@ def login_complete(request):
         # the user already exists
 
         # update user
-        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        # user.backend = 'django.contrib.auth.backends.ModelBackend'
         print('welcome back')
         print(str(user.is_authenticated()))
         user.save()
