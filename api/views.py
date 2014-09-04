@@ -153,7 +153,7 @@ def search_json_node(request, **kwargs):
         for key in queryinstance.keys():
             if key == 'NAME' or key == "TYPE":
                 queryinstance[key] = {"$regex": queryinstance[key]}
-        results = db.node.find(queryinstance, filterinstance).skip(skip).limit(limit)
+        results = db.node.find(queryinstance, filterinstance).limit(limit)
 
         for result in results:
             result['_id'] = str(result['_id'])
@@ -175,7 +175,7 @@ def search_json_node(request, **kwargs):
         else:
             data = json.dumps({'result': [result for result in results]})
 
-        return HttpResponse(data+ str(queryinstance) + str(filterinstance))
+        return HttpResponse(data + str(limit))
 
     else:
         # method is not POST
