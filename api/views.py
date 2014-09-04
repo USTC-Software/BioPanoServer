@@ -107,7 +107,7 @@ def get_del_addref_node(request, **kwargs):
             # the node exists
             node_dic = node
             for key in node_dic.keys():
-                if isinstance(node_dic[key], ObjectId):
+                if isinstance(node_dic[key], ObjectId.__class__):
                     node_dic[key] = str(node_dic[key])
             return HttpResponse(json.dumps(node_dic))
 
@@ -176,7 +176,7 @@ def search_json_node(request, **kwargs):
             results_data = []
             for result in results:
                 for key in result.keys():
-                    if isinstance(result[key], ObjectId):
+                    if isinstance(result[key], ObjectId.__class__):
                         result[key] = str(result[key])
                 results_data.append(result)
 
@@ -284,7 +284,7 @@ def get_del_addref_link(request, **kwargs):
             # the node exists
             link_dic = link
             for key in link_dic.keys():
-                if isinstance(link_dic[key], ObjectId):
+                if isinstance(link_dic[key], ObjectId.__class__):
                     link_dic[key] = str(link_dic[key])
             return HttpResponse(json.dumps(link_dic))
 
@@ -356,7 +356,7 @@ def search_json_link(request, **kwargs):
             results_data = []
             for result in results:
                 for key in result.keys():
-                    if isinstance(result[key], ObjectId):
+                    if isinstance(result[key], ObjectId.__class__):
                         result[key] = str(result[key])
                 results_data.append(result)
             data = json.dumps({'result': results_data})
