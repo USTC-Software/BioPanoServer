@@ -12,6 +12,13 @@ For POST request, it should be added as a POST form parameter in request body.
 
 The default response is in json, if you want the response in other format, please add parameter "format=XML", "format=YAML", etc. 
 
+If anything goes south, you will get a error response:
+	
+	{
+		'status': 'error',
+		'reason': '<err_reason>',
+	}
+
 ## DIRECTORY
 
 	POST	/auth/oauth/authorize
@@ -24,7 +31,7 @@ The default response is in json, if you want the response in other format, pleas
 	GET		/data/(node|link)/<ref_id>
 	POST	/data/(node|link)
 	DELETE	/data/(node|link)/<ref_id>
-	GET		/data/(node|link)/<ref_id>/<field>
+	GET		/data/(node|link)/<ref_id>/link
 	POST	/batch/(node|link)
 	POST	/search/(node|link|node_ref|link_ref)
 	POST	/algorithm/shortestpath
@@ -47,13 +54,8 @@ success :
 	'refresh_token': '...',
 	'expires_in':'18000'
 	
-fail:
 	
-	'status': 'error',
-	'reason': '<err_reason>'
-	
-	
-## LIST project
+## LIST PROJECT
 
 request:
 
@@ -76,7 +78,7 @@ response:
 	}
 
 
-## ADD project
+## ADD PROJECT
 
 request:
 
@@ -85,21 +87,14 @@ request:
 	project_name:<string>
 	species:<string>
 
-success response:
+response:
 
 	{
 		'status': 'success‘
 	}
-	
-fail response:
-	
-	{
-		'status': 'error',
-		'reason': '<err_reason>'
-	}
 
 
-## CHOOSE project
+## CHOOSE PROJECT
 
 request:
 
@@ -109,13 +104,6 @@ success response:
 
 	{
 		'status': 'success‘
-	}
-	
-fail response:
-	
-	{
-		'status': 'error',
-		'reason': '<err_reason>'
 	}
 
 
@@ -150,17 +138,10 @@ request:
 	
 	species_name: <string>
 
-success response:
+response:
 
 	{
 		'species_id': <string>
-	}
-	
-fail response:
-	
-	{
-		'status': 'error',
-		'reason': '<err_reason>'
 	}
 
 
@@ -173,37 +154,26 @@ request:
 	'username':'...'
 	'password':'...'
 
-success response:
+response:
 
 	{
 		'status': 'success‘,
 	}
-	
-fail response:
-	
-	{
-		'status': 'error',
-		'reason': '<err_reason>',
-	}
+
 	
 ## LOGOUT:
 
-success request:
+request:
 	
 	POST /auth/logout
 
-success response:
+response:
 
 	{
 		'status': 'success‘,
 	}
 	
-fail response:
-	
-	{
-		'status': 'error',
-		'reason': '<err_reason>',
-	}
+
 	
 ## DETAIL
 
@@ -211,19 +181,11 @@ request:
 
 	GET /data/(node|link)/<ref_id>
 
-success response:
+response:
 
 	{
 		I'm results
 	}
-	
-fail response:
-	
-	{
-		'status': 'error',
-		'reason': '<err_reason>',
-	}
-
 
 
 ## ADD
@@ -239,18 +201,12 @@ request:
 		...
 	}
 		
-success response:
+response:
 
 	{
 		'ref_id': '<ref_id>'	
 	}
 	
-fail response:
-	
-	{
-		'status': 'error',
-		'reason': '<err_reason>',
-	}
 
 ## REFERENCE
 
@@ -263,19 +219,11 @@ request:
 		'id': '123'
 	}
 
-success response:
+response:
 
 	{
 		'ref_id': '<ref_id>'	
 	}
-	
-fail response:
-	
-	{
-		'status': 'error',
-		'reason': '<err_reason>',
-	}
-
 
 ## DELETE
 
@@ -283,20 +231,31 @@ request:
 
 	DELETE /data/(node|link)/<ref_id>
 
-success response:
+response:
 
 	{
 		'status': 'success‘,
 	}
-	
-fail response:
-	
+		
+
+## NODE TO LINK
+
+request:
+
+	GET /data/(node|link)/<ref_id>/link
+
+response:
+
 	{
-		'status': 'error',
-		'reason': '<err_reason>',
+		'links':
+		[
+			7dbd428f731428f703,
+			5f771b8d158d157063,
+			...
+		]
 	}
-			
-			
+	
+
 ## SEARCH ENTRY
 
 request:
