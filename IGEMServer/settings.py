@@ -97,46 +97,6 @@ SOCIAL_AUTH_PIPELINE = (
 
 
 
-# LDAP configure
-AUTH_LDAP_SERVER_URI = "ldap://ldap.ailuropoda.org"
-import ldap
-from django_auth_ldap.config import LDAPSearch, PosixGroupType, GroupOfNamesType, ActiveDirectoryGroupType
-
-AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
-AUTH_LDAP_BIND_DN = "cn=admin,dc=ailuropoda,dc=org"
-AUTH_LDAP_BIND_PASSWORD = "SyntheticBiology"
-AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=people,dc=ailuropoda,dc=org",
-                                   ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
-
-AUTH_LDAP_CONNECTION_OPTIONS = {
-    ldap.OPT_DEBUG_LEVEL: 0,
-    ldap.OPT_REFERRALS: 0,
-}
-# mapping
-
-AUTH_LDAP_USER_ATTR_MAP = {
-    "first_name": "givenName",
-    "last_name": "sn",
-    "email": "mail"
-}
-
-AUTH_LDAP_MIRROR_GROUPS = True
-AUTH_LDAP_ALWAYS_UPDATE_USER = True
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch("ou=groups,dc=ailuropoda,dc=org", ldap.SCOPE_SUBTREE, "(objectClass=top)")
-
-AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    "is_active": "cn=active,ou=groups,dc=ailuropoda,dc=org",
-    "is_staff": "cn=staff,ou=groups,dc=ailuropoda,dc=org",
-    "is_superuser": "cn=superuser,ou=groups,dc=ailuropoda,dc=org",
-}
-
-import logging
-
-logger = logging.getLogger('django_auth_ldap')
-logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
-# end ldap log
 
 ROOT_URLCONF = 'IGEMServer.urls'
 
