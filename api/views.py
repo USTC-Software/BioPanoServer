@@ -51,7 +51,7 @@ def add_node(request):
 
 # @login_required
 # @group_authenticated
-def del_or_addref_node(request, **kwargs):
+def get_del_addref_node(request, **kwargs):
     if request.method == 'DELETE':
         '''
             DELETE A REF IN COLLECTION<node_ref>
@@ -89,6 +89,25 @@ def del_or_addref_node(request, **kwargs):
                                          'y': request.POST['y'], 'node_id': node['_id']})
 
         return HttpResponse("{'status': 'success'}")
+
+    elif request.method == 'GET':
+        '''
+        get the detail info of a record
+        '''
+        try:
+            node = db.node.find_one({'_id': ObjectId(kwargs['id'])})
+        except KeyError:
+            return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
+
+        if node == None:
+            # not found
+            return HttpResponse("{'status':'error', 'reason':'object not found'}")
+
+        else:
+            # the node exists
+            return HttpResponse(json.dumps(node))
+
+
 
     else:
         # method incorrect
@@ -197,7 +216,7 @@ def add_link(request):
 
 # @login_required
 # @group_authenticated
-def del_or_addref_link(request, **kwargs):
+def get_del_addref_link(request, **kwargs):
     if request.method == 'DELETE':
         '''
             DELETE A REF IN COLLECTION<link_ref>
@@ -238,6 +257,22 @@ def del_or_addref_link(request, **kwargs):
 
         return HttpResponse("{'status': 'success'}")
 
+    elif request.method == 'GET':
+        '''
+        get the detail info of a record
+        '''
+        try:
+            link = db.link.find_one({'_id': ObjectId(kwargs['id'])})
+        except KeyError:
+            return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
+
+        if link == None:
+            # not found
+            return HttpResponse("{'status':'error', 'reason':'object not found'}")
+
+        else:
+            # the node exists
+            return HttpResponse(json.dumps(link))
     else:
         # method incorrect
         return HttpResponse("{'status': 'error','reason':'pls use method DELETE/PUT '}")

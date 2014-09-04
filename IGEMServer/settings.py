@@ -57,20 +57,10 @@ following are:
 '''
 
 AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.google.GoogleOAuth2Backend',
-    'django_auth_ldap.backend.LDAPBackend',
+    # 'social_auth.backends.google.GoogleOAuth2Backend',
     'django.contrib.auth.backends.ModelBackend',
+    'django_auth_ldap.backend.LDAPBackend',
 )
-
-SOCIAL_AUTH_LOGIN_URL = '/google-login/'
-SOCIAL_AUTH_LOGIN_ERROR_URL = '/auth/login-error/'
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/google-login/'
-# LOGIN_REDIRECT_URL = '/'
-# LOGIN_ERROR_URL = '/auth/login-error/'
-SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/google-login/'
-SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/google-login/'
-
-
 
 GOOGLE_OAUTH2_CLIENT_ID = '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com'  # os.environ['GOOGLE_OAUTH2_CLIENT_ID']
 GOOGLE_OAUTH2_CLIENT_SECRET = 'OlSa44n2HuYPfXyGPoCsXEeb'  # os.environ['GOOGLE_OAUTH2_CLIENT_SECRET']
