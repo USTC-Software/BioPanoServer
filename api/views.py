@@ -175,7 +175,7 @@ def search_json_node(request, **kwargs):
         else:
             data = json.dumps({'result': [result for result in results]})
 
-        return HttpResponse(data)
+        return HttpResponse(data+ str(queryinstance) + str(filterinstance))
 
     else:
         # method is not POST
@@ -312,6 +312,7 @@ def search_json_link(request, **kwargs):
         except KeyError:
             # set a default value
             limit = 20
+            skip = 0
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'limit must be a integer'}")
 
@@ -324,7 +325,7 @@ def search_json_link(request, **kwargs):
 
         for result in results:
             result['_id'] = str(result['_id'])
-            
+
         if 'format' in request.POST.keys():
             if request.POST['format'] == 'xml':
                 # Pack data into xml format
