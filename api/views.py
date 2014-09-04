@@ -108,7 +108,7 @@ def get_del_addref_node(request, **kwargs):
             node_dic = node
             for key in node_dic.keys():
                 if isinstance(node_dic[key], ObjectId.__class__):
-                    node_dic[key] = str(node_dic[key])
+                    node_dic[key] = node_dic[key].__str__
             return HttpResponse(json.dumps(node_dic))
 
     else:
