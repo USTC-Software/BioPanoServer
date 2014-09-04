@@ -176,9 +176,9 @@ def search_json_node(request, **kwargs):
                 result['_id'] = str(result['_id'])
                 results_data.append(result)
 
-            data = json.dumps({'result': results_data} + str(len(results_data)))
+            data = json.dumps({'result': results_data})
 
-        return HttpResponse(data)
+        return HttpResponse(data + str(len(results_data)))
 
     else:
         # method is not POST
