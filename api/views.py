@@ -178,7 +178,7 @@ def search_json_node(request, **kwargs):
 
             data = json.dumps({'result': results_data})
 
-        return HttpResponse(data + str(len(results_data)))
+        return HttpResponse(data)
 
     else:
         # method is not POST
@@ -344,7 +344,11 @@ def search_json_link(request, **kwargs):
                 final['results'] = inss
                 data = dict2xml(final)
         else:
-            data = json.dumps({'result': [result for result in results]})
+            results_data = []
+            for result in results:
+                result['_id'] = str(result['_id'])
+                results_data.append(result)
+            data = json.dumps({'result': results_data})
 
         return HttpResponse(data)
 
