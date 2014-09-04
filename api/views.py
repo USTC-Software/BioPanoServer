@@ -105,7 +105,9 @@ def get_del_addref_node(request, **kwargs):
 
         else:
             # the node exists
-            return HttpResponse(json.dumps(node))
+            node_dic = node
+            node_dic['_id'] = str(node_dic['_id'])
+            return HttpResponse(json.dumps(node_dic))
 
 
 
@@ -278,7 +280,10 @@ def get_del_addref_link(request, **kwargs):
 
         else:
             # the node exists
-            return HttpResponse(json.dumps(link))
+            link_dic = link
+            link_dic['_id'] = str(link_dic['_id'])
+            return HttpResponse(json.dumps(link_dic))
+
     else:
         # method incorrect
         return HttpResponse("{'status': 'error','reason':'pls use method DELETE/PUT '}")
