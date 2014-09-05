@@ -21,7 +21,6 @@ ACCESS_TOKEN = ''
 
 
 def login_start(request):
-
     authorization_code_req = {
         'response_type': 'code',
         'client_id': CLIENT_ID,
@@ -45,6 +44,41 @@ def login_complete(request):
     # get tokens
 
     para = request.GET
+
+    tokens = retrieve_tokens(para)
+
+    access_token = tokens['access_token']
+
+    profile = retrieve_profile(access_token)
+
+
+    # login the user
+    try:
+        user = User.objects.get(email=profile['email'])
+    except MultipleObjectsReturned:
+        return HttpResponse("{'status':'error', 'reason':'there are more than one user using this email'}")
+    except ObjectDoesNotExist:
+        # first login of the user
+        # print('first login')
+        User.objects.create_user(username=profile['email'], password=None, email=profile['email'])
+        user = User.objects.get(email=profile['email'])
+        # user.backend =
+        user.save()
+        # print('new user created!')
+        login(request=request, user=user)
+    else:
+        # the user already exists
+
+        # update user
+        # user.backend = 'django.contrib.auth.backends.ModelBackend'
+        user.save()
+        login(request, user)
+        print('user login successfully')
+
+    return HttpResponse("{'status':'success'}")
+
+
+def retrieve_tokens(para):
     authorization_token_req = {
         'code': para['code'],
         'client_id': CLIENT_ID,
@@ -56,7 +90,7 @@ def login_complete(request):
     url = BASE_URL + 'token'
     headers = {'Content-Type': 'application/x-www-form-urlencoded',
                'Host': 'accounts.google.com',
-               }
+    }
 
     dataencoded = urlencode(authorization_token_req)
     print(url + ' ' + urlencode(authorization_token_req))
@@ -65,9 +99,9 @@ def login_complete(request):
     con.request(method='POST', url='/o/oauth2/token', body=dataencoded, headers=headers)
     response = con.getresponse()
     if response.status == 200:
-        print('success')
+        # print('success')
         tokens_json = response.read()
-        print(str(type(tokens_json)) + '\n' + tokens_json)
+        # print(str(type(tokens_json)) + '\n' + tokens_json)
     con.close()
 
     # get access_token
@@ -77,44 +111,11 @@ def login_complete(request):
         print('json loads failed')
         tokens = None
 
-    try:
-        access_token = tokens['access_token']
-    except KeyError:
-        print('no such key:access_token')
-        access_token = None
+    return tokens
 
 
-    # get profile
-
+def retrieve_profile(access_token):
     url = 'https://www.googleapis.com/oauth2/v1/userinfo?access_token=%s' % (access_token,)
     profile_json = urllib2.urlopen(url).read()
     profile = json.loads(profile_json)
-
-
-    #login the user
-    try:
-        user = User.objects.get(email=profile['email'])
-    except MultipleObjectsReturned:
-        return HttpResponse("{'status':'error', 'reason':'there are more than one user using this email'}")
-    except ObjectDoesNotExist:
-        # first login of the user
-        print('first login')
-        User.objects.create_user(username=profile['email'], password=None, email=profile['email'])
-        user = User.objects.get(email=profile['email'])
-        # user.backend =
-        user.save()
-        print('new user created!')
-        login(request=request, user=user)
-        print('user login successfully')
-    else:
-        # the user already exists
-
-        # update user
-        # user.backend = 'django.contrib.auth.backends.ModelBackend'
-        print('welcome back')
-        print(str(user.is_authenticated()))
-        user.save()
-        login(request, user)
-        print('user login successfully')
-
-    return HttpResponse("{'status':'success'}")
+    return profile

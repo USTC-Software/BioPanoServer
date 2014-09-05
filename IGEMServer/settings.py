@@ -43,8 +43,9 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'my_auth.middleware.CookieToTokenMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -58,7 +59,7 @@ following are:
 
 AUTHENTICATION_BACKENDS = (
     # 'social_auth.backends.google.GoogleOAuth2Backend',
-    'my_auth.TokenBackend.TokenBackend'
+    # 'my_auth.TokenBackend.TokenBackend'
     'django.contrib.auth.backends.ModelBackend',
 )
 
