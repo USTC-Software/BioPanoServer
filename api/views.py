@@ -114,7 +114,7 @@ def get_del_addref_node(request, **kwargs):
                     newrefs = []
                     for refid in node_dic[key]:
                         newrefs.append(str(refid))
-                node_dic[key] = newrefs
+                    node_dic[key] = newrefs
 
             return HttpResponse(json.dumps(node_dic))
 
@@ -193,7 +193,7 @@ def search_json_node(request, **kwargs):
                         newrefs = []
                         for refid in result[key]:
                             newrefs.append(str(refid))
-                    result[key] = newrefs
+                        result[key] = newrefs
                 results_data.append(result)
 
             data = json.dumps({'result': results_data})
@@ -384,7 +384,7 @@ def search_json_link(request, **kwargs):
                         newrefs = []
                         for refid in result[key]:
                             newrefs.append(str(refid))
-                    result[key] = newrefs
+                        result[key] = newrefs
                 results_data.append(result)
             data = json.dumps({'result': results_data})
 
