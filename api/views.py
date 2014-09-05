@@ -110,6 +110,12 @@ def get_del_addref_node(request, **kwargs):
             for key in node_dic.keys():
                 if isinstance(node_dic[key], bson.objectid.ObjectId):
                     node_dic[key] = str(node_dic[key])
+                if isinstance(node_dic[key], list) and isinstance(node_dic[key][0], ObjectId):
+                    newrefs = []
+                    for refid in node_dic[key]:
+                        newrefs.append(str(refid))
+                node_dic[key] = newrefs
+
             return HttpResponse(json.dumps(node_dic))
 
     else:
@@ -152,11 +158,15 @@ def search_json_node(request, **kwargs):
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'limit/skip must be a integer'}")
 
+        if '_id' in queryinstance.keys():
+            queryinstance['_id'] = ObjectId(queryinstance['_id'])
+
         # vague search
         for key in queryinstance.keys():
             if key == 'NAME' or key == "TYPE":
                 queryinstance[key] = {"$regex": queryinstance[key]}
         results = db.node.find(queryinstance, filterinstance).limit(limit)
+
 
 
         if 'format' in request.POST.keys():
@@ -179,6 +189,11 @@ def search_json_node(request, **kwargs):
                 for key in result.keys():
                     if isinstance(result[key], bson.objectid.ObjectId):
                         result[key] = str(result[key])
+                    if isinstance(result[key], list) and isinstance(result[key][0], ObjectId):
+                        newrefs = []
+                        for refid in result[key]:
+                            newrefs.append(str(refid))
+                    result[key] = newrefs
                 results_data.append(result)
 
             data = json.dumps({'result': results_data})
@@ -287,6 +302,12 @@ def get_del_addref_link(request, **kwargs):
             for key in link_dic.keys():
                 if isinstance(link_dic[key], bson.objectid.ObjectId):
                     link_dic[key] = str(link_dic[key])
+                if isinstance(link_dic[key], list) and isinstance(link_dic[key][0], ObjectId):
+                    newrefs = []
+                    for refid in link_dic[key]:
+                        newrefs.append(str(refid))
+                    link_dic[key] = newrefs
+
             return HttpResponse(json.dumps(link_dic))
 
     else:
@@ -315,7 +336,7 @@ def search_json_link(request, **kwargs):
             filterinstance = json.loads(request.POST['fields'])
         except KeyError:
             # set a default value
-            filterinstance = {'_id': 1, 'NAME': 1, 'TYPE': 1}
+            filterinstance = {'TYPE1': 1, 'TYPE2': 1, '_id': 1}
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'filter not conform to JSON format'}")
 
@@ -329,15 +350,15 @@ def search_json_link(request, **kwargs):
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'limit must be a integer'}")
 
+        if '_id' in queryinstance.keys():
+            queryinstance['_id'] = ObjectId(queryinstance['_id'])
 
         # vague search
         for key in queryinstance.keys():
             if key in ['NAME', 'TYPE']:
                 queryinstance[key] = {"$regex": queryinstance[key]}
-        results = db.link.find(queryinstance, filterinstance).skip(skip).limit(limit)
+        results = db.link.find(queryinstance, filterinstance).limit(limit)
 
-        for result in results:
-            result['_id'] = str(result['_id'])
 
         if 'format' in request.POST.keys():
             if request.POST['format'] == 'xml':
@@ -359,6 +380,11 @@ def search_json_link(request, **kwargs):
                 for key in result.keys():
                     if isinstance(result[key], bson.objectid.ObjectId):
                         result[key] = str(result[key])
+                    if isinstance(result[key], list) and isinstance(result[key][0], ObjectId):
+                        newrefs = []
+                        for refid in result[key]:
+                            newrefs.append(str(refid))
+                    result[key] = newrefs
                 results_data.append(result)
             data = json.dumps({'result': results_data})
 
