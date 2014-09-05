@@ -44,7 +44,7 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
-    'my_auth.middleware.CookieToTokenMiddleware',
+    # 'my_auth.middleware.CookieToTokenMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
