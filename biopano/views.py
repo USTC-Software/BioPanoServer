@@ -10,7 +10,7 @@ db = MongoClient()['igemdata_new']
 
 
 def look_around(request, **kwargs):
-    if request.method == 'POST':
+    if request.method == 'GET':
         ref_id = kwargs['ref_id']
         node_ref_log = db.node_ref.find_one({'_id': bson.ObjectId(ref_id)})
         if node_ref_log == None:
@@ -43,5 +43,5 @@ def look_around(request, **kwargs):
         result_text = json.dumps(dict_list)
         return HttpResponse(result_text)
 
-    elif request.method == 'GET':
-        return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
+    elif request.method == 'POST':
+        return HttpResponse("{'status':'error', 'reason':'no POST method setting'}")
