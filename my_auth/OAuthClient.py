@@ -24,10 +24,10 @@ class OAuthClientBase(object):
             'grant_type': 'authorization_code',
         }
 
-        cleanurl = self.BASE_URL.join('token/')
+        cleanurl = self.BASE_URL + 'token/'
 
         if self.TOKEN_METHOD == 'GET' or self.TOKEN_METHOD == '':
-            url = cleanurl.join('?').join(urlencode(authorization_token_req))
+            url = cleanurl + '?' + urlencode(authorization_token_req)
             tokens_origin = urllib2.urlopen(url).read()
         elif self.TOKEN_METHOD == 'POST':
             tokens_origin = urllib2.urlopen(cleanurl, authorization_token_req).read()
@@ -104,14 +104,14 @@ class OAuthClientQQ(OAuthClientBase):
         return {'access_token': access_token, 'expires_in': expires_in}
 
     def retrieve_useropenid(self, tokens):
-        url = self.BASE_URL.join('me/?access_token=').join(tokens['access_token'])
+        url = self.BASE_URL + 'me/?access_token=' + tokens['access_token']
         openid_json = re.match(r'.*[(](.+)[)].*', urllib2.urlopen(url).read()).group(1)
         openid = json.loads(openid_json)
         self.USER_INFO_REQ['openid'] = openid['openid']
         return openid
 
     def get_user_info(self):
-        url = 'https://graph.qq.com/user/get_user_info?'.join(urlencode(self.USER_INFO_REQ))
+        url = 'https://graph.qq.com/user/get_user_info?' + urlencode(self.USER_INFO_REQ)
         userinfo_json = urllib2.urlopen(url)
         userinfo = json.loads(userinfo_json)
         return userinfo
