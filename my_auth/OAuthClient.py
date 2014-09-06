@@ -4,6 +4,7 @@ import urllib2
 import json
 from urllib import urlencode, unquote
 import re
+import httplib
 
 
 class OAuthClientBase(object):
@@ -30,7 +31,15 @@ class OAuthClientBase(object):
             url = cleanurl + '?' + urlencode(authorization_token_req)
             tokens_origin = urllib2.urlopen(url).read()
         elif self.TOKEN_METHOD == 'POST':
-            tokens_origin = urllib2.urlopen(cleanurl, authorization_token_req).read()
+            con = httplib.HTTPSConnection('accounts.google.com')
+            headers = {'Content-Type': 'application/x-www-form-urlencoded',
+                       'Host': 'accounts.google.com',
+            }
+            con.request(method='POST', url='/o/oauth2/token', body=urlencode(authorization_token_req), headers=headers)
+            response = con.getresponse()
+            if response.status == 200:
+                tokens_origin = response.read()
+            con.close()
 
         return tokens_origin
 
@@ -66,7 +75,6 @@ class OAuthClientGoogle(OAuthClientBase):
         profile_json = urllib2.urlopen(url).read()
         profile = json.loads(profile_json)
         return profile
-
 
 
 class OAuthClientQQ(OAuthClientBase):
