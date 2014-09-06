@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'api',
     'IGEMServer',
     'social_auth',
+    'biopano',
 )
 
 MIDDLEWARE_CLASSES = (
