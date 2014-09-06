@@ -158,13 +158,24 @@ def search_json_node(request, **kwargs):
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'limit/skip must be a integer'}")
 
-        if '_id' in queryinstance.keys():
-            queryinstance['_id'] = ObjectId(queryinstance['_id'])
+        # handle _id (string-->ObjectId)
+
+        for key in queryinstance.keys():
+            if '_id' == key:
+                queryinstance[key] = ObjectId(queryinstance[key])
+                continue
+            if isinstance(queryinstance[key], list):
+                new = []
+                for item in queryinstance[key]:
+                    if '_id' in item.keys():
+                        item['_id'] = ObjectId(item['_id'])
+                    new.append(item)
+                queryinstance[key] = new
 
         # vague search
-        for key in queryinstance.keys():
-            if key == 'NAME' or key == "TYPE":
-                queryinstance[key] = {"$regex": queryinstance[key]}
+        # for key in queryinstance.keys():
+        #     if key == 'NAME' or key == "TYPE":
+        #         queryinstance[key] = {"$regex": queryinstance[key]}
         results = db.node.find(queryinstance, filterinstance).limit(limit)
 
 
@@ -350,13 +361,24 @@ def search_json_link(request, **kwargs):
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'limit must be a integer'}")
 
-        if '_id' in queryinstance.keys():
-            queryinstance['_id'] = ObjectId(queryinstance['_id'])
+        # handle _id (string-->ObjectId)
+
+        for key in queryinstance.keys():
+            if '_id' == key:
+                queryinstance[key] = ObjectId(queryinstance[key])
+                continue
+            if isinstance(queryinstance[key], list):
+                new = []
+                for item in queryinstance[key]:
+                    if '_id' in item.keys():
+                        item['_id'] = ObjectId(item['_id'])
+                    new.append(item)
+                queryinstance[key] = new
 
         # vague search
-        for key in queryinstance.keys():
-            if key in ['NAME', 'TYPE']:
-                queryinstance[key] = {"$regex": queryinstance[key]}
+        # for key in queryinstance.keys():
+        #     if key in ['NAME', 'TYPE']:
+        #         queryinstance[key] = {"$regex": queryinstance[key]}
         results = db.link.find(queryinstance, filterinstance).limit(limit)
 
 

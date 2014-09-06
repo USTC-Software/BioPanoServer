@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import json
 from urllib import urlencode
-from .oauth_clients import OAuthClientGoogle, OAuthClientQQ
+from .OAuthClient import OAuthClientGoogle, OAuthClientQQ
 
 oauthclientqq = OAuthClientQQ()
 oauthclientgoogle = OAuthClientGoogle()
@@ -24,7 +24,7 @@ def login_start_google(request):
 
     URL = oauthclientgoogle.BASE_URL + "auth?%s" % urlencode(authorization_code_req)
     # print URL
-    return HttpResponsePermanentRedirect(URL)
+    return HttpResponse("{'url':'%s'}" % (URL,))
 
 
 # not standard(qq is standardized)
@@ -40,11 +40,11 @@ def login_complete_google(request):
     para = request.GET
 
     tokens = oauthclientgoogle.retrieve_tokens(para)
-
+    # print(str(tokens))
     access_token = tokens['access_token']
 
     profile = oauthclientgoogle.get_info(access_token)
-
+    # print(str(profile))
 
     # login the user
     try:
@@ -58,8 +58,9 @@ def login_complete_google(request):
         user.save()
         login(request=request, user=user)
     else:
-        user.save()
-        login(request, user)
+        # user exists
+        # user.save()
+        # login(request, user)
         print('user login successfully')
 
     return HttpResponse("{'status':'success'}")
@@ -70,7 +71,7 @@ def login_start_qq(request):
     authorization_url = oauthclientqq.BASE_URL.join('authorize/?')
     authorization_code_req = oauthclientqq.AUTHORIZATION_CODE_REQ
     authorization_url_with_paras = authorization_url.join(urlencode(authorization_code_req))
-    return HttpResponsePermanentRedirect(authorization_url_with_paras)
+    return HttpResponse("{'url':'%s'}" % (authorization_url_with_paras,))
 
 
 def login_complete_qq(request):
