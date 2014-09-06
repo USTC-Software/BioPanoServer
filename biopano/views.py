@@ -41,4 +41,7 @@ def look_around(request, **kwargs):
             del dict_one
 
         result_text = json.dumps(dict_list)
-    return HttpResponse(result_text)
+        return HttpResponse(result_text)
+
+    elif request.method == 'GET':
+        return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
