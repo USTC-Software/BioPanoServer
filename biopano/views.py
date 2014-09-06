@@ -22,8 +22,8 @@ def look_around(request, **kwargs):
 
         for link in link_list1:
             dict_one = {}
-            dict_one['link_id'] = link['link_id']
-            dict_one['node_id'] = link['id2']
+            dict_one['link_id'] = str(link['link_id'])
+            dict_one['node_id'] = str(link['id2'])
             object_node = db.node.find_one({'_id': bson.ObjectId(link['id2'])})
             dict_one['NAME'] = object_node['NAME']
             dict_one['TYPE'] = object_node['TYPE']
@@ -32,8 +32,8 @@ def look_around(request, **kwargs):
 
         for link in link_list2:
             dict_one = {}
-            dict_one['link_id'] = link['link_id']
-            dict_one['node_id'] = link['id1']
+            dict_one['link_id'] = str(link['link_id'])
+            dict_one['node_id'] = str(link['id1'])
             object_node = db.node.find_one({'_id': bson.ObjectId(link['id1'])})
             dict_one['NAME'] = object_node['NAME']
             dict_one['TYPE'] = object_node['TYPE']
