@@ -158,8 +158,14 @@ def search_json_node(request, **kwargs):
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'limit/skip must be a integer'}")
 
-        if '_id' in queryinstance.keys():
-            queryinstance['_id'] = ObjectId(queryinstance['_id'])
+        # handle _id (string-->ObjectId)
+
+        for key in queryinstance.keys():
+            if '_id'.__eq__(key):
+                queryinstance[key] = ObjectId(queryinstance[key])
+                continue
+            if isinstance(queryinstance[key], list):
+                queryinstance[key] = [ObjectId(item) for item in queryinstance[key]]
 
         # vague search
         for key in queryinstance.keys():
@@ -350,8 +356,14 @@ def search_json_link(request, **kwargs):
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'limit must be a integer'}")
 
-        if '_id' in queryinstance.keys():
-            queryinstance['_id'] = ObjectId(queryinstance['_id'])
+        # handle _id (string-->ObjectId)
+
+        for key in queryinstance.keys():
+            if '_id'.__eq__(key):
+                queryinstance[key] = ObjectId(queryinstance[key])
+                continue
+            if isinstance(queryinstance[key], list):
+                queryinstance[key] = [ObjectId(item) for item in queryinstance[key]]
 
         # vague search
         for key in queryinstance.keys():
