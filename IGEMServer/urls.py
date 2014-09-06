@@ -17,5 +17,5 @@ urlpatterns = patterns('',
     url(r'^logout/', 'my_auth.views.logout_view'),  # POST
     url(r'^auth/', include('my_auth.url_auth')),
     # url(r'^google-login', 'my_auth.views.google_login'),
-    url(r'', 'IGEMServer.views.index')
+    url(r'^/?$', 'IGEMServer.views.index')
 )
