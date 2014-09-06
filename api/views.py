@@ -164,7 +164,7 @@ def search_json_node(request, **kwargs):
             if '_id' == key:
                 queryinstance[key] = ObjectId(queryinstance[key])
                 continue
-            if key == '$or' or '$and' or '$AND' or '$OR':
+            if isinstance(queryinstance[key], list):
                 new = []
                 for item in queryinstance[key]:
                     if '_id' in item.keys():
@@ -367,7 +367,7 @@ def search_json_link(request, **kwargs):
             if '_id' == key:
                 queryinstance[key] = ObjectId(queryinstance[key])
                 continue
-            if key == '$or' or '$and' or '$AND' or '$OR':
+            if isinstance(queryinstance[key], list):
                 new = []
                 for item in queryinstance[key]:
                     if '_id' in item.keys():
