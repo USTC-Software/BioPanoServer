@@ -57,6 +57,6 @@ class LoginError(View):
 
 # google login
 def google_login(request):
-    return render_to_response('google_login.html')
+    return render_to_response('index.html')
 
 
