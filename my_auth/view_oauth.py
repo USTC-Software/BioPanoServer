@@ -40,11 +40,11 @@ def login_complete_google(request):
     para = request.GET
 
     tokens = oauthclientgoogle.retrieve_tokens(para)
-
+    # print(str(tokens))
     access_token = tokens['access_token']
 
     profile = oauthclientgoogle.get_info(access_token)
-
+    # print(str(profile))
 
     # login the user
     try:
@@ -58,8 +58,9 @@ def login_complete_google(request):
         user.save()
         login(request=request, user=user)
     else:
-        user.save()
-        login(request, user)
+        # user exists
+        # user.save()
+        # login(request, user)
         print('user login successfully')
 
     return HttpResponse("{'status':'success'}")
