@@ -9,9 +9,9 @@ import json
 db = MongoClient()['igemdata_new']
 
 
-def look_around(request):
+def look_around(request, **kwargs):
     if request.method == 'POST':
-        ref_id = request.ref_id
+        ref_id = kwargs['ref_id']
         node_id = db.node_ref.find_one({'_id': bson.ObjectId(ref_id)})
         link_list1 = db.link_ref.find({'id1': bson.ObjectId(node_id)})
         link_list2 = db.link_ref.find({'id2': bson.ObjectId(node_id)})
