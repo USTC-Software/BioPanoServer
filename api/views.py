@@ -161,16 +161,21 @@ def search_json_node(request, **kwargs):
         # handle _id (string-->ObjectId)
 
         for key in queryinstance.keys():
-            if '_id'.__eq__(key):
+            if '_id' == key:
                 queryinstance[key] = ObjectId(queryinstance[key])
                 continue
-            if isinstance(queryinstance[key], list):
-                queryinstance[key] = [ObjectId(item) for item in queryinstance[key]]
+            if key == '$or' or '$and' or '$AND' or '$OR':
+                new = []
+                for item in queryinstance[key]:
+                    if '_id' in item.keys():
+                        item['_id'] = ObjectId(item['_id'])
+                    new.append(item)
+                queryinstance[key] = new
 
         # vague search
-        for key in queryinstance.keys():
-            if key == 'NAME' or key == "TYPE":
-                queryinstance[key] = {"$regex": queryinstance[key]}
+        # for key in queryinstance.keys():
+        #     if key == 'NAME' or key == "TYPE":
+        #         queryinstance[key] = {"$regex": queryinstance[key]}
         results = db.node.find(queryinstance, filterinstance).limit(limit)
 
 
@@ -359,16 +364,21 @@ def search_json_link(request, **kwargs):
         # handle _id (string-->ObjectId)
 
         for key in queryinstance.keys():
-            if '_id'.__eq__(key):
+            if '_id' == key:
                 queryinstance[key] = ObjectId(queryinstance[key])
                 continue
-            if isinstance(queryinstance[key], list):
-                queryinstance[key] = [ObjectId(item) for item in queryinstance[key]]
+            if key == '$or' or '$and' or '$AND' or '$OR':
+                new = []
+                for item in queryinstance[key]:
+                    if '_id' in item.keys():
+                        item['_id'] = ObjectId(item['_id'])
+                    new.append(item)
+                queryinstance[key] = new
 
         # vague search
-        for key in queryinstance.keys():
-            if key in ['NAME', 'TYPE']:
-                queryinstance[key] = {"$regex": queryinstance[key]}
+        # for key in queryinstance.keys():
+        #     if key in ['NAME', 'TYPE']:
+        #         queryinstance[key] = {"$regex": queryinstance[key]}
         results = db.link.find(queryinstance, filterinstance).limit(limit)
 
 
