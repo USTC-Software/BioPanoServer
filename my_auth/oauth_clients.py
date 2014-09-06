@@ -105,7 +105,7 @@ class OAuthClientQQ(OAuthClientBase):
 
     def retrieve_useropenid(self, tokens):
         url = self.BASE_URL.join('me/?access_token=').join(tokens['access_token'])
-        openid_json = urllib2.urlopen(url).read()
+        openid_json = re.match(r'.*[(](.+)[)].*', urllib2.urlopen(url).read()).group(1)
         openid = json.loads(openid_json)
         self.USER_INFO_REQ['openid'] = openid['openid']
         return openid
