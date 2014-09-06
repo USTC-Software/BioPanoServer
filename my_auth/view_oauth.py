@@ -56,7 +56,7 @@ def login_complete_google(request):
         User.objects.create_user(username=profile['email'], password=None, email=profile['email'])
         user = User.objects.get(email=profile['email'])
         user.save()
-        login(request=request, user=user)
+        # login(request=request, user=user)
     else:
         # user exists
         # user.save()
