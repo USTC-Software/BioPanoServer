@@ -242,7 +242,7 @@ response:
 
 request:
 
-	GET /data/(node|link)/<ref_id>/link
+	GET /data/node/<ref_id>/link
 
 response:
 
@@ -302,15 +302,15 @@ request :
 	'spec':
 	{
 		"$and":
-		{
-			"$or":
-			{
-				"key1":"abc",
-				"key2":123,
-				"key3":"sfda"
-			},
-			"key4":"feiyicheng"
-		}
+		[
+			{"$or":
+			[
+				{"key1":"abc"},
+				{"key2":123},
+				{"key3":"sfda"}
+			]},
+			{"key4":"feiyicheng"}
+		]
 	}
 	
 explain: 
