@@ -5,8 +5,10 @@ import views
 
 urlpatterns = ('',
     # url(r'^oauth/authorize/$', ),
-    url(r'^oauth/google/$', 'my_auth.google_oauth.login_start')
-
+    url(r'^oauth/google/login/$', 'my_auth.oauth.login_start_google'),
+    url(r'^oauth/google/complete/$', 'my_auth.oauth.login_complete_google'),
+    url(r'^oauth/qq/login/$', 'my_auth.oauth.login_start_qq'),
+    url(r'^oauth/qq/complete/', 'my_auth.oauth.login_complete_qq')
 )
 
 
