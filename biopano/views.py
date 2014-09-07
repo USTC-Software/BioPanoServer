@@ -27,6 +27,7 @@ def look_around(request, **kwargs):
             object_node = db.node.find_one({'_id': bson.ObjectId(link['id2'])})
             dict_one['NAME'] = object_node['NAME']
             dict_one['TYPE'] = object_node['TYPE']
+            dict_one['DIRECT'] = 1
             dict_list.append(dict_one)
             del dict_one
 
@@ -37,6 +38,7 @@ def look_around(request, **kwargs):
             object_node = db.node.find_one({'_id': bson.ObjectId(link['id1'])})
             dict_one['NAME'] = object_node['NAME']
             dict_one['TYPE'] = object_node['TYPE']
+            dict_one['DIRECT'] = 0
             dict_list.append(dict_one)
             del dict_one
 
