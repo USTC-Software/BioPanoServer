@@ -8,7 +8,6 @@ import json
 from urllib import urlencode
 from .OAuthClient import OAuthClientGoogle, OAuthClientQQ
 
-oauthclientqq = OAuthClientQQ()
 
 
 # not standard(qq is standardized)
@@ -75,7 +74,7 @@ def login_complete_google(request):
 
 
 def login_start_qq(request):
-    global oauthclientqq
+    oauthclientqq = OAuthClientQQ()
     authorization_url = oauthclientqq.BASE_URL.join('authorize/?')
     authorization_code_req = oauthclientqq.AUTHORIZATION_CODE_REQ
     authorization_url_with_paras = authorization_url.join(urlencode(authorization_code_req))
@@ -83,6 +82,6 @@ def login_start_qq(request):
 
 
 def login_complete_qq(request):
-    global oauthclientqq
+    oauthclientqq = OAuthClientQQ()
     para = request.GET
     userinfo = oauthclientqq.get_info(para)

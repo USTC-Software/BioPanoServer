@@ -1,6 +1,6 @@
 __author__ = 'feiyicheng'
 
-import urllib2
+import urllib2, urllib
 import json
 from urllib import urlencode, unquote
 import re
@@ -31,6 +31,7 @@ class OAuthClientBase(object):
             url = cleanurl + '?' + urlencode(authorization_token_req)
             tokens_origin = urllib2.urlopen(url).read()
         elif self.TOKEN_METHOD == 'POST':
+            '''
             con = httplib.HTTPSConnection('accounts.google.com')
             headers = {'Content-Type': 'application/x-www-form-urlencoded',
                        'Host': 'accounts.google.com',
@@ -40,6 +41,15 @@ class OAuthClientBase(object):
             if response.status == 200:
                 tokens_origin = response.read()
             con.close()
+            '''
+            req = urllib2.Request(cleanurl)
+            data = urllib.urlencode(authorization_token_req)
+            req.add_data(data)
+            req.add_header('Content-Type', 'application/x-www-form-urlencoded')
+            req.add_header('Host', 'accounts.google.com')
+            tokens_origin = urllib2.urlopen(req).read()
+        else:
+            pass
 
         return tokens_origin
 
@@ -63,11 +73,7 @@ class OAuthClientGoogle(OAuthClientBase):
     def retrieve_tokens(self, para):
         tokens_origin = OAuthClientBase._retrieve_tokens(self, para)
         # tokens_origin is json format
-        try:
-            tokens = json.loads(tokens_origin)
-        except Exception:
-            print('json loads failed')
-            tokens = None
+        tokens = json.loads(tokens_origin)
         return tokens
 
     def get_info(self, access_token):
