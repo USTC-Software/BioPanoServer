@@ -11,6 +11,6 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^node/(?P<obj_id>[\w]+)/link/$', views.look_around),    # POST
-    url(r'^')
+    #url(r'^')
 
 )
