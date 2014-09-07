@@ -25,7 +25,7 @@ class OAuthClientBase(object):
             'grant_type': 'authorization_code',
         }
 
-        cleanurl = self.BASE_URL + 'token/'
+        cleanurl = self.BASE_URL + 'token'
 
         if self.TOKEN_METHOD == 'GET' or self.TOKEN_METHOD == '':
             url = cleanurl + '?' + urlencode(authorization_token_req)
