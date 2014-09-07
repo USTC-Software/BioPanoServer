@@ -47,6 +47,8 @@ def login_complete_google(request):
     # print(str(profile))
 
     # login the user
+    return HttpResponse(str(profile))
+
     try:
         user = User.objects.get(email=profile['email'])
     except MultipleObjectsReturned:

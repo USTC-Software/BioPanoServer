@@ -11,6 +11,7 @@ class TokenBackend(ModelBackend):
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             return None
+
         if default_token_generator.check_token(user, token):
             return user
         return None
