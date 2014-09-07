@@ -9,11 +9,12 @@ from urllib import urlencode
 from .OAuthClient import OAuthClientGoogle, OAuthClientQQ
 
 oauthclientqq = OAuthClientQQ()
-oauthclientgoogle = OAuthClientGoogle()
 
 
 # not standard(qq is standardized)
 def login_start_google(request):
+    oauthclientgoogle = OAuthClientGoogle()
+
     authorization_code_req = {
         'response_type': 'code',
         'client_id': oauthclientgoogle.CLIENT_ID,
@@ -33,6 +34,7 @@ def login_complete_google(request):
         step 1: get tokens using the code google responsed
         step 2: get user profile using token
     '''
+    oauthclientgoogle = OAuthClientGoogle()
 
     print('get code from google')
     # get tokens
