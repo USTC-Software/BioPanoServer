@@ -8,7 +8,7 @@ import json
 
 def login(request):
     para = request.REQUEST
-    if ('username', 'password') in para.keys():
+    if 'username' in para.keys() and 'password' in para.keys():
         user = User.objects.get(username=para['username'], password=para['password'])
         token = default_token_generator.make_token(user)
         data = {
@@ -17,5 +17,5 @@ def login(request):
             'user': user.pk
         }
         return HttpResponse(json.dumps(data))
-    return HttpResponse('hehe')
+    return HttpResponse('hehe' + str(para))
 
