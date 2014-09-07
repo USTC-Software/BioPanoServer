@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from bson.objectid import ObjectId
 import bson
 from dict2xml import dict2xml
-
+from my_auth.decorators import user_verified
 from func_box import *
 
 
@@ -51,8 +51,7 @@ def add_node(request):
         # not using method POST
         return HttpResponse("{'status':'error', 'reason':'pls use method POST'}")
 
-
-@login_required
+@user_verified
 # @group_authenticated
 def get_del_addref_node(request, **kwargs):
     if request.method == 'DELETE':
