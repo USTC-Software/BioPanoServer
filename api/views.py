@@ -51,8 +51,9 @@ def add_node(request):
         # not using method POST
         return HttpResponse("{'status':'error', 'reason':'pls use method POST'}")
 
-@user_verified
+
 # @group_authenticated
+@user_verified
 def get_del_addref_node(request, **kwargs):
     if request.method == 'DELETE':
         '''
