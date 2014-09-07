@@ -4,7 +4,9 @@ import urllib2, urllib
 import json
 from urllib import urlencode, unquote
 import re
-import httplib
+import socket
+from ssl import SSLError
+import IGEMServer.settings as settings
 
 
 class OAuthClientBase(object):
@@ -16,7 +18,7 @@ class OAuthClientBase(object):
         self.TOKEN_METHOD = ''
         self.AUTHORIZATION_CODE_REQ = None
 
-    def _retrieve_tokens(self, para):
+    def retrieve_tokens(self, para):
         authorization_token_req = {
             'code': para['code'],
             'client_id': self.CLIENT_ID,
@@ -30,6 +32,11 @@ class OAuthClientBase(object):
         if self.TOKEN_METHOD == 'GET' or self.TOKEN_METHOD == '':
             url = cleanurl + '?' + urlencode(authorization_token_req)
             tokens_origin = urllib2.urlopen(url).read()
+            access_token = re.match(r'access_token=(.+)&.*', tokens_origin).group(1)
+            expires_in = re.match(r'in=(.+).*', tokens_origin).groups(1)
+            self.USER_INFO_REQ['access_token'] = access_token
+            return {'access_token': access_token, 'expires_in': expires_in}
+
         elif self.TOKEN_METHOD == 'POST':
             '''
             con = httplib.HTTPSConnection('accounts.google.com')
@@ -46,19 +53,19 @@ class OAuthClientBase(object):
             req = urllib2.Request(cleanurl, data)
             req.add_header('Content-Type', 'application/x-www-form-urlencoded')
             # req.add_header('Host', 'accounts.google.com')
-            tokens_origin = urllib2.urlopen(req).read()
+            response = urllib2.urlopen(req)
+            tokens_origin = response.read()
+            return json.loads(tokens_origin)
         else:
             pass
-
-        return tokens_origin
 
 
 class OAuthClientGoogle(OAuthClientBase):
     def __init__(self):
-        self.CLIENT_ID = '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com'
-        self.CLIENT_SECRET = 'OlSa44n2HuYPfXyGPoCsXEeb'
-        self.REDIRECT_URL = 'http://feiyicheng.server.ailuropoda.org/auth/oauth/google/complete/'
-        self.BASE_URL = r'https://accounts.google.com/o/oauth2/'
+        self.CLIENT_ID = settings.OAuthClient['google']['CLIENT_ID']
+        self.CLIENT_SECRET = settings.OAuthClient['google']['CLIENT_SECRET']
+        self.REDIRECT_URL = settings.OAuthClient['google']['REDIRECT_URL']
+        self.BASE_URL = settings.OAuthClient['google']['BASE_URL']
         self.TOKEN_METHOD = 'POST'
 
         self.AUTHORIZATION_CODE_REQ = {
@@ -69,16 +76,66 @@ class OAuthClientGoogle(OAuthClientBase):
             'state': 'something'
         }
 
+    # def retrieve_tokens(self, para):
+    # tokens_origin = self._retrieve_tokens(para)
+    #     # tokens_origin is json format
+    #     tokens = json.loads(tokens_origin)
+    #     return tokens
     def retrieve_tokens(self, para):
-        tokens_origin = self._retrieve_tokens(para)
-        # tokens_origin is json format
-        tokens = json.loads(tokens_origin)
-        return tokens
+        authorization_token_req = {
+            'code': para['code'],
+            'client_id': self.CLIENT_ID,
+            'client_secret': self.CLIENT_SECRET,
+            'redirect_uri': self.REDIRECT_URL,
+            'grant_type': 'authorization_code',
+        }
+
+        cleanurl = self.BASE_URL + 'token'
+        data = urllib.urlencode(authorization_token_req)
+        req = urllib2.Request(cleanurl, data)
+        req.add_header('Content-Type', 'application/x-www-form-urlencoded')
+        # req.add_header('Host', 'accounts.google.com')
+        tag = 1
+        while 0 < tag < 5:
+            try:
+                response = urllib2.urlopen(req, timeout=4)
+            except SSLError:
+                tag += 1
+                print('time out !')
+                continue
+            except Exception, e:
+                tag += 1
+                print('other errors' + e)
+                continue
+            else:
+                break
+
+
+        tokens_origin = response.read()
+        return json.loads(tokens_origin)
 
     def get_info(self, access_token):
         url = 'https://www.googleapis.com/oauth2/v1/userinfo?access_token=%s' % (access_token,)
-        profile_json = urllib2.urlopen(url).read()
-        profile = json.loads(profile_json)
+        # profile_json = urllib2.urlopen(url).read()
+        tag = 1
+        while 0 < tag < 5:
+            try:
+                response = urllib2.urlopen(url, timeout=4)
+            except SSLError:
+                tag += 1
+                print('time out !')
+                continue
+            except Exception, e:
+                tag += 1
+                print('other errors' + e)
+                continue
+            else:
+                if tag >= 5:
+                    return None
+                break
+
+
+        profile = json.loads(response.read())
         return profile
 
 
@@ -109,12 +166,12 @@ class OAuthClientQQ(OAuthClientBase):
         self.__init__()
         return userinfo
 
-    def retrieve_tokens(self, para):
-        tokens_origin = OAuthClientBase._retrieve_tokens(self, para)
-        access_token = re.match(r'access_token=(.+)&.*', tokens_origin).group(1)
-        expires_in = re.match(r'in=(.+).*', tokens_origin).groups(1)
-        self.USER_INFO_REQ['access_token'] = access_token
-        return {'access_token': access_token, 'expires_in': expires_in}
+    # def retrieve_tokens(self, para):
+    # tokens_origin = OAuthClientBase._retrieve_tokens(self, para)
+    #     access_token = re.match(r'access_token=(.+)&.*', tokens_origin).group(1)
+    #     expires_in = re.match(r'in=(.+).*', tokens_origin).groups(1)
+    #     self.USER_INFO_REQ['access_token'] = access_token
+    #     return {'access_token': access_token, 'expires_in': expires_in}
 
     def retrieve_useropenid(self, tokens):
         url = self.BASE_URL + 'me/?access_token=' + tokens['access_token']
@@ -128,6 +185,7 @@ class OAuthClientQQ(OAuthClientBase):
         userinfo_json = urllib2.urlopen(url)
         userinfo = json.loads(userinfo_json)
         return userinfo
+
 
 if __name__ == '__main__':
     pass

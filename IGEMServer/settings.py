@@ -39,7 +39,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'api',
     'IGEMServer',
-    'social_auth',
     'biopano',
 )
 
@@ -67,7 +66,6 @@ AUTHENTICATION_BACKENDS = (
 GOOGLE_OAUTH2_CLIENT_ID = '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com'  # os.environ['GOOGLE_OAUTH2_CLIENT_ID']
 GOOGLE_OAUTH2_CLIENT_SECRET = 'OlSa44n2HuYPfXyGPoCsXEeb'  # os.environ['GOOGLE_OAUTH2_CLIENT_SECRET']
 # GOOGLE_WHITE_LISTED_DOMAINS = ['ailuropoda.org']
-SOCIAL_AUTH_USER_MODEL = 'auth.User'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
@@ -75,30 +73,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.contrib.messages.context_processors.messages',
-    'social_auth.context_processors.social_auth_by_type_backends',
-    'social_auth.context_processors.social_auth_login_redirect',
 )
-
-# SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
-# SOCIAL_AUTH_EXTRA_DATA = False
-
-SOCIAL_AUTH_PIPELINE = (
-    # 'social.pipeline.social_auth.social_details',
-    # 'social.pipeline.social_auth.social_uid',
-    # 'social.pipeline.social_auth.auth_allowed',
-    'social_auth.backends.pipeline.social.social_auth_user',
-    # 'social_auth.backends.pipeline.associate.associate_by_email',
-    'social_auth.backends.pipeline.misc.save_status_to_session',
-    'social_auth.backends.pipeline.user.create_user',
-    'social_auth.backends.pipeline.social.associate_user',
-    'social_auth.backends.pipeline.social.load_extra_data',
-    'social_auth.backends.pipeline.user.update_user_details',
-    'social_auth.backends.pipeline.misc.save_status_to_session',
-
-)
-
-
-
 
 ROOT_URLCONF = 'IGEMServer.urls'
 
@@ -149,3 +124,11 @@ STATIC_URL = '/static/'
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
+
+OAuthClient = {'google': {
+            'CLIENT_ID': '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com',
+            'CLIENT_SECRET': 'OlSa44n2HuYPfXyGPoCsXEeb',
+            'REDIRECT_URL': 'http://feiyicheng.server.ailuropoda.org/auth/oauth/google/complete/',
+            'BASE_URL': r'https://accounts.google.com/o/oauth2/',
+    },
+}

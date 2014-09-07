@@ -23,8 +23,8 @@ def login_start_google(request):
     }
 
     URL = oauthclientgoogle.BASE_URL + "auth?%s" % urlencode(authorization_code_req)
-    # print URL
-    return HttpResponse("{'url':'%s'}" % (URL,))
+    # return HttpResponse("{'url':'%s'}" % (URL,))
+    return HttpResponsePermanentRedirect(URL)
 
 
 # not standard(qq is standardized)
@@ -41,13 +41,14 @@ def login_complete_google(request):
     para = request.GET
 
     tokens = oauthclientgoogle.retrieve_tokens(para)
-    # print(str(tokens))
+    print(str(tokens))
     access_token = tokens['access_token']
 
     profile = oauthclientgoogle.get_info(access_token)
-    # print(str(profile))
+    print(str(profile))
 
     # login the user
+    return HttpResponse('profile get\n' + str(profile))
 
     try:
         user = User.objects.get(email=profile['email'])
