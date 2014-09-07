@@ -57,7 +57,7 @@ def login_complete_google(request):
         User.objects.create_user(username=profile['email'], password=None, email=profile['email'])
         user = User.objects.get(username=profile['email'])
         user.backend = 'django.contrib.auth.backends.ModelBackend'
-        user.save()
+        # user.save()
         if user:
             login(request, user)
         else:
@@ -66,7 +66,7 @@ def login_complete_google(request):
     else:
         # user exists
         user.backend = 'django.contrib.auth.backends.ModelBackend'
-        user.save()
+        # user.save()
         login(request, user)
 
     return HttpResponse("{'status':'success'}")
