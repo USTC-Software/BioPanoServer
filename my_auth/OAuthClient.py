@@ -48,7 +48,7 @@ class OAuthClientGoogle(OAuthClientBase):
     def __init__(self):
         self.CLIENT_ID = '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com'
         self.CLIENT_SECRET = 'OlSa44n2HuYPfXyGPoCsXEeb'
-        self.REDIRECT_URL = 'http://master.server.ailuropoda.org/auth/oauth/google/complete/'
+        self.REDIRECT_URL = 'http://feiyicheng.server.ailuropoda.org/auth/oauth/google/complete/'
         self.BASE_URL = r'https://accounts.google.com/o/oauth2/'
         self.TOKEN_METHOD = 'POST'
 
