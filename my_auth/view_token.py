@@ -18,7 +18,7 @@ def login(request):
             data = {
                 'status': 'success',
                 'token': token,
-                'user': user.pk
+                'user': user.username
             }
         else:
             data = {
@@ -26,6 +26,6 @@ def login(request):
                 'reason': 'password not correct'
             }
         return HttpResponse(json.dumps(data))
-    
+
     return HttpResponse('hehe' + str(para))
 
