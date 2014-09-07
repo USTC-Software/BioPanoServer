@@ -1,7 +1,7 @@
-# __author__ = 'feiyicheng'
-# from django.shortcuts import  HttpResponse, HttpResponseRedirect, render_to_response
-# from django.contrib.auth import authenticate, login, logout
-# from django.contrib.auth.decorators import login_required
+__author__ = 'feiyicheng'
+from django.shortcuts import  HttpResponse, HttpResponseRedirect, render_to_response
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 # from django.core.urlresolvers import reverse
 # from django.contrib import messages
 # from django.views.generic.base import View
@@ -32,11 +32,11 @@
 #         return HttpResponse("{'status':'error','reason':'pls use POST method'}")
 #
 #
-# #logout
-# @login_required
-# def logout_view(request):
-#     logout(request)
-#     return HttpResponse("{'status':'success'}")
+# logout
+@login_required
+def logout_view(request):
+    logout(request)
+    return HttpResponse("{'status':'success'}")
 #
 #
 # # login/logout using Google OAuth

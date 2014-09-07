@@ -50,7 +50,7 @@ def add_node(request):
         return HttpResponse("{'status':'error', 'reason':'pls use method POST'}")
 
 
-# @login_required
+@login_required
 # @group_authenticated
 def get_del_addref_node(request, **kwargs):
     if request.method == 'DELETE':
