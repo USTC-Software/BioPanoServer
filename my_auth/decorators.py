@@ -29,7 +29,7 @@ def user_verified(func):
 
     def wrap(request, *args, **kwargs):
         para = request.REQUEST
-        if 'token' not in para.keys() or 'username' not in para.keys():
+        if ('token' not in para.keys()) or ('username' not in para.keys()):
             return HttpResponse("{'status':'error', 'reason':'your request paras should include username & token '}")
         else:
             try:
@@ -38,7 +38,7 @@ def user_verified(func):
                 return HttpResponse("{'status':'error', 'reason':'the username is incorrect'}")
             else:
                 # find the user with given username
-                valid = default_token_generator.check_token(user=user, toke=para['token'])
+                valid = default_token_generator.check_token(user=user, token=para['token'])
                 if valid:
                     return func(request, *args, **kwargs)
                 else:
