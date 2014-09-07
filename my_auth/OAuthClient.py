@@ -42,11 +42,10 @@ class OAuthClientBase(object):
                 tokens_origin = response.read()
             con.close()
             '''
-            req = urllib2.Request(cleanurl)
             data = urllib.urlencode(authorization_token_req)
-            req.add_data(data)
+            req = urllib2.Request(cleanurl, data)
             req.add_header('Content-Type', 'application/x-www-form-urlencoded')
-            req.add_header('Host', 'accounts.google.com')
+            # req.add_header('Host', 'accounts.google.com')
             tokens_origin = urllib2.urlopen(req).read()
         else:
             pass
@@ -130,7 +129,8 @@ class OAuthClientQQ(OAuthClientBase):
         userinfo = json.loads(userinfo_json)
         return userinfo
 
-
+if __name__ == '__main__':
+    pass
 
 
 
