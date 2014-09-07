@@ -85,4 +85,6 @@ def login_start_qq(request):
 def login_complete_qq(request):
     oauthclientqq = OAuthClientQQ()
     para = request.GET
+    print para
     userinfo = oauthclientqq.get_info(para)
+
