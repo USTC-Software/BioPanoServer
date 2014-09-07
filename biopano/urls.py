@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'IGEMServer.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^node/(?P<ref_id>[\w]+)/link/$', views.look_around),    # POST
+    url(r'^node/(?P<obj_id>[\w]+)/link/$', views.look_around),    # POST
+    url(r'^')
 
 )

@@ -11,18 +11,22 @@ db = MongoClient()['igemdata_new']
 
 def look_around(request, **kwargs):
     if request.method == 'GET':
-        ref_id = kwargs['ref_id']
-        node_ref_log = db.node_ref.find_one({'_id': bson.ObjectId(ref_id)})
-        if node_ref_log == None:
+        obj_id = kwargs['obj_id']
+        node_log = db.node.find_one({'_id': bson.ObjectId(obj_id)})
+        if node_log == None:
             return HttpResponse("{'status':'error', 'reason':'no record match that id'}")
-        node_id = node_ref_log['node_id']
-        link_list1 = db.link_ref.find({'id1': bson.ObjectId(node_id)})
-        link_list2 = db.link_ref.find({'id2': bson.ObjectId(node_id)})
+        link_list1 = db.link_ref.find({'id1': bson.ObjectId(obj_id)})
+        link_list2 = db.link_ref.find({'id2': bson.ObjectId(obj_id)})
         dict_list = []
 
+        link_exist_list = []
         for link in link_list1:
             dict_one = {}
             dict_one['link_id'] = str(link['link_id'])
+            if link['link_id'] in link_exist_list:
+                del dict_one
+                continue
+            link_exist_list.append(link['link_id'])
             dict_one['node_id'] = str(link['id2'])
             object_node = db.node.find_one({'_id': bson.ObjectId(link['id2'])})
             dict_one['NAME'] = object_node['NAME']
@@ -31,9 +35,14 @@ def look_around(request, **kwargs):
             dict_list.append(dict_one)
             del dict_one
 
+        link_exist_list = []
         for link in link_list2:
             dict_one = {}
             dict_one['link_id'] = str(link['link_id'])
+            if link['link_id'] in link_exist_list:
+                del dict_one
+                continue
+            link_exist_list.append(link['link_id'])
             dict_one['node_id'] = str(link['id1'])
             object_node = db.node.find_one({'_id': bson.ObjectId(link['id1'])})
             dict_one['NAME'] = object_node['NAME']
