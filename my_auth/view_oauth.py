@@ -55,15 +55,17 @@ def login_complete_google(request):
         # first login of the user
         User.objects.create_user(username=profile['email'], password=None, email=profile['email'])
         user = User.objects.get(email=profile['email'])
-        # user.backend = 'django.contrib.auth.backends.ModelBackend'
-        user.save()
-        request.user = user
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        if user:
+            login(request, user)
+        else:
+            return HttpResponse("{'error':'cannot create user'}")
 
     else:
         # user exists
         # user.save()
         user.backend = 'django.contrib.auth.backends.ModelBackend'
-        request.user = user
+        login(request, user)
         print('user login successfully')
 
     return HttpResponse("{'status':'success'}")
