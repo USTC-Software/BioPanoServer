@@ -53,11 +53,11 @@ def login_complete_google(request):
     except MultipleObjectsReturned:
         return HttpResponse("{'status':'error', 'reason':'there are more than one user using this email'}")
     except ObjectDoesNotExist:
-        return HttpResponse('does not exist')
         # first login of the user
         User.objects.create_user(username=profile['email'], password=None, email=profile['email'])
-        user = User.objects.get(email=profile['email'])
+        user = User.objects.get(username=profile['email'])
         user.backend = 'django.contrib.auth.backends.ModelBackend'
+        user.save()
         if user:
             login(request, user)
         else:
@@ -65,11 +65,9 @@ def login_complete_google(request):
 
     else:
         # user exists
-        # user.save()
-        return HttpResponse('exists')
         user.backend = 'django.contrib.auth.backends.ModelBackend'
+        user.save()
         login(request, user)
-        print('user login successfully')
 
     return HttpResponse("{'status':'success'}")
 
