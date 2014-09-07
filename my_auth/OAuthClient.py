@@ -89,7 +89,7 @@ class OAuthClientGoogle(OAuthClientBase):
                 continue
             except Exception, e:
                 tag += 1
-                print('other errors')
+                print('other errors' + str(e))
                 continue
             else:
                 break
@@ -110,7 +110,7 @@ class OAuthClientGoogle(OAuthClientBase):
                 continue
             except Exception, e:
                 tag += 1
-                print('other errors')
+                print('other errors' + str(e))
                 continue
             else:
                 if tag >= 5:
@@ -172,7 +172,7 @@ class OAuthClientQQ(OAuthClientBase):
                 continue
             except Exception, e:
                 tag += 1
-                print('other errors')
+                print('other errors' + str(e))
                 continue
             else:
                 if tag >= 5:
@@ -198,7 +198,7 @@ class OAuthClientQQ(OAuthClientBase):
                 continue
             except Exception, e:
                 tag += 1
-                print('other errors')
+                print('other errors' + str(e))
                 continue
             else:
                 if tag >= 5:
@@ -222,7 +222,7 @@ class OAuthClientQQ(OAuthClientBase):
                 continue
             except Exception, e:
                 tag += 1
-                print('other errors')
+                print('other errors' + str(e))
                 continue
             else:
                 if tag >= 5:

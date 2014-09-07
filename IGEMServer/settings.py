@@ -59,7 +59,7 @@ following are:
 
 AUTHENTICATION_BACKENDS = (
     # 'social_auth.backends.google.GoogleOAuth2Backend',
-    # 'my_auth.TokenBackend.TokenBackend'
+    'my_auth.TokenBackend.TokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -125,13 +125,21 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
 
-OAuthClient = {'google': {
+
+config_igemserver_local = {
+    'CLIENT_ID': '646625069486-lf2c4fimrnv6eqpgt6qltv0g2vnnhuch.apps.googleusercontent.com',
+    'CLIENT_SECRET': 'TFSAw1GMa_ZVY6Yr5sbLylL0',
+    'REDIRECT_URL': 'http://127.0.0.1:8000/auth/oauth/google/complete/',
+    'BASE_URL': r'https://accounts.google.com/o/oauth2/',
+}
+
+config_igemserver = {
     'CLIENT_ID': '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com',
     'CLIENT_SECRET': 'OlSa44n2HuYPfXyGPoCsXEeb',
     'REDIRECT_URL': 'http://feiyicheng.server.ailuropoda.org/auth/oauth/google/complete/',
     'BASE_URL': r'https://accounts.google.com/o/oauth2/',
-},
-               'qq': {
-
-},
 }
+
+
+OAuthClient = {'google': config_igemserver,
+    }

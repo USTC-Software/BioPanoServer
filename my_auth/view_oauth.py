@@ -1,7 +1,8 @@
 __author__ = 'feiyicheng'
 
 from django.shortcuts import HttpResponse, HttpResponsePermanentRedirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import json
@@ -48,30 +49,25 @@ def login_complete_google(request):
     print(str(profile))
 
     # login the user
-    return HttpResponse('profile get\n' + str(profile))
+    # return HttpResponse('profile get\n' + str(profile))
 
-    try:
-        user = User.objects.get(email=profile['email'])
-    except MultipleObjectsReturned:
-        return HttpResponse("{'status':'error', 'reason':'there are more than one user using this email'}")
-    except ObjectDoesNotExist:
-        # first login of the user
-        User.objects.create_user(username=profile['email'], password=None, email=profile['email'])
-        user = User.objects.get(username=profile['email'])
-        user.backend = 'django.contrib.auth.backends.ModelBackend'
-        # user.save()
-        if user:
-            login(request, user)
-        else:
-            return HttpResponse("{'error':'cannot create user'}")
-
+    user, token = _get_user_and_token(profile)
+    if user:
+        data = {
+            'status': 'success',
+            'token': token,
+            'user': user.pk,
+        }
     else:
-        # user exists
-        user.backend = 'django.contrib.auth.backends.ModelBackend'
-        # user.save()
-        login(request, user)
+        data = {
+            'status': 'error',
+            'reason': 'cannot find and create user, pls contact us'
+        }
 
-    return HttpResponse("{'status':'success'}")
+    return HttpResponse(json.dumps(data))
+
+
+
 
 
 def login_start_qq(request):
@@ -87,4 +83,36 @@ def login_complete_qq(request):
     para = request.GET
     print para
     userinfo = oauthclientqq.get_info(para)
+
+
+def _get_user_and_token(profile):
+    '''
+    :param profile: information get from Google with OAuth access_token
+    :return: it will be a tuple of (user, token) if everything goes right, otherwise None
+    '''
+
+    user, created = User.objects.get_or_create(username=profile['email'])
+    _update_user(user, profile)
+    token = default_token_generator.make_token(user)
+    return (user, token) if user else (None, None)
+
+
+def _update_user(user, profile):
+    '''
+    update user info with the newest information get from OAuth
+    :param user: (User object)the user whose profile needs to update
+    :param profile: (dict)the source of new info
+    :return: None
+    '''
+    try:
+        user.first_name = profile['given_name']
+        user.last_name = profile['family_name']
+        user.email = profile['email']
+    except AttributeError, e:
+        raise e
+    except KeyError, e:
+        raise e
+    return None
+
+
 

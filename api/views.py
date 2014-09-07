@@ -1,12 +1,14 @@
+import json
+
 from django.shortcuts import HttpResponse
 from pymongo import Connection
 from django.contrib.auth.decorators import login_required
-from decorators import group_authenticated
-from func_box import *
 from bson.objectid import ObjectId
 import bson
 from dict2xml import dict2xml
-import json
+
+from func_box import *
+
 
 # connect the database
 conn = Connection()
@@ -117,7 +119,7 @@ def get_del_addref_node(request, **kwargs):
                     node_dic[key] = newrefs
 
             return HttpResponse(json.dumps(node_dic))
-
+    # TODO: add PATCH
     else:
         # method incorrect
         return HttpResponse("{'status': 'error','reason':'pls use method DELETE/PUT '}")
