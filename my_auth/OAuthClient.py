@@ -71,7 +71,7 @@ class OAuthClientGoogle(OAuthClientBase):
         }
 
     def retrieve_tokens(self, para):
-        tokens_origin = self._retrieve_tokens(self, para) 
+        tokens_origin = self._retrieve_tokens(self, para)
         # tokens_origin is json format
         tokens = json.loads(tokens_origin)
         return tokens
