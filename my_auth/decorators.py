@@ -40,8 +40,7 @@ def user_verified(func):
                 # find the user with given username
                 valid = default_token_generator.check_token(user=user, token=para['token'])
                 if valid:
-                    return HttpResponse("{'status':'error', 'reason':'the username is incorrect'}")
-                    # return func(request, *args, **kwargs)
+                    return func(request, *args, **kwargs)
                 else:
                     return HttpResponse("{'status':'error', 'reason':'token incorrect or expired ,pls ask for token again'}")
 
