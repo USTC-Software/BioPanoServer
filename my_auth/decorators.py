@@ -28,7 +28,15 @@ def user_verified(func):
     '''
 
     def wrap(request, *args, **kwargs):
-        para = request.REQUEST
+        if request.method == 'GET' or 'POST':
+            para = request.REQUEST
+        elif request.method == 'PUT':
+            para = request.PUT
+        elif request.method == 'PATCH':
+            para = request.PATCH
+        elif request.method == 'DELETE':
+            para = request.DELETE
+
         if ('token' not in para.keys()) or ('username' not in para.keys()):
             return HttpResponse("{'status':'error', 'reason':'your request paras should include username & token '}")
         else:
