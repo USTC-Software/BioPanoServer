@@ -26,6 +26,8 @@ def look_around(request, **kwargs):
             if link['link_id'] in link_exist_list:
                 del dict_one
                 continue
+            object_link = db.link.find_one({'_id': link['link_id']})
+            dict_one['link_type'] = object_link['TYPE']
             link_exist_list.append(link['link_id'])
             dict_one['node_id'] = str(link['id2'])
             object_node = db.node.find_one({'_id': bson.ObjectId(link['id2'])})
@@ -42,6 +44,8 @@ def look_around(request, **kwargs):
             if link['link_id'] in link_exist_list:
                 del dict_one
                 continue
+            object_link = db.link.find_one({'_id': link['link_id']})
+            dict_one['link_type'] = object_link['TYPE']
             link_exist_list.append(link['link_id'])
             dict_one['node_id'] = str(link['id1'])
             object_node = db.node.find_one({'_id': bson.ObjectId(link['id1'])})
