@@ -75,7 +75,8 @@ def login_start_qq(request):
     authorization_url = oauthclientqq.BASE_URL.join('authorize/?')
     authorization_code_req = oauthclientqq.AUTHORIZATION_CODE_REQ
     authorization_url_with_paras = authorization_url.join(urlencode(authorization_code_req))
-    return HttpResponse("{'url':'%s'}" % (authorization_url_with_paras,))
+    # return HttpResponse("{'url':'%s'}" % (authorization_url_with_paras,))
+    return HttpResponsePermanentRedirect(authorization_url_with_paras)
 
 
 def login_complete_qq(request):
@@ -83,6 +84,7 @@ def login_complete_qq(request):
     para = request.GET
     print para
     userinfo = oauthclientqq.get_info(para)
+    return (str(userinfo))
 
 
 def _get_user_and_token(profile):

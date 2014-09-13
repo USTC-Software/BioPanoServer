@@ -140,6 +140,13 @@ config_igemserver = {
     'BASE_URL': r'https://accounts.google.com/o/oauth2/',
 }
 
+config_qq = {
+    'CLIENT_ID': '101152562',
+    'CLIENT_SECRET': 'f9076c2757efaaeee614fc3c83997918',
+    'REDIRECT_URL': 'http://feiyicheng.server.ailuropoda.org/auth/oauth/qq/complete/',
+    'BASE_URL': r'https://graph.qq.com/oauth2.0/',
+}
 
-OAuthClient = {'google': config_igemserver,
+OAuthClient = {'google': config_igemserver_local,
+               'qq': config_qq
     }
