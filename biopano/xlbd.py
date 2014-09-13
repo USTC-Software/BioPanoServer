@@ -64,12 +64,12 @@ def main(request):
         # what down here is ugly code!
         for u_t_r in db.u_t_r.find():
             if u_t_r['TYPE'] == 'O_T_P':
-                if u_t_r['SEQUENCE5'] is not '':
+                if u_t_r['SEQUENCE_5'] is not '':
                     id_list.append(str(u_t_r['node_id']))
-                    b.append(u_t_r['SEQUENCE5'].upper())
-                if u_t_r['SEQUENCE3'] is not '':
+                    b.append(u_t_r['SEQUENCE_5'].upper())
+                if u_t_r['SEQUENCE_3'] is not '':
                     id_list.append(str(u_t_r['node_id']))
-                    b.append(u_t_r['SEQUENCE3'].upper())
+                    b.append(u_t_r['SEQUENCE_3'].upper())
             else:
                 id_list.append(str(u_t_r['node_id']))
                 b.append(u_t_r['SEQUENCE'].upper())
