@@ -72,9 +72,9 @@ def login_complete_google(request):
 
 def login_start_qq(request):
     oauthclientqq = OAuthClientQQ()
-    authorization_url = oauthclientqq.BASE_URL.join('authorize/?')
+    authorization_url = oauthclientqq.BASE_URL + 'authorize/?'
     authorization_code_req = oauthclientqq.AUTHORIZATION_CODE_REQ
-    authorization_url_with_paras = authorization_url.join(urlencode(authorization_code_req))
+    authorization_url_with_paras = authorization_url + urlencode(authorization_code_req)
     # return HttpResponse("{'url':'%s'}" % (authorization_url_with_paras,))
     return HttpResponsePermanentRedirect(authorization_url_with_paras)
 
