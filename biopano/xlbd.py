@@ -94,6 +94,7 @@ def main(request):
             node = db.node.find_one({'_id': bson.ObjectId(id_list[each])})
             dict['NAME'] = node['NAME']
             dict['TYPE'] = node['TYPE']
+            dict['SCORE'] = ans
             result.append(dict)
 
         return HttpResponse(result)
