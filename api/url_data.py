@@ -2,6 +2,9 @@ __author__ = 'feiyicheng'
 
 from django.conf.urls import patterns, include, url
 import views
+from django.contrib import admin
+
+admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^node/$', views.add_node),    # POST
@@ -9,6 +12,5 @@ urlpatterns = patterns('',
 
     url(r'^link/$', views.add_link),    # POST
     url(r'^link/(?P<id>[\w]+)/$', views.get_del_addref_link),  # DELETE / PUT / GET
-
 
 )
