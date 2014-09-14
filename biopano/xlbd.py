@@ -96,7 +96,7 @@ def main(request):
             dict['TYPE'] = node['TYPE']
             dict['SCORE'] = ans
             result.append(dict)
-
+        result = str(result)
         return HttpResponse(result)
         #print ans   # mark
         #print ansx  # object list which have highest mark
