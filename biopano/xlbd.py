@@ -61,7 +61,7 @@ def main(request):
     if request.method == 'POST':
         if 'sequence' not in request.POST.keys():
             key_list = str(request.POST.keys())
-            return HttpResponse("{'status':'error', 'reason':'keyword\'sequence\' is not in request. All key here:'+key_list}")
+            return HttpResponse("{'status':'error', 'reason':'keyword sequence is not in request.', 'keys':" + key_list +"}")
         a = request.POST['sequence'].upper()
         id_list = []
         b = []
