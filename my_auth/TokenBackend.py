@@ -8,9 +8,10 @@ from django.contrib.auth.tokens import default_token_generator
 class TokenBackend(ModelBackend):
     def authenticate(self, email, token=None):
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(pk=email)
         except User.DoesNotExist:
             return None
+
         if default_token_generator.check_token(user, token):
             return user
         return None

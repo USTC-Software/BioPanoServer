@@ -1,12 +1,14 @@
+import json
+
 from django.shortcuts import HttpResponse
 from pymongo import Connection
 from django.contrib.auth.decorators import login_required
-from decorators import group_authenticated
-from func_box import *
 from bson.objectid import ObjectId
 import bson
 from dict2xml import dict2xml
-import json
+from my_auth.decorators import user_verified
+from func_box import *
+
 
 # connect the database
 conn = Connection()
@@ -50,8 +52,8 @@ def add_node(request):
         return HttpResponse("{'status':'error', 'reason':'pls use method POST'}")
 
 
-# @login_required
 # @group_authenticated
+@user_verified
 def get_del_addref_node(request, **kwargs):
     if request.method == 'DELETE':
         '''
@@ -94,6 +96,7 @@ def get_del_addref_node(request, **kwargs):
     elif request.method == 'GET':
         '''
         get the detail info of a record
+        :param kwargs: kwargs['_id'] is the object id in collection node
         '''
         try:
             node = db.node.find_one({'_id': ObjectId(kwargs['id'])})
@@ -118,9 +121,42 @@ def get_del_addref_node(request, **kwargs):
 
             return HttpResponse(json.dumps(node_dic))
 
+    elif request.method == 'PATCH':
+        '''
+        update merely the position(x,y) of the node
+        :param request.PATCH: a dict with keys(token, username, info), info is also a dict with keys(x, y, ref_id)
+        :return data: {'status': 'success'} if everything goes right
+        '''
+        try:
+            info = request.PATCH['info']
+        except KeyError:
+            return HttpResponse("{'status': 'error','reason':'your paras should include the key named info'}")
+        try:
+            x = info['x']
+            y = info['y']
+            old_ref_id = info['ref_id']
+        except KeyError:
+            return HttpResponse("{'status': 'error','reason':'your info should include keys: x, y, ref_id'}")
+
+        try:
+            x = float(x)
+            y = float(y)
+        except ValueError:
+            return HttpResponse("{'status': 'error','reason':'the x, y value should be float'}")
+
+        node = db.node_ref.find_one({'_id': ObjectId(old_ref_id)})
+        if not node:
+            return HttpResponse("{'status': 'error','reason':'unable to find the record matching red_id given'}")
+        else:
+            db.node_ref.update({'_id': ObjectId(old_ref_id)}, {'$set', {'x': x, 'y': y}})
+            return HttpResponse("{'status': 'success}")
+
+
+
+
     else:
         # method incorrect
-        return HttpResponse("{'status': 'error','reason':'pls use method DELETE/PUT '}")
+        return HttpResponse("{'status': 'error','reason':'pls use method DELETE/PUT/GET/PATCH '}")
 
 
 # @login_required
@@ -251,8 +287,8 @@ def add_link(request):
         return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
 
 
-# @login_required
 # @group_authenticated
+@user_verified
 def get_del_addref_link(request, **kwargs):
     if request.method == 'DELETE':
         '''
