@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'api',
     'IGEMServer',
     'biopano',
+    'projects',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -60,7 +61,7 @@ following are:
 AUTHENTICATION_BACKENDS = (
     # 'social_auth.backends.google.GoogleOAuth2Backend',
     'my_auth.TokenBackend.TokenBackend',
-    # 'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 GOOGLE_OAUTH2_CLIENT_ID = '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com'  # os.environ['GOOGLE_OAUTH2_CLIENT_ID']
@@ -134,8 +135,8 @@ config_igemserver_local = {
 }
 
 config_igemserver = {
-    'CLIENT_ID': '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com',
-    'CLIENT_SECRET': 'OlSa44n2HuYPfXyGPoCsXEeb',
+    'CLIENT_ID': '570101514109-ra6d6nl2t4boj0td4enikgu613gmaa13.apps.googleusercontent.com',
+    'CLIENT_SECRET': 'Bot8Yff2vZd21sgM2qHpWkCQ',
     'REDIRECT_URL': 'http://feiyicheng.server.ailuropoda.org/auth/oauth/google/complete/',
     'BASE_URL': r'https://accounts.google.com/o/oauth2/',
 }
@@ -147,6 +148,6 @@ config_qq = {
     'BASE_URL': r'https://graph.qq.com/oauth2.0/',
 }
 
-OAuthClient = {'google': config_igemserver,
+OAuthClient = {'google': config_igemserver_local,
                'qq': config_qq
     }
