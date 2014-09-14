@@ -1,5 +1,6 @@
 from pymongo import *
 from django.shortcuts import HttpResponse
+import bson
 db = MongoClient()['igemdata_new']
 
 def func(a,b):
@@ -87,7 +88,7 @@ def main(request):
         for each in ansx:
             dict = {}
             dict['_id'] = id_list[each]
-            node = db.node.find_one({'_id': id_list[each]})
+            node = db.node.find_one({'_id': bson.ObjectId(id_list[each])})
             dict['NAME'] = node['NAME']
             dict['TYPE'] = node['TYPE']
             result.append(dict)
