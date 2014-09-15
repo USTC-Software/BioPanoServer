@@ -54,10 +54,10 @@ def main(request):
         for i in b:
             x = NeedleWunch(a, i)
             if x == ans:
-                ansx += [b]
+                ansx += [i]
             if x > ans:
                 ans = x
-                ansx = [b]
+                ansx = [i]
 
         result = []
         for sequence in ansx:
