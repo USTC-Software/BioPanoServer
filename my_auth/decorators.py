@@ -37,6 +37,10 @@ def user_verified(func):
         elif request.method == 'DELETE':
             para = request.DELETE
 
+        # GET method does not need the user to be logged in
+        if request.method == 'GET':
+            return func(request, *args, **kwargs)
+
         if ('token' not in para.keys()) or ('username' not in para.keys()):
             return HttpResponse("{'status':'error', 'reason':'your request paras should include username & token '}")
         else:
@@ -52,7 +56,7 @@ def user_verified(func):
                 else:
                     return HttpResponse("{'status':'error', 'reason':'token incorrect or expired ,pls ask for token again'}")
 
-    wrap.__doc__  = func.__doc__
+    wrap.__doc__ = func.__doc__
     wrap.__name__ = func.__name__
     return wrap
 
