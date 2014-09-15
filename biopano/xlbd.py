@@ -62,11 +62,11 @@ def main(request):
         result = []
         for sequence in ansx:
             for node in db.u_t_r.find({'$or': [{'SEQUENCE': sequence}, {'SEQUENCE_3': sequence}, {'SEQUENCE_5': sequence}]}):
-                if node['_id'] not in id_list:
-                    id_list.append(node['_id'])
-        for each in ansx:
-            dicts = {'_id': id_list[each]}
-            node = db.node.find_one({'_id': bson.ObjectId(id_list[each])})
+                if node['node_id'] not in id_list:
+                    id_list.append(node['node_id'])
+        for each_id in id_list:
+            dicts = {'_id': str(each_id)}
+            node = db.node.find_one({'_id': each_id})
             dicts['NAME'] = node['NAME']
             dicts['TYPE'] = node['TYPE']
             dicts['SCORE'] = ans
