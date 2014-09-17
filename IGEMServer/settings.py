@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework.authtoken',
     'api',
     'IGEMServer',
     'biopano',
@@ -45,12 +46,15 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'Middleware.TokenMiddleware',
     # 'my_auth.middleware.CookieToTokenMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.messages.middleware.MessageMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+
 )
 
 '''
@@ -60,7 +64,7 @@ following are:
 
 AUTHENTICATION_BACKENDS = (
     # 'social_auth.backends.google.GoogleOAuth2Backend',
-    'my_auth.TokenBackend.TokenBackend',
+    # 'my_auth.TokenBackend.TokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
