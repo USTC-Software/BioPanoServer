@@ -52,7 +52,7 @@ def search(request, *args, **kwargs):
         clean_results = []
         for result in results:
             clean_result = {
-                'author': result.author,
+                'author': result.author.username,
                 'id': result.id,
                 'name': result.name,
             }
