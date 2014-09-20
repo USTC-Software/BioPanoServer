@@ -25,6 +25,11 @@ def search(request, *args, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'your POST paras should have a field named query'}")
 
         try:
+            para = json.loads(para)
+        except:
+            return HttpResponse("{'status':'error', 'reason':'requet string not conform to json format'}")
+
+        try:
             author_name = para['author']
         except KeyError:
             author_name = None
@@ -47,7 +52,7 @@ def search(request, *args, **kwargs):
         clean_results = []
         for result in results:
             clean_result = {
-                'author': result.author,
+                'author': result.author.username,
                 'id': result.id,
                 'name': result.name,
             }
@@ -144,7 +149,7 @@ def get_my_projects(request, *args, **kwargs):
     results_author = user.projects_authored.all()
     for result in results_author:
         clean_result = {
-            'author': result.author,
+            'author': result.author.username,
             'id': result.id,
             'name': result.name,
         }
@@ -152,7 +157,7 @@ def get_my_projects(request, *args, **kwargs):
     results_collaborated = user.projects_collaborated.all()
     for result in results_collaborated:
         clean_result = {
-            'author': result.author,
+            'author': result.author.username,
             'id': result.id,
             'name': result.name,
         }
