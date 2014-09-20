@@ -49,11 +49,11 @@ def login_complete_google(request):
     # login the user
     # return HttpResponse('profile get\n' + str(profile))
 
-    user, token = _get_user_and_token(profile)
+    (user, token) = _get_user_and_token(profile)
     if user:
         data = {
             'status': 'success',
-            'token': token,
+            'token': str(token),
             'user': user.pk,
         }
     else:
@@ -90,7 +90,7 @@ def _get_user_and_token(profile):
 
     user, created = User.objects.get_or_create(username=profile['email'])
     _update_user(user, profile)
-    token = Token.objects.get_or_create(user=user)
+    token, created = Token.objects.get_or_create(user=user)
     return (user, token) if user else (None, None)
 
 
