@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
 import json
 
-
+"""
 def login(request):
     para = request.REQUEST
     if 'username' in para.keys() and 'password' in para.keys():
@@ -29,3 +29,4 @@ def login(request):
 
     return HttpResponse('hehe' + str(para))
 
+"""

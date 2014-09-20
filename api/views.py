@@ -53,7 +53,7 @@ def add_node(request):
 
 
 # @group_authenticated
-@user_verified
+# @user_verified
 def get_del_addref_node(request, **kwargs):
     if request.method == 'DELETE':
         '''
@@ -288,7 +288,7 @@ def add_link(request):
 
 
 # @group_authenticated
-@user_verified
+# @user_verified
 def get_del_addref_link(request, **kwargs):
     if request.method == 'DELETE':
         '''

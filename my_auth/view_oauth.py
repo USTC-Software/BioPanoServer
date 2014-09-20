@@ -4,6 +4,7 @@ from django.shortcuts import HttpResponse, HttpResponsePermanentRedirect
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import json
 from urllib import urlencode
@@ -61,13 +62,10 @@ def login_complete_google(request):
     else:
         data = {
             'status': 'error',
-            'reason': 'cannot find and create user, pls contact us'
+            'reason': 'cannot find or create user, pls contact us',
         }
 
     return HttpResponse(json.dumps(data))
-
-
-
 
 
 def login_start_qq(request):
@@ -88,24 +86,24 @@ def login_complete_qq(request):
 
 
 def _get_user_and_token(profile):
-    '''
+    """
     :param profile: information get from Google with OAuth access_token
     :return: it will be a tuple of (user, token) if everything goes right, otherwise None
-    '''
+    """
 
     user, created = User.objects.get_or_create(username=profile['email'])
     _update_user(user, profile)
-    token = default_token_generator.make_token(user)
+    token = Token.objects.get_or_create(user=user)
     return (user, token) if user else (None, None)
 
 
 def _update_user(user, profile):
-    '''
+    """
     update user info with the newest information get from OAuth
     :param user: (User object)the user whose profile needs to update
     :param profile: (dict)the source of new info
     :return: None
-    '''
+    """
     try:
         user.first_name = profile['given_name']
         user.last_name = profile['family_name']
