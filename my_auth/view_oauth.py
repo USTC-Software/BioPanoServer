@@ -10,7 +10,6 @@ import json
 from urllib import urlencode
 from .OAuthClient import OAuthClientGoogle, OAuthClientQQ
 from socialoauth import SocialSites, SocialAPIError
-import socialoauth.sites.baidu
 from settings import SOCIALOAUTH_SITES
 
 def login_start_google(request):
