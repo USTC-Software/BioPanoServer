@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework.authtoken',
     'api',
     'IGEMServer',
     'biopano',
@@ -45,12 +46,15 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'Middleware.TokenMiddleware',
     # 'my_auth.middleware.CookieToTokenMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.messages.middleware.MessageMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+
 )
 
 '''
@@ -60,7 +64,7 @@ following are:
 
 AUTHENTICATION_BACKENDS = (
     # 'social_auth.backends.google.GoogleOAuth2Backend',
-    'my_auth.TokenBackend.TokenBackend',
+    # 'my_auth.TokenBackend.TokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -135,9 +139,9 @@ config_igemserver_local = {
 }
 
 config_igemserver = {
-    'CLIENT_ID': '570101514109-ra6d6nl2t4boj0td4enikgu613gmaa13.apps.googleusercontent.com',
-    'CLIENT_SECRET': 'Bot8Yff2vZd21sgM2qHpWkCQ',
-    'REDIRECT_URL': 'http://feiyicheng.server.ailuropoda.org/auth/oauth/google/complete/',
+    'CLIENT_ID': '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com',
+    'CLIENT_SECRET': 'OlSa44n2HuYPfXyGPoCsXEeb',
+    'REDIRECT_URL': 'http://api.ailuropoda.org/auth/oauth/google/complete/',
     'BASE_URL': r'https://accounts.google.com/o/oauth2/',
 }
 
