@@ -17,5 +17,5 @@ urlpatterns = patterns('',
     url(r'^addcollaborator/(?P<prj_id>[^/]+)/(?P<username>[^/]+)/$', 'projects.views.add_collaborator'),
 
     url(r'^my/$', 'projects.views.get_my_projects'),
-    url(r'^switch/(?P<prj_id>[^/]+)/$', 'projects.views.switch_project'),
+    # url(r'^switch/(?P<prj_id>[^/]+)/$', 'projects.views.switch_project'),
 )
