@@ -70,7 +70,7 @@ def create_project(request, *args, **kwargs):
     prj_name = kwargs['prj_name']
 
     if user.is_authenticated():
-        new_prj = Project(name=prj_name, author=user)
+        new_prj = Project(name=prj_name, author=user, is_active=True)
         new_prj.save()
         return HttpResponse("{'status':'success','id':'%d'}" % (new_prj.pk, ))
 
