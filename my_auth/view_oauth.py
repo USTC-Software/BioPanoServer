@@ -9,7 +9,9 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import json
 from urllib import urlencode
 from .OAuthClient import OAuthClientGoogle, OAuthClientQQ
-
+from socialoauth import SocialSites, SocialAPIError
+import socialoauth.sites.baidu
+from .settings import SOCIALOAUTH_SITES
 
 def login_start_google(request):
     oauthclientgoogle = OAuthClientGoogle()
@@ -82,13 +84,52 @@ def login_complete_qq(request):
     return (str(userinfo))
 
 
+def login_start_baidu(request):
+    site = SocialSites(SOCIALOAUTH_SITES).get_site_object_by_name('baidu')
+    authorize_url = site.authorize_url
+    return HttpResponsePermanentRedirect(authorize_url)
+
+
+def login_complete_baidu(request):
+    code = request.GET.get('code')
+    if not code:
+        data = {
+            'status': 'error',
+            'reason': 'cannot find or create user, pls contact us',
+        }
+    site = SocialSites(SOCIALOAUTH_SITES).get_site_object_by_name('baidu')
+    try:
+        site.get_access_token(code)
+    except SocialAPIError as e:
+        data = {
+            'status': 'error',
+            'reason': e.error_msg,
+        }
+    profile = []
+    profile['uid'] = site.uid
+    profile['username'] = site.username
+    (user, token) = _get_user_and_token(profile)
+    if user:
+        data = {
+            'status': 'success',
+            'token': str(token),
+            'user': user.pk,
+        }
+    else:
+        data = {
+            'status': 'error',
+            'reason': 'cannot find or create user, pls contact us',
+        }
+    return HttpResponse(json.dumps(data))
+
+
 def _get_user_and_token(profile):
     """
     :param profile: information get from Google with OAuth access_token
     :return: it will be a tuple of (user, token) if everything goes right, otherwise None
     """
 
-    user, created = User.objects.get_or_create(username=profile['email'])
+    user, created = User.objects.get_or_create(username=profile['uid'])
     _update_user(user, profile)
     token, created = Token.objects.get_or_create(user=user)
     return (user, token) if user else (None, None)
