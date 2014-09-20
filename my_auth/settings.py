@@ -8,6 +8,4 @@ SOCIALOAUTH_SITES = (
          'client_secret': 'eMdV4YvODlpQRqLsTdTBU8xET0g9xlvQ',
         }
     ),
-
-
 )
