@@ -11,8 +11,6 @@ from urllib import urlencode
 from .OAuthClient import OAuthClientGoogle, OAuthClientQQ
 
 
-
-# not standard(qq is standardized)
 def login_start_google(request):
     oauthclientgoogle = OAuthClientGoogle()
 
@@ -29,7 +27,6 @@ def login_start_google(request):
     return HttpResponsePermanentRedirect(URL)
 
 
-# not standard(qq is standardized)
 def login_complete_google(request):
     '''
         step 1: get tokens using the code google responsed

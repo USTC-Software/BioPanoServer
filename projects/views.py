@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 import json
 from .models import Project
+from decorators import logged_in
 
 
 def search(request, *args, **kwargs):
@@ -56,6 +57,7 @@ def search(request, *args, **kwargs):
         return HttpResponse(json.dumps(data_dict))
 
 
+@logged_in
 def create_project(request, *args, **kwargs):
     """
     create a totally new project
@@ -68,45 +70,12 @@ def create_project(request, *args, **kwargs):
     prj_name = kwargs['prj_name']
 
     if user.is_authenticated():
-        '''
-        is_existed = False
-        prj_set = user.projects.all()
-        for prj in prj_set:
-            if prj_name == prj.name:
-                is_existed = True
-
-        if is_existed:
-            return HttpResponse("{'status':'error', 'reason':'There already exists a project with that name,\
-             pls change a name '}")
-        else:
-            # everthing goes right, create a new project
-        '''
         new_prj = Project(name=prj_name, author=user)
         new_prj.save()
-        return HttpResponse("{'status':'success','id':'%d'}" % (new_prj.id, ))
+        return HttpResponse("{'status':'success','id':'%d'}" % (new_prj.pk, ))
 
 
-def add_in_a_project(request, *args, **kwargs):
-    """
-    add the user self into a project
-    :param request: request object
-    :param args: nonsense
-    :param kwargs: kwargs['prj_id'] is the id of the project
-    :return: success info with prj_id or error reason
-    """
-    user = request.user
-    prj_id = _get_prj_id_int(kwargs['prj_id'])
-    if not prj_id:
-        return HttpResponse("{'status':'error', 'reason':'prj_id should be a integer'}")
-
-    if user.is_authenticated():
-        prj = Project.objects.get(id=prj_id)
-        prj.collaborators.add(user)
-        return HttpResponse("{'status':'success','id':'%d'}" % (prj_id, ))
-    else:
-        return HttpResponse("{'status':'error', 'reason':'user not logged in'}")
-
-
+@logged_in
 def delete_project(request, *args, **kwargs):
     """
     delete a porject of the user's own
@@ -133,6 +102,7 @@ def delete_project(request, *args, **kwargs):
         return HttpResponse("{'status':'error', 'reason':'user not logged in'}")
 
 
+@logged_in
 def add_collaborator(request, *args, **kwargs):
     """
     add a collaborator to the user's own project
@@ -161,14 +131,14 @@ def add_collaborator(request, *args, **kwargs):
         except ObjectDoesNotExist:
             return HttpResponse("{'status':'error', 'reason':'cannot find a user matching the input username'}")
         prj.collaborators.add(collaborator)
-        return HttpResponse("{'status':'success', 'id':'%s'}" % (prj_id,))
+        return HttpResponse("{'status':'success', 'id':'%s', 'username':'%s'}" % (prj_id, username))
     else:
         return HttpResponse("{'status':'error', 'reason':'user not logged in'}")
 
 
+@logged_in
 def get_my_projects(request, *args, **kwargs):
     user = request.user
-    username = user.username
     clean_results = []
 
     results_author = user.projects_authored.all()
@@ -188,11 +158,11 @@ def get_my_projects(request, *args, **kwargs):
         }
         clean_results.append(clean_result)
 
-
     data_dict = {'status': 'success', 'results': clean_results}
     return HttpResponse(json.dumps(data_dict))
 
 
+'''
 def switch_project(request, *args, **kwargs):
     user = request.user
     prj = _get_prj_id_int(kwargs['prj_id'])
@@ -201,7 +171,7 @@ def switch_project(request, *args, **kwargs):
     else:
         user.userprofile.currentProject = prj
         return HttpResponse("{'status':'success', 'id':'%d'}" % (prj.id, ))
-
+'''
 
 
 
