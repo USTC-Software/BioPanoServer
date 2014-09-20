@@ -56,7 +56,7 @@ def login_complete_google(request):
     if user:
         data = {
             'status': 'success',
-            'token': token,
+            'token': str(token),
             'user': user.pk,
         }
     else:
