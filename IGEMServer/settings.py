@@ -152,6 +152,6 @@ config_qq = {
     'BASE_URL': r'https://graph.qq.com/oauth2.0/',
 }
 
-OAuthClient = {'google': config_igemserver_local,
+OAuthClient = {'google': config_igemserver,
                'qq': config_qq
     }
