@@ -100,6 +100,7 @@ def login_complete_baidu(request):
             'status': 'error',
             'reason': 'cannot find or create user, pls contact us',
         }
+        return HttpResponse(json.dumps(data))
     site = SocialSites(SOCIALOAUTH_SITES).get_site_object_by_name('baidu')
     try:
         site.get_access_token(code)
@@ -108,6 +109,7 @@ def login_complete_baidu(request):
             'status': 'error',
             'reason': e.error_msg,
         }
+        return HttpResponse(json.dumps(data))
     profile = {}
     profile['uid'] = site.uid
     profile['given_name'] = site.name
