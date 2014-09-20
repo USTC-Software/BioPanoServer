@@ -1,6 +1,7 @@
 from pymongo import *
 from django.shortcuts import HttpResponse
 import bson
+from datetime import *
 
 db = MongoClient()['igemdata_new']
 
@@ -62,11 +63,11 @@ def main(request):
         result = []
         for sequence in ansx:
             for node in db.u_t_r.find({'$or': [{'SEQUENCE': sequence}, {'SEQUENCE_3': sequence}, {'SEQUENCE_5': sequence}]}):
-                if node['node_id'] not in id_list:
-                    id_list.append(node['node_id'])
+                if str(node['node_id']) not in id_list:
+                    id_list.append(str(node['node_id']))
         for each_id in id_list:
-            dicts = {'_id': str(each_id)}
-            node = db.node.find_one({'_id': each_id})
+            dicts = {'_id': each_id}
+            node = db.node.find_one({'_id': bson.ObjectId(each_id)})
             dicts['NAME'] = node['NAME']
             dicts['TYPE'] = node['TYPE']
             dicts['SCORE'] = ans
