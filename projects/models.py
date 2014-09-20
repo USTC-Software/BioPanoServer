@@ -13,6 +13,7 @@ class Project(models.Model):
     collaborators = models.ManyToManyField(User, blank=True, related_name='projects_collaborated')
     name = models.CharField(max_length=40)
     description = models.TextField(max_length=300, blank=True, default="no description yet")
+    species = models.TextField(max_length=100, blank=True)
     is_active = models.BooleanField()  # this field will be set False if it is 'deleted' ,to keep prj_id
                                         # still all the time
 
