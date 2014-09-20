@@ -25,6 +25,11 @@ def search(request, *args, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'your POST paras should have a field named query'}")
 
         try:
+            para = json.loads(para)
+        except:
+            return HttpResponse("{'status':'error', 'reason':'requet string not conform to json format'}")
+
+        try:
             author_name = para['author']
         except KeyError:
             author_name = None
