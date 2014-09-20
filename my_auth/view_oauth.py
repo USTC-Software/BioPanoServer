@@ -108,9 +108,11 @@ def login_complete_baidu(request):
             'status': 'error',
             'reason': e.error_msg,
         }
-    profile = []
+    profile = {}
     profile['uid'] = site.uid
-    profile['username'] = site.username
+    profile['given_name'] = site.username
+    profile['family_name'] = ''
+    profile['email'] = ''
     (user, token) = _get_user_and_token(profile)
     if user:
         data = {
