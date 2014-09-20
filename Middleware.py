@@ -38,6 +38,7 @@ class TokenMiddleware(object):
 
         if not auth or auth[0].lower() != b'token':
             request.user = AnonymousUser()
+            return None
 
         if len(auth) == 1:
             msg = 'Invalid token header. No credentials provided.'
