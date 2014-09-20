@@ -141,7 +141,7 @@ config_igemserver_local = {
 config_igemserver = {
     'CLIENT_ID': '803598705759-nuc4bd5cm9k0ng4u91m9fa3pr05158k9.apps.googleusercontent.com',
     'CLIENT_SECRET': 'OlSa44n2HuYPfXyGPoCsXEeb',
-    'REDIRECT_URL': 'http://api.ailuropoda.org/auth/oauth/google/complete/',
+    'REDIRECT_URL': 'http://api.biopano.org/auth/oauth/google/complete/',
     'BASE_URL': r'https://accounts.google.com/o/oauth2/',
 }
 
