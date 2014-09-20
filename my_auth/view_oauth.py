@@ -110,7 +110,7 @@ def login_complete_baidu(request):
         }
     profile = {}
     profile['uid'] = site.uid
-    profile['given_name'] = site.username
+    profile['given_name'] = site.name
     profile['family_name'] = ''
     profile['email'] = ''
     (user, token) = _get_user_and_token(profile)
