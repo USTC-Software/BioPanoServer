@@ -149,7 +149,7 @@ def get_my_projects(request, *args, **kwargs):
     results_author = user.projects_authored.all()
     for result in results_author:
         clean_result = {
-            'author': result.author,
+            'author': result.author.username,
             'id': result.id,
             'name': result.name,
         }
