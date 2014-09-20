@@ -3,6 +3,8 @@ __author__ = 'feiyicheng'
 from rest_framework.authtoken.models import Token
 from django.shortcuts import HttpResponse
 from rest_framework import HTTP_HEADER_ENCODING, exceptions
+from django.contrib.auth.models import AnonymousUser
+from django.http import QueryDict
 
 
 def get_authorization_header(request):
@@ -21,9 +23,21 @@ class TokenMiddleware(object):
     model = Token
 
     def process_request(self, request):
+        # PATCH, PUT, DELETE
+        if request.method == 'GET' or 'POST':
+            pass
+        elif request.method == 'PUT':
+            request.PUT = QueryDict(request.body)
+        elif request.method == 'PATCH':
+            request.PATCH = QueryDict(request.body)
+        elif request.method == 'DELETE':
+            request.DELETE = QueryDict(request.body)
+
+        # AUTH
         auth = get_authorization_header(request).split()
 
         if not auth or auth[0].lower() != b'token':
+            request.user = AnonymousUser()
             return None
 
         if len(auth) == 1:

@@ -16,7 +16,6 @@ urlpatterns = patterns('',
     url(r'^biopano/', include('biopano.urls')),
     url(r'^project/', include('projects.urls')),
 
-    url(r'^logout/', 'my_auth.views.logout_view'),  # POST
-    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}, name='static'),
+    # url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}, name='static'),
     url(r'^/?$', 'IGEMServer.views.index'),
 )

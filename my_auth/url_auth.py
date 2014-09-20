@@ -1,7 +1,6 @@
 __author__ = 'feiyicheng'
 
 from django.conf.urls import patterns, include, url
-import views
 from django.contrib import admin
 
 admin.autodiscover()

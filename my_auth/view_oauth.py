@@ -13,8 +13,6 @@ from socialoauth import SocialSites, SocialAPIError
 import socialoauth.sites.baidu
 from .settings import SOCIALOAUTH_SITES
 
-
-# not standard(qq is standardized)
 def login_start_google(request):
     oauthclientgoogle = OAuthClientGoogle()
 
@@ -31,7 +29,6 @@ def login_start_google(request):
     return HttpResponsePermanentRedirect(URL)
 
 
-# not standard(qq is standardized)
 def login_complete_google(request):
     '''
         step 1: get tokens using the code google responsed

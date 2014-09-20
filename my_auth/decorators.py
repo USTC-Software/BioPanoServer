@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import QueryDict
 
+
 def group_authenticated(func):
     """
         a decorator that ensures the group
