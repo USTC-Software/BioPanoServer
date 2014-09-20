@@ -39,7 +39,7 @@ def main(request):
         id_list = []
         b = []
         # what down here is ugly code!
-        time_point = []
+        time_point = {}
         start_time = datetime.now()
         for u_t_r in db.u_t_r.find():
             if u_t_r['TYPE'] == 'O_T_P':
@@ -52,7 +52,7 @@ def main(request):
             else:
                 # id_list.append(str(u_t_r['node_id']))
                 b.append(u_t_r['SEQUENCE'].upper())
-        time_point.append({'database_reading': datetime.now() - start_time})
+        time_point['datebase_reading'] = datetime.now() - start_time
         ans = -9999999999
         ansx = []
         for i in b:
@@ -62,13 +62,13 @@ def main(request):
             if x > ans:
                 ans = x
                 ansx = [i]
-        time_point.append({'core_computing': datetime.now() - start_time})
+        time_point['core_computing'] = datetime.now() - start_time
         result = []
         for sequence in ansx:
             for node in db.u_t_r.find({'$or': [{'SEQUENCE': sequence}, {'SEQUENCE_3': sequence}, {'SEQUENCE_5': sequence}]}):
                 if str(node['node_id']) not in id_list:
                     id_list.append(str(node['node_id']))
-        time_point.append({'search_result_in_datebase': datetime.now() - start_time})
+        time_point['search_result_in_datebase'] = datetime.now() - start_time
         for each_id in id_list:
             dicts = {'_id': each_id}
             node = db.node.find_one({'_id': bson.ObjectId(each_id)})
@@ -77,7 +77,7 @@ def main(request):
             dicts['SCORE'] = ans
             result.append(dicts)
         result = str(result)
-        time_point.append({'serialize': datetime.now() - start_time})
+        time_point['serialize'] = datetime.now() - start_time
 
         time_report = '\n'.join(step + str(time_point[step]) for step in time_point.keys())
         return HttpResponse(result + time_report)
