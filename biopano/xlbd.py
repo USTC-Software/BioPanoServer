@@ -84,4 +84,5 @@ def main(request):
         # print ans   # mark
         #print ansx  # object list which have highest mark
     elif request.method == 'GET':
-        return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
+        return HttpResponse('This is new!!!!')
+        #return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
