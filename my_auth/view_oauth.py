@@ -9,15 +9,9 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import json
 from urllib import urlencode
 from .OAuthClient import OAuthClientGoogle, OAuthClientQQ
-from socialoauth import SocialSites, SocialAPIError
-from socialoauth.sites.baidu import Baidu
+from .socialoauth import SocialSites, SocialAPIError
 from settings import SOCIALOAUTH_SITES
 
-
-class BaiduMobile(Baidu):
-    def authorize_url(self):
-        url = super(BaiduMobile, self).authorize_url
-        return '%s&display=mobile' % url
 
 def login_start_google(request):
     oauthclientgoogle = OAuthClientGoogle()
