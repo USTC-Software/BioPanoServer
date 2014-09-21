@@ -8,8 +8,8 @@ from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import json
 from urllib import urlencode
-from .OAuthClient import OAuthClientGoogle, OAuthClientQQ
-from .socialoauth import SocialSites, SocialAPIError
+from OAuthClient import OAuthClientGoogle, OAuthClientQQ
+from socialoauth import SocialSites, SocialAPIError
 from settings import SOCIALOAUTH_SITES
 
 
