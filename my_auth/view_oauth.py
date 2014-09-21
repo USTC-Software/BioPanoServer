@@ -16,7 +16,7 @@ from settings import SOCIALOAUTH_SITES
 
 class BaiduMobile(Baidu):
     def authorize_url(self):
-        url = super(Baidu, self).authorize_url
+        url = super(BaiduMobile, self).authorize_url
         return '%s&display=mobile' % url
 
 def login_start_google(request):
