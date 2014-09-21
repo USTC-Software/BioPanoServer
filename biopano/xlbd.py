@@ -80,8 +80,9 @@ def main(request):
         time_point['serialize'] = datetime.now() - start_time
 
         time_report = '\n'.join(step + str(time_point[step]) for step in time_point.keys())
-        return HttpResponse(result + time_report)
+        return HttpResponse(result)
         # print ans   # mark
         #print ansx  # object list which have highest mark
     elif request.method == 'GET':
+        #return HttpResponse('This is new!!!!')
         return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
