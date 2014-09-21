@@ -34,3 +34,7 @@ class Baidu(OAuth2):
         self.name = res['uname']
         self.avatar = '%s%s' % (self.SMALL_IMAGE, res['portrait'])
         self.avatar_large = '%s%s' % (self.LARGE_IMAGE, res['portrait'])
+
+    def authorize_url(self):
+        url = super(Baidu, self).authorize_url
+        return '%s&display=mobile' % url
