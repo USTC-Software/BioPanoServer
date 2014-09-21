@@ -52,7 +52,7 @@ def search(request, *args, **kwargs):
         for result in results:
             clean_result = {
                 'author': result.author.username,
-                'id': result.id,
+                'pid': result.id,
                 'name': result.name,
             }
             clean_results.append(clean_result)
@@ -79,7 +79,7 @@ def create_project(request, *args, **kwargs):
         if user.is_authenticated():
             new_prj = Project(name=prj_name, author=user, is_active=True)
             new_prj.save()
-            return HttpResponse("{'status':'success','id':'%d'}" % (new_prj.pk, ))
+            return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
     else:
         return HttpResponse("{'status':'error', 'reason':'method not correct'}")
 
@@ -96,7 +96,7 @@ def delete_project(request, *args, **kwargs):
         user = request.user
         prj_id = _get_prj_id_int(kwargs['prj_id'])
         if not prj_id:
-            return HttpResponse("{'status':'error', 'reason':'prj_id should be a integer'}")
+            return HttpResponse("{'status':'error', 'reason':'prj_id not found'}")
 
         if user.is_authenticated():
             if _is_author(prj_id, user):
@@ -169,7 +169,7 @@ def get_my_projects(request, *args, **kwargs):
         for result in results_collaborated:
             clean_result = {
                 'author': result.author.username,
-                'id': result.id,
+                'pid': result.id,
                 'name': result.name,
             }
             if result.is_active:
