@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 SOCIALOAUTH_SITES = (
-    ('baidu', 'view_oauth.Baidu', '百度',
+    ('baidu', 'view_oauth.BaiduMobile', '百度',
         {
          'redirect_uri': 'http://api.biopano.org/auth/oauth/baidu/complete/',
          'client_id': 'cNB3eb0wHjgGpMNB8yLxDqdM',
