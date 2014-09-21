@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from socialoauth.sites.base import OAuth2
+from base import OAuth2
 
 
 class Baidu(OAuth2):

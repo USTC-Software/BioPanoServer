@@ -5,8 +5,8 @@ import urllib2
 import json
 from functools import wraps
 
-from socialoauth.exception import SocialAPIError, SocialSitesConfigError
-from socialoauth import SocialSites
+from ../exception import SocialAPIError, SocialSitesConfigError
+from ../socialoauth import SocialSites
 
 HTTP_TIMEOUT = 10
 
