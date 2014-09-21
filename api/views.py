@@ -113,7 +113,7 @@ def get_del_addref_node(request, **kwargs):
             for key in node_dic.keys():
                 if isinstance(node_dic[key], bson.objectid.ObjectId):
                     node_dic[key] = str(node_dic[key])
-                if isinstance(node_dic[key], list) and isinstance(node_dic[key][0], ObjectId):
+                if isinstance(node_dic[key], list) and len(node_dic[key]) > 0 and isinstance(node_dic[key][0], ObjectId):
                     newrefs = []
                     for refid in node_dic[key]:
                         newrefs.append(str(refid))
@@ -236,7 +236,7 @@ def search_json_node(request, **kwargs):
                 for key in result.keys():
                     if isinstance(result[key], bson.objectid.ObjectId):
                         result[key] = str(result[key])
-                    if isinstance(result[key], list) and isinstance(result[key][0], ObjectId):
+                    if isinstance(result[key], list) and len(result[key]) > 0 and isinstance(result[key][0], ObjectId):
                         newrefs = []
                         for refid in result[key]:
                             newrefs.append(str(refid))
@@ -349,7 +349,7 @@ def get_del_addref_link(request, **kwargs):
             for key in link_dic.keys():
                 if isinstance(link_dic[key], bson.objectid.ObjectId):
                     link_dic[key] = str(link_dic[key])
-                if isinstance(link_dic[key], list) and isinstance(link_dic[key][0], ObjectId):
+                if isinstance(link_dic[key], list) and len(link_dic[key]) > 0 and isinstance(link_dic[key][0], ObjectId):
                     newrefs = []
                     for refid in link_dic[key]:
                         newrefs.append(str(refid))
@@ -438,7 +438,7 @@ def search_json_link(request, **kwargs):
                 for key in result.keys():
                     if isinstance(result[key], bson.objectid.ObjectId):
                         result[key] = str(result[key])
-                    if isinstance(result[key], list) and isinstance(result[key][0], ObjectId):
+                    if isinstance(result[key], list) and len(result[key]) > 0 and isinstance(result[key][0], ObjectId):
                         newrefs = []
                         for refid in result[key]:
                             newrefs.append(str(refid))
