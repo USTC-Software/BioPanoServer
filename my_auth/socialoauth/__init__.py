@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .exception import SocialSitesConfigError, SocialAPIError
-from .utils import import_oauth_class
+from exception import SocialSitesConfigError, SocialAPIError
+from utils import import_oauth_class
 
 
 version_info = (0, 3, 3)
