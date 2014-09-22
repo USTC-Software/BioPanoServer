@@ -6,7 +6,7 @@ from bson.objectid import ObjectId
 import bson
 from dict2xml import dict2xml
 from func_box import *
-from decorators import project_verified, logged_in
+from decorators import project_verified, logged_in, project_verified_exclude_get, logged_in_exclude_get
 from projects.models import Project
 
 # connect the database
@@ -52,8 +52,8 @@ def add_node(request):
         return HttpResponse("{'status':'error', 'reason':'pls use method POST'}")
 
 
-@logged_in
-@project_verified
+@logged_in_exclude_get
+@project_verified_exclude_get
 def get_del_addref_node(request, **kwargs):
     if request.method == 'DELETE':
         '''
@@ -288,8 +288,8 @@ def add_link(request):
         return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
 
 
-@logged_in
-@project_verified
+@logged_in_exclude_get
+@project_verified_exclude_get
 def get_del_addref_link(request, **kwargs):
     if request.method == 'DELETE':
         '''
