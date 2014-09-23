@@ -42,12 +42,12 @@ def login_complete_google(request):
     para = request.GET
 
     tokens = oauthclientgoogle.retrieve_tokens(para)
-    print(str(tokens))
+    # print(str(tokens))
     access_token = tokens['access_token']
 
     profile = oauthclientgoogle.get_info(access_token)
-    print(str(profile))
-
+    # print(str(profile))
+    profile['uid'] = profile['email']
     # login the user
     # return HttpResponse('profile get\n' + str(profile))
 
