@@ -13,9 +13,9 @@ urlpatterns = patterns('',
 
     url(r'^create/(?P<prj_name>[^/]+)/$', 'projects.views.create_project'),  # create a new project
     # url(r'^addin/(?P<prj_id>[^/]+)$', 'projects.views.add_in_a_project'), # add the user into a project
-    url(r'^delete/(?P<prj_id>[^/]+)/$', 'projects.views.delete_project'), # delete a project
-    url(r'^addcollaborator/(?P<prj_id>[^/]+)/(?P<uid>[^/]+)/$', 'projects.views.add_collaborator'),
+    url(r'^delete/(?P<prj_id>\d+)/$', 'projects.views.delete_project'), # delete a project
+    url(r'^addcollaborator/(?P<prj_id>[^/]+)/(?P<username>[^/]+)/$', 'projects.views.add_collaborator'),
 
     url(r'^my/$', 'projects.views.get_my_projects'),
-    url(r'^switch/(?P<prj_id>[^/]+)/$', 'projects.views.switch_project'),
+    # url(r'^switch/(?P<prj_id>[^/]+)/$', 'projects.views.switch_project'),
 )

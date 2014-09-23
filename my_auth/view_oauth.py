@@ -8,8 +8,9 @@ from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import json
 from urllib import urlencode
-from .OAuthClient import OAuthClientGoogle, OAuthClientQQ
+from OAuthClient import OAuthClientGoogle, OAuthClientQQ
 from socialoauth import SocialSites, SocialAPIError
+import socialoauth.sites.baidu
 from .settings import SOCIALOAUTH_SITES
 
 def login_start_google(request):
@@ -41,12 +42,12 @@ def login_complete_google(request):
     para = request.GET
 
     tokens = oauthclientgoogle.retrieve_tokens(para)
-    print(str(tokens))
+    # print(str(tokens))
     access_token = tokens['access_token']
 
     profile = oauthclientgoogle.get_info(access_token)
-    print(str(profile))
-
+    # print(str(profile))
+    profile['uid'] = profile['email']
     # login the user
     # return HttpResponse('profile get\n' + str(profile))
 
@@ -96,6 +97,7 @@ def login_complete_baidu(request):
             'status': 'error',
             'reason': 'cannot find or create user, pls contact us',
         }
+        return HttpResponse(json.dumps(data))
     site = SocialSites(SOCIALOAUTH_SITES).get_site_object_by_name('baidu')
     try:
         site.get_access_token(code)
@@ -104,9 +106,12 @@ def login_complete_baidu(request):
             'status': 'error',
             'reason': e.error_msg,
         }
-    profile = []
+        return HttpResponse(json.dumps(data))
+    profile = {}
     profile['uid'] = site.uid
-    profile['username'] = site.username
+    profile['given_name'] = site.name
+    profile['family_name'] = ''
+    profile['email'] = ''
     (user, token) = _get_user_and_token(profile)
     if user:
         data = {
