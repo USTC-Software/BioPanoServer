@@ -4,14 +4,15 @@ from django.shortcuts import HttpResponse, HttpResponsePermanentRedirect
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import json
 from urllib import urlencode
-from .OAuthClient import OAuthClientGoogle, OAuthClientQQ
+from OAuthClient import OAuthClientGoogle, OAuthClientQQ
+from socialoauth import SocialSites, SocialAPIError
+from settings import SOCIALOAUTH_SITES
 
 
-
-# not standard(qq is standardized)
 def login_start_google(request):
     oauthclientgoogle = OAuthClientGoogle()
 
@@ -28,7 +29,6 @@ def login_start_google(request):
     return HttpResponsePermanentRedirect(URL)
 
 
-# not standard(qq is standardized)
 def login_complete_google(request):
     '''
         step 1: get tokens using the code google responsed
@@ -42,32 +42,29 @@ def login_complete_google(request):
     para = request.GET
 
     tokens = oauthclientgoogle.retrieve_tokens(para)
-    print(str(tokens))
+    # print(str(tokens))
     access_token = tokens['access_token']
 
     profile = oauthclientgoogle.get_info(access_token)
-    print(str(profile))
-
+    # print(str(profile))
+    profile['uid'] = profile['email']
     # login the user
     # return HttpResponse('profile get\n' + str(profile))
 
-    user, token = _get_user_and_token(profile)
+    (user, token) = _get_user_and_token(profile)
     if user:
         data = {
             'status': 'success',
-            'token': token,
+            'token': str(token),
             'user': user.pk,
         }
     else:
         data = {
             'status': 'error',
-            'reason': 'cannot find and create user, pls contact us'
+            'reason': 'cannot find or create user, pls contact us',
         }
 
     return HttpResponse(json.dumps(data))
-
-
-
 
 
 def login_start_qq(request):
@@ -87,25 +84,72 @@ def login_complete_qq(request):
     return (str(userinfo))
 
 
+def login_start_baidu(request):
+    #site = SocialSites(SOCIALOAUTH_SITES).get_site_object_by_name('baidu')
+    #authorize_url = site.authorize_url
+    socialsites = SocialSites(SOCIALOAUTH_SITES)
+    for s in socialsites.list_sites_class():
+        site = socialsites.get_site_object_by_class(s)
+        authorize_url = site.authorize_url
+    return HttpResponsePermanentRedirect(authorize_url)
+
+
+def login_complete_baidu(request):
+    code = request.GET.get('code')
+    if not code:
+        data = {
+            'status': 'error',
+            'reason': 'cannot find or create user, pls contact us',
+        }
+        return HttpResponse(json.dumps(data))
+    site = SocialSites(SOCIALOAUTH_SITES).get_site_object_by_name('baidu')
+    try:
+        site.get_access_token(code)
+    except SocialAPIError as e:
+        data = {
+            'status': 'error',
+            'reason': e.error_msg,
+        }
+        return HttpResponse(json.dumps(data))
+    profile = {}
+    profile['uid'] = site.uid
+    profile['given_name'] = site.name
+    profile['family_name'] = ''
+    profile['email'] = ''
+    (user, token) = _get_user_and_token(profile)
+    if user:
+        data = {
+            'status': 'success',
+            'token': str(token),
+            'user': user.pk,
+        }
+    else:
+        data = {
+            'status': 'error',
+            'reason': 'cannot find or create user, pls contact us',
+        }
+    return HttpResponse(json.dumps(data))
+
+
 def _get_user_and_token(profile):
-    '''
+    """
     :param profile: information get from Google with OAuth access_token
     :return: it will be a tuple of (user, token) if everything goes right, otherwise None
-    '''
+    """
 
-    user, created = User.objects.get_or_create(username=profile['email'])
+    user, created = User.objects.get_or_create(username=profile['uid'])
     _update_user(user, profile)
-    token = default_token_generator.make_token(user)
+    token, created = Token.objects.get_or_create(user=user)
     return (user, token) if user else (None, None)
 
 
 def _update_user(user, profile):
-    '''
+    """
     update user info with the newest information get from OAuth
     :param user: (User object)the user whose profile needs to update
     :param profile: (dict)the source of new info
     :return: None
-    '''
+    """
     try:
         user.first_name = profile['given_name']
         user.last_name = profile['family_name']

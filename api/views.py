@@ -2,32 +2,35 @@ import json
 
 from django.shortcuts import HttpResponse
 from pymongo import Connection
-from django.contrib.auth.decorators import login_required
 from bson.objectid import ObjectId
 import bson
 from dict2xml import dict2xml
-from my_auth.decorators import user_verified
 from func_box import *
-
+from decorators import project_verified, logged_in, project_verified_exclude_get, logged_in_exclude_get
+from projects.models import Project
 
 # connect the database
 conn = Connection()
 db = conn.igemdata_new
 
 
-# @login_required
-# @group_authenticated
+@logged_in
+@project_verified
 def add_node(request):
     if request.method == "POST":
         '''
             add a node id collection <node>
             request.POST is all information of the node
         '''
-        if validate_node(request.POST['info']) and request.POST['group'] in [g.name for g in request.user.groups.all()]:
+        if validate_node(request.POST['info']):
             # all the information is valid(including the group)
             node_id = db.node.insert(request.POST['info'])
             noderef_id = db.node_ref.insert(
-                {'owner': request.POST['group'], 'x': request.POST['x'], 'y': request.POST['y']})
+                {'pid': int(request.POST['pid']) if 'pid' in request.POST.keys() else 0,
+                 'x': request.POST['x'] if 'x' in request.POST.keys() else '0',
+                 'y': request.POST['y'] if 'y' in request.POST.keys() else '0',
+                }
+            )
 
             # fail to insert into database
             if not node_id or not noderef_id:
@@ -35,14 +38,11 @@ def add_node(request):
 
             # add refs between two records
             db.node.update({'_id': node_id}, {'$push': {'refs': noderef_id}})
-            db.node_ref.update({'_id': noderef_id}, {'$set': {'owner': request.POST['group'], 'node_id': node_id}})
+            db.node_ref.update({'_id': noderef_id}, {'$set': {'node_id': node_id}})
 
             # return the _id of this user's own record of this node
             return HttpResponse({'ref_id': str(noderef_id)})
 
-        elif request.POST['group'] not in request.user.groups:
-            # the group info is not correct
-            return HttpResponse("{'status':'error', 'reason':'group info incorrect'}")
         else:
             # node info is incorrect
             return HttpResponse("{'status':'error', 'reason':'node info invalid'}")
@@ -52,8 +52,8 @@ def add_node(request):
         return HttpResponse("{'status':'error', 'reason':'pls use method POST'}")
 
 
-# @group_authenticated
-@user_verified
+@logged_in_exclude_get
+@project_verified_exclude_get
 def get_del_addref_node(request, **kwargs):
     if request.method == 'DELETE':
         '''
@@ -88,8 +88,12 @@ def get_del_addref_node(request, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'object not found'}")
 
         # node exists
-        noderef_id = db.node_ref.insert({'owner': request.POST['group'], 'x': request.POST['x'],
-                                         'y': request.POST['y'], 'node_id': node['_id']})
+        noderef_id = db.node_ref.insert({'pid': int(request.POST['pid']) if 'pid' in request.POST.keys() else 0,
+                                         'x': request.POST['x'] if 'x' in request.POST.keys() else '0',
+                                         'y': request.POST['y'] if 'y' in request.POST.keys() else '0',
+                                         'node_id': node['_id']}
+                                        )
+
 
         return HttpResponse("{'status': 'success'}")
 
@@ -139,9 +143,10 @@ def get_del_addref_node(request, **kwargs):
         except KeyError:
             return HttpResponse("{'status': 'error','reason':'your info should include keys: x, y, ref_id'}")
 
+        # x,y should be able to convert to a float number
         try:
-            x = float(x)
-            y = float(y)
+            fx = float(x)
+            fy = float(y)
         except ValueError:
             return HttpResponse("{'status': 'error','reason':'the x, y value should be float'}")
 
@@ -152,15 +157,11 @@ def get_del_addref_node(request, **kwargs):
             db.node_ref.update({'_id': ObjectId(old_ref_id)}, {'$set', {'x': x, 'y': y}})
             return HttpResponse("{'status': 'success}")
 
-
-
-
     else:
         # method incorrect
         return HttpResponse("{'status': 'error','reason':'pls use method DELETE/PUT/GET/PATCH '}")
 
 
-# @login_required
 def search_json_node(request, **kwargs):
     if request.method == 'POST':
         ''' POST: {
@@ -253,15 +254,18 @@ def search_json_node(request, **kwargs):
         return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
 
 
-# @login_required
-# @group_authenticated
+@logged_in
+@project_verified
 def add_link(request):
     if request.method == "POST":
         # request.POST is all information of the link
-        if validate_link(request.POST['info']) and request.POST['group'] in [g.name for g in request.user.groups.all()]:
+        if validate_link(request.POST['info']):
             # all the information is valid(including the group)
             link_id = db.link.insert(request.POST['info'])
-            linkref_id = db.link_ref.insert({'owner': request.POST['group']})
+            linkref_id = db.link_ref.insert({
+                'pid': int(request.POST['pid']) if 'pid' in request.POST.keys() else 0,
+                }
+            )
 
             # fail to insert into database
             if not link_id or not linkref_id:
@@ -269,16 +273,13 @@ def add_link(request):
 
             # add refs between two records
             db.link.update({'_id': link_id}, {'$push': {'refs': linkref_id}})
-            db.link_ref.update({'_id': linkref_id}, {'$set': {'owner': request.POST['group'], 'link_id': link_id,
+            db.link_ref.update({'_id': linkref_id}, {'$set': {'link_id': link_id,
                                                               'id1': ObjectId(request.POST['id1']),
                                                               'id2': ObjectId(request.POST['id2'])}})
 
             # return the _id of this user's own record of this link
             return HttpResponse({'ref_id': str(linkref_id)})
 
-        elif request.POST['group'] not in request.user.groups:
-            # the group info is not correct
-            return HttpResponse("{'status':'error', 'reason':'group info incorrect'}")
         else:
             # link info is incorrect
             return HttpResponse("{'status':'error', 'reason':'link info invalid'}")
@@ -288,8 +289,8 @@ def add_link(request):
         return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
 
 
-# @group_authenticated
-@user_verified
+@logged_in_exclude_get
+@project_verified_exclude_get
 def get_del_addref_link(request, **kwargs):
     if request.method == 'DELETE':
         '''
@@ -324,7 +325,8 @@ def get_del_addref_link(request, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'object not found'}")
 
         # link exists
-        db.link_ref.insert({'owner': request.POST['group'], 'link_id': request.POST['_id'],
+        db.link_ref.insert({'pid': int(request.POST['pid']) if 'pid' in request.POST.keys() else 0,
+                            'link_id': request.POST['_id'],
                             'id1': ObjectId(request.POST['id1']),
                             'id2': ObjectId(request.POST['id2'])}
         )
@@ -452,5 +454,12 @@ def search_json_link(request, **kwargs):
     else:
         # method is not POST
         return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
+
+
+@logged_in
+@project_verified
+def test_prj(request):
+    prj = Project.objects.get(pk=request.POST['pid'])
+    return HttpResponse(prj.name + ' ' + prj.author.username)
 
 

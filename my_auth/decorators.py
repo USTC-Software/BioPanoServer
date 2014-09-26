@@ -3,12 +3,13 @@ from django.shortcuts import HttpResponse
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import QueryDict
 
 
 def group_authenticated(func):
-    '''
+    """
         a decorator that ensures the group
-    '''
+    """
 
     def wrap(request, *args, **kwargs):
         if request.REQUEST['group'] not in [g.name for g in request.user.groups.all()]:
@@ -23,19 +24,23 @@ def group_authenticated(func):
 
 
 def user_verified(func):
-    '''
+    """
     a decorator that authenticate the user using tokens
-    '''
+    if authenticated successfully, the specific user object will be in request.user
+    """
 
     def wrap(request, *args, **kwargs):
         if request.method == 'GET' or 'POST':
             para = request.REQUEST
         elif request.method == 'PUT':
-            para = request.PUT
+            para = QueryDict(request.body)
+            request.PUT = para
         elif request.method == 'PATCH':
-            para = request.PATCH
+            para = QueryDict(request.body)
+            request.PATCH = para
         elif request.method == 'DELETE':
-            para = request.DELETE
+            para = QueryDict(request.body)
+            request.DELETE = para
 
         # GET method does not need the user to be logged in
         if request.method == 'GET':
@@ -52,6 +57,7 @@ def user_verified(func):
                 # find the user with given username
                 valid = default_token_generator.check_token(user=user, token=para['token'])
                 if valid:
+                    request.user = user
                     return func(request, *args, **kwargs)
                 else:
                     return HttpResponse("{'status':'error', 'reason':'token incorrect or expired ,pls ask for token again'}")
