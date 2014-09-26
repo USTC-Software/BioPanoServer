@@ -98,8 +98,9 @@ def get_del_addref_node(request, **kwargs):
         get the detail info of a record
         :param kwargs: kwargs['_id'] is the object id in collection node
         '''
+        BANNED_ATTRI = {'_id': 0, 'REF': 0, 'REF_COUNT': 0, 'ID': 0, 'FATHER': 0, 'CHILD': 0}
         try:
-            node = db.node.find_one({'_id': ObjectId(kwargs['id'])})
+            node = db.node.find_one({'_id': ObjectId(kwargs['id'])}, BANNED_ATTRI)
         except KeyError:
             return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
 

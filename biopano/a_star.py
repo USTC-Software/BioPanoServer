@@ -144,7 +144,7 @@ def a_star(request):
         return HttpResponse(str(path))
 
     elif request.method == 'GET':
-        return HttpResponse({'status':'error', 'reason':'no GET method setting'})
+        return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
 
 
 '''for i in range(m):
