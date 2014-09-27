@@ -14,6 +14,9 @@ from settings import SOCIALOAUTH_SITES
 
 
 def login_start_google(request):
+    """ a method that loads config and redirect to Google
+    """
+
     oauthclientgoogle = OAuthClientGoogle()
 
     authorization_code_req = {
@@ -30,10 +33,12 @@ def login_start_google(request):
 
 
 def login_complete_google(request):
-    '''
-        step 1: get tokens using the code google responsed
-        step 2: get user profile using token
-    '''
+    """
+    a method that get UserInfo from Google, log in or create a user, and finally return a token
+    with which the user can log in to our server.
+
+    """
+
     oauthclientgoogle = OAuthClientGoogle()
 
     print('get code from google')
@@ -67,26 +72,10 @@ def login_complete_google(request):
     return HttpResponse(json.dumps(data))
 
 
-def login_start_qq(request):
-    oauthclientqq = OAuthClientQQ()
-    authorization_url = oauthclientqq.BASE_URL + 'authorize/?'
-    authorization_code_req = oauthclientqq.AUTHORIZATION_CODE_REQ
-    authorization_url_with_paras = authorization_url + urlencode(authorization_code_req)
-    # return HttpResponse("{'url':'%s'}" % (authorization_url_with_paras,))
-    return HttpResponsePermanentRedirect(authorization_url_with_paras)
-
-
-def login_complete_qq(request):
-    oauthclientqq = OAuthClientQQ()
-    para = request.GET
-    print para
-    userinfo = oauthclientqq.get_info(para)
-    return (str(userinfo))
-
-
 def login_start_baidu(request):
-    #site = SocialSites(SOCIALOAUTH_SITES).get_site_object_by_name('baidu')
-    #authorize_url = site.authorize_url
+    """ a method that loads config and redirect to Google
+    """
+
     socialsites = SocialSites(SOCIALOAUTH_SITES)
     for s in socialsites.list_sites_class():
         site = socialsites.get_site_object_by_class(s)
@@ -95,6 +84,12 @@ def login_start_baidu(request):
 
 
 def login_complete_baidu(request):
+    """
+    a method that get UserInfo from Baidu, log in or create a user, and finally return a token
+    with which the user can log in to our server.
+
+    """
+
     code = request.GET.get('code')
     if not code:
         data = {
@@ -132,7 +127,9 @@ def login_complete_baidu(request):
 
 
 def _get_user_and_token(profile):
-    """
+    """ get user with the given UserInfo(email as the primary key), \
+    log in the existed or create a new one, return a token
+
     :param profile: information get from Google with OAuth access_token
     :return: it will be a tuple of (user, token) if everything goes right, otherwise None
     """
@@ -144,8 +141,8 @@ def _get_user_and_token(profile):
 
 
 def _update_user(user, profile):
-    """
-    update user info with the newest information get from OAuth
+    """ update user info with the newest information get from OAuth
+
     :param user: (User object)the user whose profile needs to update
     :param profile: (dict)the source of new info
     :return: None

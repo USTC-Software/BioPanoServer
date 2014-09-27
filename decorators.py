@@ -9,11 +9,9 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 def logged_in(func):
-    """
-    :param func: a view methd . func(request,*args,**kwargs)
-    :param args:
-    :param kwargs:
-    :return: func or response with error reason
+    """a decorator that ensures that the user is logged in
+
+    @param func: a method that requires the user to be logged in.
     """
 
     def wrap(request, *args, **kwargs):
@@ -37,10 +35,14 @@ def logged_in(func):
 
 
 def project_verified(func):
-    """
+    """ a decorator that identify the project
 
-    :param func:
-    :return:
+    the request body should be in JSON format with a key names "pid", and this decorator
+    will verify the project with pid with the user logged in.If "pid" is not provided or
+    the project pid represents do not match the logged-in user, it will return Error with
+    some error information
+
+    @param func: a method tha needs to verify the user's group
     """
 
     def wrap(request, *args, **kwargs):
@@ -65,11 +67,9 @@ def project_verified(func):
 
 
 def logged_in_exclude_get(func):
-    """
-    :param func: a view methd . func(request,*args,**kwargs)
-    :param args:
-    :param kwargs:
-    :return: func or response with error reason
+    """ verify user logged in except the request user the GET method
+
+    almost the same as logged_in(func)
     """
 
     def wrap(request, *args, **kwargs):
@@ -96,10 +96,9 @@ def logged_in_exclude_get(func):
 
 
 def project_verified_exclude_get(func):
-    """
+    """ verify user logged in with the project except the request user the GET method
 
-    :param func:
-    :return:
+    almost the same as project_verified(func)
     """
 
     def wrap(request, *args, **kwargs):

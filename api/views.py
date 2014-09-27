@@ -17,6 +17,15 @@ db = conn.igemdata_new
 @logged_in
 @project_verified
 def add_node(request):
+    """ This api will store data of one node from logged-in user to our database
+
+    node data should be passed in with the POST method with the following format:
+
+    "info":<query>  ,query is in JSON format
+
+    @param request: django request object
+    @return: success prompt or error information
+    """
     if request.method == "POST":
         '''
             add a node id collection <node>
@@ -55,6 +64,19 @@ def add_node(request):
 @logged_in_exclude_get
 @project_verified_exclude_get
 def get_del_addref_node(request, **kwargs):
+    """ A RESTful api that user can get/delete and make a copy using different method
+
+    Following are the mapping between method and operation:
+        1. GET: return all infomation of the node asked.
+        2. DELETE: delete the specific node if the logged-in user has access to do so.
+        3. PUT: make a copy(actually a ref) that belongs to the project which the user is working on.
+        4. PATCH: merely modify the x, y coordinates of specific node
+
+    @param kwargs: kwarg['id'] is the object_id or ref_id
+    @param request: django request object
+    @type request: django.http.request
+    @return: success prompt or error information
+    """
     if request.method == 'DELETE':
         '''
             DELETE A REF IN COLLECTION<node_ref>
@@ -63,7 +85,7 @@ def get_del_addref_node(request, **kwargs):
         noderef = db.node_ref.find_one({'_id': ObjectId(kwargs['id'])})
 
         # not found
-        if noderef == None:
+        if noderef is None:
             return HttpResponse("{'status':'error', 'reason':'no record match that id'}")
 
         # remove ref in specific node record
@@ -84,7 +106,7 @@ def get_del_addref_node(request, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
 
         # not found
-        if node == None:
+        if node is None:
             return HttpResponse("{'status':'error', 'reason':'object not found'}")
 
         # node exists
@@ -92,10 +114,12 @@ def get_del_addref_node(request, **kwargs):
                                          'x': request.POST['x'] if 'x' in request.POST.keys() else '0',
                                          'y': request.POST['y'] if 'y' in request.POST.keys() else '0',
                                          'node_id': node['_id']}
-                                        )
+        )
 
-
-        return HttpResponse("{'status': 'success'}")
+        if noderef_id:
+            HttpResponse("{'status': 'success'}")
+        else:
+            HttpResponse("{'status':'error', 'reason':'fail to insert data into database'}")
 
     elif request.method == 'GET':
         '''
@@ -108,7 +132,7 @@ def get_del_addref_node(request, **kwargs):
         except KeyError:
             return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
 
-        if node == None:
+        if node is None:
             # not found
             return HttpResponse("{'status':'error', 'reason':'object not found'}")
 
@@ -118,7 +142,8 @@ def get_del_addref_node(request, **kwargs):
             for key in node_dic.keys():
                 if isinstance(node_dic[key], bson.objectid.ObjectId):
                     node_dic[key] = str(node_dic[key])
-                if isinstance(node_dic[key], list) and len(node_dic[key]) > 0 and isinstance(node_dic[key][0], ObjectId):
+                if (isinstance(node_dic[key], list) and len(node_dic[key]) > 0 and
+                        isinstance(node_dic[key][0], ObjectId)):
                     newrefs = []
                     for refid in node_dic[key]:
                         newrefs.append(str(refid))
@@ -162,7 +187,18 @@ def get_del_addref_node(request, **kwargs):
         return HttpResponse("{'status': 'error','reason':'pls use method DELETE/PUT/GET/PATCH '}")
 
 
-def search_json_node(request, **kwargs):
+def search_json_node(request):
+    """ an api used for complex searching
+
+    User passes in a json query using POST method, and this method will return the
+    results of this single searching.
+
+    User can use the "$limit" "$or" "$and" paras to apply a complex searching.
+    all paras can be seen in U{http://docs.mongodb.org/manual/}
+
+    @param request: django request object
+    @return: the results of the query or error information
+    """
     if request.method == 'POST':
         ''' POST: {
             'spec': <json query>,
@@ -212,13 +248,12 @@ def search_json_node(request, **kwargs):
 
         # vague search
         # for key in queryinstance.keys():
-        #     if key == 'NAME' or key == "TYPE":
-        #         queryinstance[key] = {"$regex": queryinstance[key]}
+        # if key == 'NAME' or key == "TYPE":
+        # queryinstance[key] = {"$regex": queryinstance[key]}
         results = db.node.find(queryinstance, filterinstance).limit(limit)
 
-
-
         if 'format' in request.POST.keys():
+            # noinspection PyDictCreation
             if request.POST['format'] == 'xml':
                 # Pack data into xml format
                 lists = []
@@ -232,6 +267,8 @@ def search_json_node(request, **kwargs):
                 final = {}
                 final['results'] = inss
                 data = dict2xml(final)
+            else:
+                data = None
         else:
             results_data = []
             for result in results:
@@ -257,13 +294,23 @@ def search_json_node(request, **kwargs):
 @logged_in
 @project_verified
 def add_link(request):
+    """ This api will store data of one link from logged-in user to our database
+
+    node data should be passed in with the POST method with the following format:
+
+    "info":<query>  ,query is in JSON format
+
+    @param request: django request object
+    @return: success prompt or error information
+    """
     if request.method == "POST":
         # request.POST is all information of the link
         if validate_link(request.POST['info']):
             # all the information is valid(including the group)
             link_id = db.link.insert(request.POST['info'])
-            linkref_id = db.link_ref.insert({
-                'pid': int(request.POST['pid']) if 'pid' in request.POST.keys() else 0,
+            linkref_id = db.link_ref.insert(
+                {
+                    'pid': int(request.POST['pid']) if 'pid' in request.POST.keys() else 0,
                 }
             )
 
@@ -292,6 +339,19 @@ def add_link(request):
 @logged_in_exclude_get
 @project_verified_exclude_get
 def get_del_addref_link(request, **kwargs):
+    """ A RESTful api that user can get/delete and make a copy using different method
+
+    Following are the mapping between method and operation:
+        1. GET: return all infomation of the link asked.
+        2. DELETE: delete the specific node if the logged-in user has access to do so.
+        3. PUT: make a copy(actually a ref) that belongs to the project which the user is working on.
+        4. PATCH: merely modify the x, y coordinates of specific node
+
+    @param kwargs: kwarg['id'] is the object_id or ref_id
+    @param request: django request object
+    @type request: django.http.request
+    @return: success prompt or error information
+    """
     if request.method == 'DELETE':
         '''
             DELETE A REF IN COLLECTION<link_ref>
@@ -300,7 +360,7 @@ def get_del_addref_link(request, **kwargs):
         linkref = db.link_ref.find_one({'_id': ObjectId(kwargs['id'])})
 
         # not found
-        if linkref == None:
+        if linkref is None:
             return HttpResponse("{'status':'error', 'reason':'no record match that id'}")
 
         # remove ref in specific node record
@@ -321,14 +381,17 @@ def get_del_addref_link(request, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
 
         # not found
-        if link == None:
+        if link is None:
             return HttpResponse("{'status':'error', 'reason':'object not found'}")
 
         # link exists
-        db.link_ref.insert({'pid': int(request.POST['pid']) if 'pid' in request.POST.keys() else 0,
-                            'link_id': request.POST['_id'],
-                            'id1': ObjectId(request.POST['id1']),
-                            'id2': ObjectId(request.POST['id2'])}
+        db.link_ref.insert(
+            {
+                'pid': int(request.POST['pid']) if 'pid' in request.POST.keys() else 0,
+                'link_id': request.POST['_id'],
+                'id1': ObjectId(request.POST['id1']),
+                'id2': ObjectId(request.POST['id2'])
+            }
         )
 
         return HttpResponse("{'status': 'success'}")
@@ -342,7 +405,7 @@ def get_del_addref_link(request, **kwargs):
         except KeyError:
             return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
 
-        if link == None:
+        if link is None:
             # not found
             return HttpResponse("{'status':'error', 'reason':'object not found'}")
 
@@ -352,7 +415,8 @@ def get_del_addref_link(request, **kwargs):
             for key in link_dic.keys():
                 if isinstance(link_dic[key], bson.objectid.ObjectId):
                     link_dic[key] = str(link_dic[key])
-                if isinstance(link_dic[key], list) and len(link_dic[key]) > 0 and isinstance(link_dic[key][0], ObjectId):
+                if (isinstance(link_dic[key], list) and len(link_dic[key]) > 0 and
+                        isinstance(link_dic[key][0], ObjectId)):
                     newrefs = []
                     for refid in link_dic[key]:
                         newrefs.append(str(refid))
@@ -367,6 +431,17 @@ def get_del_addref_link(request, **kwargs):
 
 # @login_required
 def search_json_link(request, **kwargs):
+    """ an api used for complex searching
+
+    User passes in a json query using POST method, and this method will return the
+    results of this single searching.
+
+    User can use the "$limit" "$or" "$and" paras to apply a complex searching.
+    all paras can be seen in U{http://docs.mongodb.org/manual/}
+
+    @param request: django request object
+    @return: the results of the query or error information
+    """
     if request.method == 'POST':
         ''' POST: {
             'spec': <json query>,
@@ -413,13 +488,7 @@ def search_json_link(request, **kwargs):
                         item['_id'] = ObjectId(item['_id'])
                     new.append(item)
                 queryinstance[key] = new
-
-        # vague search
-        # for key in queryinstance.keys():
-        #     if key in ['NAME', 'TYPE']:
-        #         queryinstance[key] = {"$regex": queryinstance[key]}
         results = db.link.find(queryinstance, filterinstance).limit(limit)
-
 
         if 'format' in request.POST.keys():
             if request.POST['format'] == 'xml':
@@ -435,6 +504,8 @@ def search_json_link(request, **kwargs):
                 final = {}
                 final['results'] = inss
                 data = dict2xml(final)
+            else:
+                data = None
         else:
             results_data = []
             for result in results:

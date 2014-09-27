@@ -8,8 +8,7 @@ from django.http import QueryDict
 
 
 def get_authorization_header(request):
-    """
-    Return request's 'Authorization:' header
+    """ Return request's 'Authorization:' header
 
     """
     auth = request.META.get('HTTP_AUTHORIZATION', b'')
@@ -20,9 +19,25 @@ def get_authorization_header(request):
 
 
 class TokenMiddleware(object):
+    """ a middleware that authenticate the client
+
+    if "Authorization" is found in HttpRequest header, the user matching this token will be logged in;
+    else if "Authorization" is not provided, request.user will be an instance of AnonymousUser;
+    else the request will be reject with return some error information.
+
+    """
     model = Token
 
     def process_request(self, request):
+        """ authenticate the user if Token is provide in the HttpRequest header
+
+        if authenticated successfully, the specific user object will be in request.user,
+        if the client don't provide a token, request.user will be a AnonymousUser instance,
+        otherwise error with err information
+
+        @return: None if everything goes right
+        """
+
         # PATCH, PUT, DELETE
         if request.method == 'GET' or 'POST':
             pass

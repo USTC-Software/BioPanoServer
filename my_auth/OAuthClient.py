@@ -10,6 +10,9 @@ import IGEMServer.settings as settings
 
 
 class OAuthClientBase(object):
+    """ a OAuthClient manager that encapsulate the oauth steps into several methods
+    """
+
     def __init__(self):
         self.CLIENT_ID = ''
         self.CLIENT_SECRET = ''
@@ -19,6 +22,11 @@ class OAuthClientBase(object):
         self.AUTHORIZATION_CODE_REQ = None
 
     def retrieve_tokens(self, para):
+        """ this method will automatically retrieve the OAuth token from the OAuth server
+
+        @tag: this method is not used in the whole project
+        """
+
         authorization_token_req = {
             'code': para['code'],
             'client_id': self.CLIENT_ID,
@@ -50,6 +58,11 @@ class OAuthClientBase(object):
 
 
 class OAuthClientGoogle(OAuthClientBase):
+    """ a client manager tha encapsulate the OAuth step into several methods
+
+    when an instance is created, it will load OAuth configs(redirect_url, id, secret) from SETTINGS
+    """
+
     def __init__(self):
         self.CLIENT_ID = settings.OAuthClient['google']['CLIENT_ID']
         self.CLIENT_SECRET = settings.OAuthClient['google']['CLIENT_SECRET']
@@ -66,6 +79,13 @@ class OAuthClientGoogle(OAuthClientBase):
         }
 
     def retrieve_tokens(self, para):
+        """ this method will automatically retrieve the OAuth token from the OAuth server
+
+        @para para: a dict with a key named "code"(the code from Google)
+        @type para: dict
+        @return: a dict with token and other extra information
+        """
+
         authorization_token_req = {
             'code': para['code'],
             'client_id': self.CLIENT_ID,
@@ -93,11 +113,21 @@ class OAuthClientGoogle(OAuthClientBase):
                 continue
             else:
                 break
+        try:
+            tokens_origin = response.read()
+        except Exception as e:
+            raise e
 
-        tokens_origin = response.read()
         return json.loads(tokens_origin)
 
-    def get_info(self, access_token):
+    @staticmethod
+    def get_info(access_token):
+        """ a method that can return the user info with the given
+
+        @param access_token: access_token that can be used to get user info
+        @type access_token: string
+        @return: a dict with all the user info got from Google server
+        """
         url = 'https://www.googleapis.com/oauth2/v1/userinfo?access_token=%s' % (access_token,)
         # profile_json = urllib2.urlopen(url).read()
         tag = 1
@@ -116,122 +146,12 @@ class OAuthClientGoogle(OAuthClientBase):
                 if tag >= 5:
                     return None
                 break
+        try:
+            profile = json.loads(response.read())
+        except Exception as e:
+            raise e
 
-        profile = json.loads(response.read())
         return profile
-
-
-class OAuthClientQQ(OAuthClientBase):
-    def __init__(self):
-        self.CLIENT_ID = settings.OAuthClient['qq']['CLIENT_ID']
-        self.CLIENT_SECRET = settings.OAuthClient['qq']['CLIENT_SECRET']
-        self.REDIRECT_URL = settings.OAuthClient['qq']['REDIRECT_URL']
-        self.BASE_URL = settings.OAuthClient['qq']['BASE_URL']
-        self.TOKEN_METHOD = 'GET'
-
-        self.AUTHORIZATION_CODE_REQ = {
-            'response_type': 'code',
-            'client_id': self.CLIENT_ID,
-            'redirect_uri': self.REDIRECT_URL,
-            'state': 'something'
-        }
-        self.USER_INFO_REQ = {
-            'access_token': '',
-            'oauth_consumer_key': self.CLIENT_ID,
-            'openid': '',
-        }
-
-    def get_info(self, para):
-        tokens = self.retrieve_tokens(para)
-        print(str(tokens))
-        self.retrieve_useropenid(tokens)
-        userinfo = self.get_user_info()
-        print(str(userinfo))
-        self.__init__()
-        return userinfo
-
-    def retrieve_tokens(self, para):
-        authorization_token_req = {
-            'code': para['code'],
-            'client_id': self.CLIENT_ID,
-            'client_secret': self.CLIENT_SECRET,
-            'redirect_uri': self.REDIRECT_URL,
-            'grant_type': 'authorization_code',
-        }
-        cleanurl = self.BASE_URL + 'token'
-
-        url = cleanurl + '?' + urlencode(authorization_token_req)
-
-        tag = 1
-        while 0 < tag < 5:
-            try:
-                response = urllib2.urlopen(url, timeout=6)
-            except SSLError:
-                tag += 1
-                print('time out !')
-                continue
-            except Exception, e:
-                tag += 1
-                print('other errors' + str(e))
-                continue
-            else:
-                if tag >= 5:
-                    return None
-                break
-        tokens_origin = response.read()
-
-        access_token = re.match(r'access_token=(.+)&.*', tokens_origin).group(1)
-        expires_in = re.match(r'in=(.+).*', tokens_origin).groups(1)
-        self.USER_INFO_REQ['access_token'] = access_token
-        return {'access_token': access_token, 'expires_in': expires_in}
-
-    def retrieve_useropenid(self, tokens):
-        url = self.BASE_URL + 'me/?access_token=' + tokens['access_token']
-
-        tag = 1
-        while 0 < tag < 5:
-            try:
-                response = urllib2.urlopen(url, timeout=6)
-            except SSLError:
-                tag += 1
-                print('time out !')
-                continue
-            except Exception, e:
-                tag += 1
-                print('other errors' + str(e))
-                continue
-            else:
-                if tag >= 5:
-                    return None
-                break
-
-        openid_json = re.match(r'.*[(](.+)[)].*', response.read()).group(1)
-        openid = json.loads(openid_json)
-        self.USER_INFO_REQ['openid'] = openid['openid']
-        return openid
-
-    def get_user_info(self):
-        url = 'https://graph.qq.com/user/get_user_info?' + urlencode(self.USER_INFO_REQ)
-        tag = 1
-        while 0 < tag < 5:
-            try:
-                response = urllib2.urlopen(url, timeout=6)
-            except SSLError:
-                tag += 1
-                print('time out !')
-                continue
-            except Exception, e:
-                tag += 1
-                print('other errors' + str(e))
-                continue
-            else:
-                if tag >= 5:
-                    return None
-                break
-        userinfo_json = response.read()
-        userinfo = json.loads(userinfo_json)
-        return userinfo
-
 
 if __name__ == '__main__':
     pass
