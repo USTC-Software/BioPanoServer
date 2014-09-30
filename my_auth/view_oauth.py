@@ -13,6 +13,7 @@ from socialoauth import SocialSites, SocialAPIError
 import socialoauth.sites.baidu
 from .settings import SOCIALOAUTH_SITES
 
+
 def login_start_google(request):
     """ a method that loads config and redirect to Google
     """
@@ -61,7 +62,8 @@ def login_complete_google(request):
         data = {
             'status': 'success',
             'token': str(token),
-            'user': user.pk,
+            'uid': user.pk,
+            'googleid': user.username,
         }
     else:
         data = {
@@ -96,6 +98,7 @@ def login_complete_baidu(request):
         }
         return HttpResponse(json.dumps(data))
     site = SocialSites(SOCIALOAUTH_SITES).get_site_object_by_name('baidu')
+
     try:
         site.get_access_token(code)
     except SocialAPIError as e:
@@ -104,7 +107,8 @@ def login_complete_baidu(request):
             'reason': e.error_msg,
         }
         return HttpResponse(json.dumps(data))
-    profile = {}
+
+    profile = dict()
     profile['uid'] = site.uid
     profile['given_name'] = site.name
     profile['family_name'] = ''
@@ -114,7 +118,8 @@ def login_complete_baidu(request):
         data = {
             'status': 'success',
             'token': str(token),
-            'user': user.pk,
+            'uid': user.pk,
+            'baiduid': user.username,
         }
     else:
         data = {

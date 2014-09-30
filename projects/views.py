@@ -29,22 +29,24 @@ def search(request, *args, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'requet string not conform to json format'}")
 
         try:
-            author_name = para['author']
+            author_id = int(para['authorid'])
         except KeyError:
-            author_name = None
+            author_id = None
         try:
             prj_name = para['name']
         except KeyError:
             prj_name = None
 
-        if not author_name and not prj_name:
+
+        if not author_id and not prj_name:
             return HttpResponse("{'status':'error', 'reason':'your query contains neither author nor name'}")
 
-        if author_name:
+        if author_id:
             if prj_name:
-                results = Project.objects.filter(name__icontains=prj_name, author__icontains=author_name)
+                results = Project.objects.filter(name__icontains=prj_name,
+                                                 author=User.objects.get(pk=author_id))
             else:
-                results = Project.objects.filter(author__icontains=author_name)
+                results = Project.objects.filter(author=User.objects.get(pk=author_id))
         else:
             results = Project.objects.filter(name__icontains=prj_name)
 
@@ -52,39 +54,21 @@ def search(request, *args, **kwargs):
         for result in results:
             clean_result = {
                 'author': result.author.username,
+                'authorid': result.author.pk,
                 'pid': result.id,
                 'name': result.name,
+                'collaborators': [coll.pk for coll in result.collaborators],
             }
             clean_results.append(clean_result)
 
-        data_dict = {'status': 'success', 'results': clean_results}
+        data_dict =json.dumps(clean_results)
         return HttpResponse(json.dumps(data_dict))
     else:
         return HttpResponse("{'status':'error', 'reason':'method not correct'}")
 
 
 @logged_in
-def create_project(request, *args, **kwargs):
-    """
-    create a totally new project
-    :param request: request object
-    :param args: nonsense
-    :param kwargs: kwargs['prj_name']
-    :return:
-    """
-    if request.method == 'GET':
-        user = request.user
-        prj_name = kwargs['prj_name']
-
-        if user.is_authenticated():
-            new_prj = Project(name=prj_name, author=user, is_active=True)
-            new_prj.save()
-            return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
-    else:
-        return HttpResponse("{'status':'error', 'reason':'method not correct'}")
-
-@logged_in
-def delete_project(request, *args, **kwargs):
+def del_project(request, *args, **kwargs):
     """
     delete a porject of the user's own
     :param request: request object
@@ -114,6 +98,47 @@ def delete_project(request, *args, **kwargs):
 
 
 @logged_in
+def modify_project(request, *args, **kwargs):
+    """ a api to modify the project profile
+
+    @param request: django request object
+    @para kwargs: kwargs['prj_id'] is the id of the
+    @return: success or error information
+    """
+
+    # POST paras should cover all fields expected to be modified
+    if request.method == 'POST':
+        user = request.user
+        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        query = request.POST
+        if not prj_id:
+            return HttpResponse("{'status':'error', 'reason':'prj_id not found'}")
+
+        if user.is_authenticated():
+            if _is_author(prj_id, user):
+                try:
+                    project = Project.objects.get(id=prj_id)
+                except ObjectDoesNotExist as e:
+                    return HttpResponse("{'status':'error', 'reason':'cannot find project with that id'}")
+
+                prj_attrs = ['author', 'collaborators', 'name', 'description', 'species']
+                for key in query.keys():
+                    if key not in prj_attrs:
+                        return HttpResponse("{'status':'error', 'reason':'field invalid!'}")
+                    try:
+                        exec("project.{0} = query['{1}']".format(key, key))
+                        project.save()
+                        return HttpResponse("{'status':'success', 'prj_id':%d}" % project.pk)
+                    except Exception as e:
+                        return HttpResponse("{'status':'error', 'reason':'wrong key provided'}")
+            else:
+                return HttpResponse("{'status':'error', 'reason':'No access! Only the author of the project \
+                has the right to delete it'}")
+        else:
+            return HttpResponse("{'status':'error', 'reason':'user not logged in'}")
+
+
+@logged_in
 def add_collaborator(request, *args, **kwargs):
     """
     add a collaborator to the user's own project
@@ -123,12 +148,13 @@ def add_collaborator(request, *args, **kwargs):
     :return:
 
     """
-    if request.method == 'GET':
+    if request.method == 'POST':
         user = request.user
-        username = kwargs['username']
         prj_id = _get_prj_id_int(kwargs['prj_id'])
         if not prj_id:
             return HttpResponse("{'status':'error', 'reason':'prj_id should be a integer'}")
+
+        uid = int(request.POST['uid'])
 
         if not _is_author(prj_id, user):
             # the user is not the author of the project
@@ -139,46 +165,147 @@ def add_collaborator(request, *args, **kwargs):
 
             prj = Project.objects.get(id=prj_id)
             try:
-                collaborator = User.objects.get(username=username)
+                collaborator = User.objects.get(pk=uid)
             except ObjectDoesNotExist:
                 return HttpResponse("{'status':'error', 'reason':'cannot find a user matching the input username'}")
             prj.collaborators.add(collaborator)
-            return HttpResponse("{'status':'success', 'id':'%s', 'username':'%s'}" % (prj_id, username))
+            return HttpResponse("{'status':'success'}")
         else:
             return HttpResponse("{'status':'error', 'reason':'user not logged in'}")
     else:
-        return HttpResponse("{'status':'error', 'reason':'method not correct'}")
+        return HttpResponse("{'status':'error', 'reason':'method not correct(should be POST)'}")
 
 
 @logged_in
-def get_my_projects(request, *args, **kwargs):
+def del_collaborator(request, *args, **kwargs):
+    if request.method == 'GET':
+        # @feiyicheng TODO: delete a reference
+        pass
+    else:
+        return HttpResponse("{'status':'error', 'reason':'method not correct(should be GET)'}")
+
+
+@logged_in
+def list_or_create(request, *args, **kwargs):
+    """ show the user's all projects with GET or create a new project with POST
+
+    @return: success or error with information
+    """
     if request.method == 'GET':
         user = request.user
-        clean_results = []
+        pids = []
 
         results_author = user.projects_authored.all()
         for result in results_author:
-            clean_result = {
-                'author': result.author.username,
-                'id': result.id,
-                'name': result.name,
-            }
             if result.is_active:
-                clean_results.append(clean_result)
+                pids.append(result.pk)
+
         results_collaborated = user.projects_collaborated.all()
         for result in results_collaborated:
-            clean_result = {
-                'author': result.author.username,
-                'pid': result.id,
-                'name': result.name,
-            }
             if result.is_active:
+                pids.append(result.pk)
+
+        data_dict = {'status': 'success', 'pids': pids}
+        return HttpResponse(json.dumps(data_dict))
+
+    elif request.method == 'POST':
+        user = request.user
+        paras = request.POST
+        try:
+            prj_name = paras['prj_name']
+        except KeyError:
+            return HttpResponse("{'status':'error', 'reason':'POST paras should include prj_name'}")
+
+        del paras['prj_name']
+
+        if user.is_authenticated():
+            new_prj = Project(name=prj_name, author=user, is_active=True)
+            new_prj.save()
+            attrset = ['name', 'description', 'species']
+            for key in paras:
+                if not key in attrset:
+                    return HttpResponse("{'status':'error', 'reason':'attribution error'}")
+                else:
+                    exec("new_prj.{0} = paras['{1}']".format(key, key))
+            new_prj.save()
+
+            return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
+
+    else:
+        return HttpResponse("{'status':'error', 'reason':'method not correct(GET or POST needed)'}")
+
+
+@logged_in
+def get_one(request, *args, **kwargs):
+    if request.method == 'GET':
+        user = request.user
+        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        if not prj_id:
+            return HttpResponse("{'status':'error', 'reason':'prj_id not found'}")
+
+        if user.is_authenticated():
+            try:
+                project = Project.objects.get(pk=prj_id)
+            except ObjectDoesNotExist:
+                return HttpResponse("{'status':'error', 'reason':'cannot find project matching the given id'}")
+            if not (user == project.author or user in project.collaborators):
+                return HttpResponse("{'status':'error', 'reason':'you dont have the access to the whole profile'}")
+            else:
+                clean_result = {
+                    'author': project.author.username,
+                    'authorid': project.author.pk,
+                    'pid': project.id,
+                    'prj_name': project.name,
+                    'species': project.species,
+                    'description': project.description,
+                    'collaborators': [coll.pk for coll in project.collaborators],
+                }
+            data_dict = {'status': 'success', 'result': clean_result}
+            return HttpResponse(json.dumps(data_dict))
+
+        else:
+            return HttpResponse("{'status':'error', 'reason':'you should be logged in'}")
+
+    else:
+        return HttpResponse("{'status':'error', 'reason':'method not correct(GET or POST needed)'}")
+
+
+@logged_in
+def search_user(request, *args, **kwargs):
+    """ search user using name (fuzzy search)
+
+    POST method needed
+    POST:  name: zhoul
+
+    @return: success or error information
+    """
+
+    if request.method == 'POST':
+        if 'name' not in request.POST:
+            return HttpResponse("{'status':'error', 'reason':'you should provide name field'}")
+        else:
+            value = request.POST['name']
+            resultset = User.objects.filter(Q(username__icontains=value) | Q(first_name__icontains=value) | \
+                                            Q(first_name__icontains=value))
+            clean_results = []
+            for result in resultset:
+                clean_result = {
+                    'username': result.username,
+                    'first_name': result.first_name,
+                    'last_name': result.last_name,
+                    'id': result.pk,
+                }
                 clean_results.append(clean_result)
 
-        data_dict = {'status': 'success', 'results': clean_results}
-        return HttpResponse(json.dumps(data_dict))
+            data_dict = {'status': 'success', 'results': clean_results}
+
+            return HttpResponse(json.dumps(data_dict))
+
     else:
-        return HttpResponse("{'status':'error', 'reason':'method not correct'}")
+        return HttpResponse("{'status':'error', 'reason':'method not correct(should be POST)'}")
+
+
+
 
 
 '''
@@ -191,7 +318,6 @@ def switch_project(request, *args, **kwargs):
         user.userprofile.currentProject = prj
         return HttpResponse("{'status':'success', 'id':'%d'}" % (prj.id, ))
 '''
-
 
 
 def _get_prj_id_int(prj_id_str):
