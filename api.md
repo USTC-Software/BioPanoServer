@@ -21,39 +21,48 @@ If anything goes south, you will get a error response:
 
 ## DIRECTORY
 
-	POST	/auth/oauth/authorize
+	POST	/auth/oauth/(baidu|google)/login
+	GET		/auth/oauth/(baidu|google)/complete&...
+	GET		/user/<uid>
 	GET		/project
 	POST	/project
-	GET		/project/<project_id>
+	GET		/project/<pid>
+	POST	/project/<pid>/collaborator
+	DELETE	/project/<pid>/collaborator/<uid>
 	GET		/species
 	POST	/species
-	GET		/species/<species_id>
+	GET		/species/<sid>
 	GET		/data/(node|link)/<ref_id>
 	POST	/data/(node|link)
 	DELETE	/data/(node|link)/<ref_id>
 	GET		/data/(node|link)/<ref_id>/link
-	POST	/batch/(node|link)
-	POST	/search/(node|link|node_ref|link_ref)
+	POST	/search/(node|link)
+	POST	/search/user
+	POST	/search/project
 	POST	/algorithm/shortestpath
+	POST	/algorithm/blastn
 
-## OAUTH:
+## OAUTH LOGIN:
 
 request:
 
-	POST /auth/oauth/authorize
-	
-	'client_id':保留参数
-	'response_type':'token'
-	'redirect_uri':回调地址
+	POST /auth/oauth/(baidu|google)/login
 
-When the user login in sucessfully, the pages will redict to the “redict_url” with the following parameters:
+When the user login in sucessfully, the pages will redict to the /auth/oauth/<baidu|google>/complete
+
+## OAUTH COMPLETE
+
+request(automaticlly):
+
+	GET /auth/oauth/(baidu|google)/complete&....
+
 success :
 
-	'status': 'success‘,
-	‘access_token': '...',
-	'refresh_token': '...',
-	'expires_in':'18000'
-	
+	{
+		"status": "success",
+	 	"token": "16517d0809f225b7b65a79ef1dc8c552441bf58a", 
+	 	"uid": 8
+	}	
 	
 ## LIST PROJECT
 
@@ -66,14 +75,7 @@ response:
 	{
 		'projects':
 		[
-			{
-				'project_name':'staff',
-				'species_id':'Ecoli'
-			},
-			{
-				‘project_name':'regulation',
-				'species_id':'Pseudomonas'
-			}
+			<pid>
 		]
 	}
 
@@ -86,26 +88,69 @@ request:
 	
 	project_name:<string>
 	species:<string>
+	description:<string>
 
 response:
 
 	{
-		'status': 'success‘
+		'pid':...
 	}
 
 
-## CHOOSE PROJECT
+## PROJECT INFO
 
 request:
 
-	GET /project/<gname>
+	GET /project/<pid>
 
 success response:
 
 	{
-		'status': 'success‘
+		'pid':....,
+		'prooject_name':...,
+		'species':...,
+		'description':...,
+		'collaborators':
+		[
+		]
 	}
 
+## DELETE PROJECT
+
+request:
+
+	DELETE /project/<pid>
+
+response:
+
+	{
+		'status':'success'
+	}
+
+## ADD COLLABORATOR
+
+request:
+
+	POST /project/<pid>/collaborator
+	collaborator:<uid>
+
+response:
+
+	{
+		'status':'success'
+	}
+
+## DELETE COLLABORATOR
+
+request:
+
+	DELETE /project/<pid>/collaborator/<uid>
+
+response:
+
+	{
+		'status':'success'
+	}
 
 ## LIST SPECIES
 
@@ -142,22 +187,6 @@ response:
 
 	{
 		'species_id': <string>
-	}
-
-
-## LOGIN(overdue):
-
-request:
-
-	POST /auth/login
-	
-	'username':'...'
-	'password':'...'
-
-response:
-
-	{
-		'status': 'success‘,
 	}
 
 	
@@ -255,11 +284,11 @@ response:
 		]
 	}
 	
-## BATCH QUERY
+## SEARCH NODE|LINK
 
 request:
 
-	POST /batch/(node|link)
+	POST /search/(node|link)
 	
 	method:query
 	spec:{}
@@ -297,7 +326,7 @@ response:
 
 request :
 
-	POST /batch/(node|link)
+	POST /search/(node|link)
 		
 	'spec':
 	{
@@ -321,7 +350,7 @@ explain:
 
 request:
 
-	POST /batch/(node|link)
+	POST /search/(node|link)
 	
 	'spec':
 	{
@@ -346,7 +375,7 @@ only return ID, NAME and TYPE fileds
 
 request:
 
-	POST /batch/(node|link)
+	POST /search/(node|link)
 	
 	spec:
 	{
@@ -375,15 +404,26 @@ request:
 		'NAME':False
 	}
 
-## SEARCH
+## SEARCH USER
 
 request:
 
-	POST /search/(node|link|node_ref|link_ref)
+	POST /search/user
+	
+response:
 
-instructions:
+	//TODO
 
-	find record in the database directly
+
+## SEARCH PROJECT
+
+request:
+
+	POST /search/project
+
+response:
+
+	//TODO
 
 ## SHORTESTPATH
 
@@ -414,3 +454,10 @@ response:
 			}
 		]
 	}
+
+## BLASTN
+
+request:
+
+	POST /algorithm/blastn
+	//TODO
