@@ -162,7 +162,7 @@ def blast(request):
         fasta_fp.write(request.POST['sequence'] + '\n')
         fasta_fp.close()
         cline = NcbiblastnCommandline(query=fasta_path, db='/tmp/blast/ustc_blast', strand='plus',
-                                      evalue=0.01, outfmt=11)
+                                      evalue=0.0001, outfmt=request.POST['format'])
 
         stdout, stderr = cline()
 
