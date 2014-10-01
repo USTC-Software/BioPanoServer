@@ -91,6 +91,7 @@ def main(request):
         return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
 '''
 
+
 def blast(request):
     if request.method == 'POST':
         if 'sequence' not in request.POST.keys() or 'user' not in request.POST.keys():
@@ -104,7 +105,7 @@ def blast(request):
         so that there wouldn't be conflict when multiuser use blast
         '''
         fasta_path = BLAST_PATH + '/input_' + request.POST['user'] +'.fasta'
-        fasta_fp = open(BLAST_PATH, 'w')
+        fasta_fp = open(fasta_path, 'w')
         fasta_fp.write('>query\n')
         fasta_fp.write(request.POST['sequence'] + '\n')
 
@@ -113,6 +114,8 @@ def blast(request):
 
         test_fp = open(BLAST_PATH + '/stdout.txt', 'w')
         test_fp.write(stdout)
+
+        return HttpResponse("result txt has been established")
 
     elif request.method == 'GET':
         return HttpResponse("{'function':'blast', 'status':'error', 'reason':'no GET method setting'}")
