@@ -13,7 +13,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^node/(?P<obj_id>[\w]+)/link/$', views.look_around),    # POST
-    url(r'^alignment/$', xlbd.main),     # POST
+    url(r'^alignment/$', xlbd.blast),     # POST
     url(r'^find_way/$', a_star.a_star)   # POST
     #url(r'^')
 

@@ -2,7 +2,10 @@ from pymongo import *
 from django.shortcuts import HttpResponse
 import bson
 from datetime import *
+from Bio.Blast.Applications import NcbiblastnCommandline
 
+
+BLAST_PATH = r'/var/lib/jenkins/jobs/database-importing/workspace'
 db = MongoClient()['igemdata_new']
 
 
@@ -86,3 +89,30 @@ def main(request):
     elif request.method == 'GET':
         #return HttpResponse('This is new!!!!')
         return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
+
+
+def blast(request):
+    if request.method == 'POST':
+        if 'sequence' not in request.POST.keys() or 'user' not in request.POST.keys():
+            key_list = str(request.POST.keys())
+            return HttpResponse("{'status':'error', 'reason':'keyword sequence is not in request.', 'keys':" + key_list + "}")
+
+        # input to fasta
+
+        '''
+        fasta_path should be appended with user name such as input_beibei.fasta
+        so that there wouldn't be conflict when multiuser use blast
+        '''
+        fasta_path = BLAST_PATH + '/input_' + request.POST['user'] +'.fasta'
+        fasta_fp = open(BLAST_PATH, 'w')
+        fasta_fp.write('>query\n')
+        fasta_fp.write(request.POST['sequence'] + '\n')
+
+        cline = NcbiblastnCommandline(query = fasta_path, db = 'ustc_blast', strand = 'plus', evalue = 0.00001, outfmt = 5)
+        stdout, stderr = cline()
+
+        test_fp = open(BLAST_PATH + '/stdout.txt', 'w')
+        test_fp.write(stdout)
+
+    elif request.method == 'GET':
+        return HttpResponse("{'function':'blast', 'status':'error', 'reason':'no GET method setting'}")
