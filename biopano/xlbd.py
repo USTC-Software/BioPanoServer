@@ -134,13 +134,25 @@ def blast_fasta_create():
 
 
 def check_blast_fasta():
-    if not os.path.exists(r'/tmp/blast') or True:
+    if not os.path.exists(r'/tmp/blast'):
         blast_fasta_create()
         order = 'makeblastdb -in /tmp/sequence.fasta -dbtype nucl -title ustc_blast -parse_seqids -out /tmp/blast/ustc_blast'
         os.system(order)
         return True
     else:
         return True
+
+
+def id_parse(stdout):
+    line_list = stdout.split('\n')
+    result_list = []
+    for line in line_list:
+        dict = {}
+        dict['id'] = line.split()[1]
+        dict['evalue'] = line.split()[10]
+        result_list.append(dict)
+        del dict
+    return result_list
 
 
 def blast(request):
@@ -159,7 +171,7 @@ def blast(request):
         if 'format' in request.POST.keys():
             para_format = request.POST['format']
         else:
-            para_format = 11
+            para_format = 6
 
         '''
         fasta_path should be appended with user name such as input_beibei.fasta
@@ -174,11 +186,14 @@ def blast(request):
                                       evalue=para_evalue, outfmt=para_format)
 
         stdout, stderr = cline()
+        result_list = id_parse(stdout)
 
         test_fp = open(BLAST_PATH + '/stdout.txt', 'w')
         test_fp.write(stdout + '\n\n' + stderr)
         test_fp.close()
-        return HttpResponse(stdout)
+
+
+        return HttpResponse(result_list)
 
     elif request.method == 'GET':
         return HttpResponse("{'function':'blast', 'status':'error', 'reason':'no GET method setting'}")
