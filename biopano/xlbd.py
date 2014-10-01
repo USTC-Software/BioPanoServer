@@ -147,6 +147,8 @@ def id_parse(stdout):
     line_list = stdout.split('\n')
     result_list = []
     for line in line_list:
+        if line == '':
+            continue
         dict = {}
         dict['id'] = line.split()[1]
         dict['evalue'] = line.split()[10]
