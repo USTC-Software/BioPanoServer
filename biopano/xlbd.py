@@ -151,6 +151,15 @@ def blast(request):
             return HttpResponse("{'status':'error', 'reason':'keyword sequence is not in request.', 'keys':" + key_list + "}")
 
         # input to fasta
+        if 'evalue' in request.POST.keys():
+            para_evalue = request.POST['evalue']
+        else:
+            para_evalue = 0.01
+
+        if 'format' in request.POST.keys():
+            para_format = request.POST['format']
+        else:
+            para_format = 11
 
         '''
         fasta_path should be appended with user name such as input_beibei.fasta
@@ -162,7 +171,7 @@ def blast(request):
         fasta_fp.write(request.POST['sequence'] + '\n')
         fasta_fp.close()
         cline = NcbiblastnCommandline(query=fasta_path, db='/tmp/blast/ustc_blast', strand='plus',
-                                      evalue=0.0001, outfmt=request.POST['format'])
+                                      evalue=para_evalue, outfmt=para_format)
 
         stdout, stderr = cline()
 
