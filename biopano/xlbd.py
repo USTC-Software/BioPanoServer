@@ -116,7 +116,7 @@ def blast_fasta_create():
         '''
     print 'Successfully read utr sequences'
 
-    for node in db.node.find({'TYPE': {'$in': ['Promoter', 'Gene', 'Terminator']}}):
+    for node in db.u_t_r.find({'TYPE': {'$in': ['Gene', 'Terminator']}}):
         if 'SEQUENCE' in node.keys():
             if node['SEQUENCE']:
                 id = str(node['_id'])
@@ -134,7 +134,7 @@ def blast_fasta_create():
 
 
 def check_blast_fasta():
-    if not os.path.exists(r'/tmp/blast'):
+    if not os.path.exists(r'/tmp/blast') or True:
         blast_fasta_create()
         order = 'makeblastdb -in /tmp/sequence.fasta -dbtype nucl -title ustc_blast -parse_seqids -out /tmp/blast/ustc_blast'
         os.system(order)
