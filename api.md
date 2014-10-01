@@ -29,7 +29,7 @@ If anything goes south, you will get a error response:
 	POST	/project  # add
 	GET		/project/<pid>  # login
 	POST	/project/<pid>/collaborator  
->DELETE	/project/<pid>/collaborator/<uid>
+	DELETE	/project/<pid>/collaborator/<uid>
 	
 	GET		/data/(node|link)/<id>
 	POST	/data/(node|link)

@@ -178,11 +178,26 @@ def add_collaborator(request, *args, **kwargs):
 
 @logged_in
 def del_collaborator(request, *args, **kwargs):
-    if request.method == 'GET':
-        # @feiyicheng TODO: delete a reference
-        pass
+    if request.method == 'DELETE':
+        user = request.user
+        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        uid = int(kwargs['uid'])
+        if prj_id is None:
+            return HttpResponse("{'status':'error', 'reason':'prj id should be a integer'}")
+        if _is_author(prj_id, user):
+            project = Project.objects.get(pk=prj_id)
+            coll = User.objects.get(pk=uid)
+            if coll in project.collaborators:
+                project.collaborators.remove(coll)
+                return HttpResponse("{'status':'success'}")
+            else:
+                return HttpResponse("{'status':'error', 'reason':'the user is not in collaborators'}")
+
+        else:
+            return HttpResponse("{'status':'error', 'reason':'only author of the project have access to do this'}")
+
     else:
-        return HttpResponse("{'status':'error', 'reason':'method not correct(should be GET)'}")
+        return HttpResponse("{'status':'error', 'reason':'method not correct(should be DELETE)'}")
 
 
 @logged_in
