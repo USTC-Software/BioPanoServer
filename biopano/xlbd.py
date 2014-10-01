@@ -3,12 +3,14 @@ from django.shortcuts import HttpResponse
 import bson
 from datetime import *
 from Bio.Blast.Applications import NcbiblastnCommandline
+import os
 
 
-BLAST_PATH = r'/var/lib/jenkins/jobs/database-importing/workspace'
+BLAST_PATH = r'/tmp/blast'
 db = MongoClient()['igemdata_new']
 
-
+## unused after using blast
+'''
 def func(a, b):
     if a == b:
         return 1
@@ -31,7 +33,7 @@ def NeedleWunch(s, t):
             f[i + 1][j + 1] = max(max(f[i + 1][j], f[i][j + 1]) - 2, f[i][j] + func(s[i], t[j]))
     return f[n][m]
 
-'''
+
 def main(request):
     if request.method == 'POST':
         if 'sequence' not in request.POST.keys():
@@ -92,8 +94,58 @@ def main(request):
 '''
 
 
+def blast_fasta_create():
+    db = MongoClient()['igemdata_new']
+    fp = r'/tmp/sequence.fasta'
+    file = open(fp, 'w')
+    text_list = []
+    text = ''
+
+    for utr in db.u_t_r.find({'TYPE': 'O_T_P'}):
+        id = str(utr['_id'])
+        sequence_5 = utr['SEQUENCE_5']
+        sequence_3 = utr['SEQUENCE_3']
+        id = '>' + id + '\n'
+        if sequence_5:
+            text = ' '.join([id, sequence_5, '\n'])
+            text_list.append(text)
+        '''
+        if sequence_3:
+            text = ' '.join([id, sequence_3, '\n'])
+            text_list.append(text)
+        '''
+    print 'Successfully read utr sequences'
+
+    for node in db.node.find({'TYPE': {'$in': ['Promoter', 'Gene', 'Terminator']}}):
+        if 'SEQUENCE' in node.keys():
+            if node['SEQUENCE']:
+                id = str(node['_id'])
+                id = '>' + id + '\n'
+                sequence = node['SEQUENCE']
+                text = ' '.join([id, sequence, '\n'])
+                text_list.append(text)
+    print 'Successfully read node sequences'
+
+    for text in text_list:
+        file.write(text)
+    print 'Successfully write sequences'
+
+    file.close()
+
+
+def check_blast_fasta():
+    if not os.path.exists(r'/tmp/blast'):
+        blast_fasta_create()
+        order = 'makeblastdb -in /tmp/sequence.fasta -dbtype nucl -title ustc_blast -parse_seqids -out /tmp/blast/ustc_blast'
+        os.system(order)
+        return True
+    else:
+        return True
+
+
 def blast(request):
     if request.method == 'POST':
+        check_blast_fasta()
         if 'sequence' not in request.POST.keys() or 'user' not in request.POST.keys():
             key_list = str(request.POST.keys())
             return HttpResponse("{'status':'error', 'reason':'keyword sequence is not in request.', 'keys':" + key_list + "}")
