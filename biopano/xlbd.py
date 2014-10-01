@@ -165,7 +165,7 @@ def blast(request):
         stdout, stderr = cline()
 
         test_fp = open(BLAST_PATH + '/stdout.txt', 'w')
-        test_fp.write(stdout)
+        test_fp.write(stdout + '\n\n' + stderr)
 
         return HttpResponse("result txt has been established")
 
