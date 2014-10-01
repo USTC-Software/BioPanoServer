@@ -194,8 +194,7 @@ def blast(request):
         test_fp.write(stdout + '\n\n' + stderr)
         test_fp.close()
 
-
-        return HttpResponse(result_list)
+        return HttpResponse(str(result_list))
 
     elif request.method == 'GET':
         return HttpResponse("{'function':'blast', 'status':'error', 'reason':'no GET method setting'}")
