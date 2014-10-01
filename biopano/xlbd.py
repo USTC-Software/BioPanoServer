@@ -31,7 +31,7 @@ def NeedleWunch(s, t):
             f[i + 1][j + 1] = max(max(f[i + 1][j], f[i][j + 1]) - 2, f[i][j] + func(s[i], t[j]))
     return f[n][m]
 
-
+'''
 def main(request):
     if request.method == 'POST':
         if 'sequence' not in request.POST.keys():
@@ -89,7 +89,7 @@ def main(request):
     elif request.method == 'GET':
         #return HttpResponse('This is new!!!!')
         return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
-
+'''
 
 def blast(request):
     if request.method == 'POST':
