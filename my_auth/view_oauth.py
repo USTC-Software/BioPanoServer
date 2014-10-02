@@ -109,7 +109,7 @@ def login_complete_baidu(request):
         return HttpResponse(json.dumps(data))
 
     profile = dict()
-    profile['username'] = site.username
+    profile['username'] = site.name
     profile['uid'] = site.uid
     profile['given_name'] = ''
     profile['family_name'] = ''
@@ -120,7 +120,7 @@ def login_complete_baidu(request):
             'status': 'success',
             'token': str(token),
             'uid': user.pk,
-            'baiduid': profile['username'],
+            'baiduName': profile['username'],
         }
     else:
         data = {
