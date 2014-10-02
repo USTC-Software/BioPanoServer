@@ -107,7 +107,7 @@ def modify_project(request, *args, **kwargs):
     """
 
     # POST paras should cover all fields expected to be modified
-    if request.method == 'POST':
+    if request.method == 'PUT':
         user = request.user
         prj_id = _get_prj_id_int(kwargs['prj_id'])
         query = request.POST
@@ -279,9 +279,56 @@ def get_one(request, *args, **kwargs):
 
         else:
             return HttpResponse("{'status':'error', 'reason':'you should be logged in'}")
+    elif request.method == 'PUT':
+        user = request.user
+        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        query = request.PUT
+        if not prj_id:
+            return HttpResponse("{'status':'error', 'reason':'prj_id not found'}")
+
+        if user.is_authenticated():
+            if _is_author(prj_id, user):
+                try:
+                    project = Project.objects.get(id=prj_id)
+                except ObjectDoesNotExist as e:
+                    return HttpResponse("{'status':'error', 'reason':'cannot find project with that id'}")
+
+                prj_attrs = ['name', 'description', 'species']
+                for key in query.keys():
+                    if key not in prj_attrs:
+                        return HttpResponse("{'status':'error', 'reason':'field invalid!'}")
+                    try:
+                        exec("project.{0} = query['{1}']".format(key, key))
+                        project.save()
+                        return HttpResponse("{'status':'success', 'prj_id':%d}" % project.pk)
+                    except Exception as e:
+                        return HttpResponse("{'status':'error', 'reason':'wrong key provided'}")
+            else:
+                return HttpResponse("{'status':'error', 'reason':'No access! Only the author of the project \
+                has the right to delete it'}")
+        else:
+            return HttpResponse("{'status':'error', 'reason':'user not logged in'}")
+
+    elif request.method == 'DELETE':
+        user = request.user
+        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        if not prj_id:
+            return HttpResponse("{'status':'error', 'reason':'prj_id not found'}")
+
+        if user.is_authenticated():
+            if _is_author(prj_id, user):
+                # the user operating is the author of the project, he/she has the power to delete id
+                Project.objects.get(id=prj_id).delete()
+                return HttpResponse("{'status':'success'}")
+
+            else:
+                return HttpResponse("{'status':'error', 'reason':'No access! Only the author of the project \
+                has the right to delete it'}")
+        else:
+            return HttpResponse("{'status':'error', 'reason':'user not logged in'}")
 
     else:
-        return HttpResponse("{'status':'error', 'reason':'method not correct(GET or POST needed)'}")
+        return HttpResponse("{'status':'error', 'reason':'method not correct(GET,DELETE or PUT needed)'}")
 
 
 @logged_in

@@ -23,13 +23,19 @@ If anything goes south, you will get a error response:
 
 	POST	/auth/oauth/(baidu|google)/login
 	GET		/auth/oauth/(baidu|google)/complete&...
-	#GET		/user/<uid>
+	#GET    /user/<uid>
 	
-	GET		/project  # list my project
-	POST	/project  # add
+	
+	GET		/project/project  # list my project
+	POST	/project/project  # add
+	
 	GET		/project/<pid>  # login
-	POST	/project/<pid>/collaborator  
+	PUT     /project<pid>  # modify
+	DELETE  /project<pid>  # delete
+	
+	POST	/project/<pid>/collaborator/<uid> 
 	DELETE	/project/<pid>/collaborator/<uid>
+	
 	
 	GET		/data/(node|link)/<id>
 	POST	/data/(node|link)
@@ -72,15 +78,15 @@ success :
 
 request:
 
-	GET /project
+	GET .org/project/project (**没有s**)
 
 response:
 
 	{	
 		'status':'success',
-		'pids': 
+		'resultes': 
 		[
-			1,2,3...
+			...
 		]
 	}
 
@@ -89,7 +95,7 @@ response:
 
 request:
 
-	POST /project
+	POST .org/project/project
 	
 	prj_name:<string>
 	[species:<string>]
@@ -107,7 +113,7 @@ response:
 
 request:
 
-	GET /project/<pid>
+	GET .org/project/<pid>
 
 success response:
 
@@ -131,19 +137,31 @@ success response:
 
 request:
 
-	DELETE /project/<pid>
+	DELETE .org/project/<pid>
 
 response:
 
 	{
 		'status':'success'
 	}
+	
+## MODIFY PROJECT
+request:
+	
+	PUT .org/project/<pid>
+	request体(类似POST):
+	
+	name : ...,
+	species: ...,
+	description:...
+	
+	
 
 ## ADD COLLABORATOR
 
 request:
 
-	POST /project/<pid>/collaborator
+	POST .org/project/<pid>/collaborator
 	uid:<uid>
 
 response:
@@ -156,7 +174,7 @@ response:
 
 request:
 
-	DELETE /project/<pid>/collaborator/<uid>
+	DELETE .org/project/<pid>/collaborator/<uid>
 
 response:
 
@@ -169,7 +187,7 @@ response:
 
 request:
 	
-	POST /auth/logout
+	POST .org/auth/logout
 
 response:
 
