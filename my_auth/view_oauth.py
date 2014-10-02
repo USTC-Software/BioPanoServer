@@ -109,8 +109,8 @@ def login_complete_baidu(request):
         return HttpResponse(json.dumps(data))
 
     profile = dict()
-    profile['username'] = site.name
-    profile['uid'] = site.id
+    profile['username'] = site.username
+    profile['uid'] = site.uid
     profile['given_name'] = ''
     profile['family_name'] = ''
     profile['email'] = ''
