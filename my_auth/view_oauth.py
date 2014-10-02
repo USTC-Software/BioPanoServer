@@ -52,6 +52,7 @@ def login_complete_google(request):
 
     profile = oauthclientgoogle.get_info(access_token)
     # print(str(profile))
+    profile['username'] = profile['email']
     profile['uid'] = profile['email']
     # login the user
     # return HttpResponse('profile get\n' + str(profile))
@@ -108,8 +109,9 @@ def login_complete_baidu(request):
         return HttpResponse(json.dumps(data))
 
     profile = dict()
-    profile['uid'] = site.uid
-    profile['given_name'] = site.name
+    profile['username'] = site.name
+    profile['uid'] = site.id
+    profile['given_name'] = ''
     profile['family_name'] = ''
     profile['email'] = ''
     (user, token) = _get_user_and_token(profile)
@@ -136,7 +138,7 @@ def _get_user_and_token(profile):
     :return: it will be a tuple of (user, token) if everything goes right, otherwise None
     """
 
-    user, created = User.objects.get_or_create(username=profile['uid'])
+    user, created = User.objects.get_or_create(username=profile['username'])
     _update_user(user, profile)
     token, created = Token.objects.get_or_create(user=user)
     return (user, token) if user else (None, None)
