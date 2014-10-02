@@ -6,7 +6,7 @@ from Bio.Blast.Applications import NcbiblastnCommandline
 import os
 
 
-BLAST_PATH = r'/tmp/blast1'
+BLAST_PATH = r'/tmp/blast'
 db = MongoClient()['igemdata_new']
 
 ## unused after using blast
@@ -96,13 +96,13 @@ def main(request):
 
 def blast_fasta_create():
     db = MongoClient()['igemdata_new']
-    fp = r'/tmp/sequence1.fasta'
+    fp = r'/tmp/sequence.fasta'
     file = open(fp, 'w')
     text_list = []
     text = ''
 
     for utr in db.u_t_r.find({'TYPE': 'O_T_P'}):
-        id = str(utr['node_id'])
+        id = str(utr['_id'])
         sequence_5 = utr['SEQUENCE_5']
         sequence_3 = utr['SEQUENCE_3']
         id = '>' + id + '\n'
@@ -119,7 +119,7 @@ def blast_fasta_create():
     for node in db.u_t_r.find({'TYPE': {'$in': ['Gene', 'Terminator']}}):
         if 'SEQUENCE' in node.keys():
             if node['SEQUENCE']:
-                id = str(node['node_id'])
+                id = str(node['_id'])
                 id = '>' + id + '\n'
                 sequence = node['SEQUENCE']
                 text = ' '.join([id, sequence, '\n'])
@@ -134,9 +134,9 @@ def blast_fasta_create():
 
 
 def check_blast_fasta():
-    if not os.path.exists(r'/tmp/blast1'):
+    if not os.path.exists(BLAST_PATH):
         blast_fasta_create()
-        order = 'makeblastdb -in /tmp/sequence1.fasta -dbtype nucl -title ustc_blast -parse_seqids -out /tmp/blast1/ustc_blast'
+        order = 'makeblastdb -in /tmp/sequence.fasta -dbtype nucl -title ustc_blast -parse_seqids -out /tmp/blast/ustc_blast'
         os.system(order)
         return True
     else:
@@ -150,7 +150,8 @@ def id_parse(stdout):
         if line == '':
             continue
         dict = {}
-        dict['id'] = line.split()[1]
+        log = db.u_t_r.find_one({'_id': line.split()[1]})
+        dict['id'] = log['node_id']
         dict['evalue'] = line.split()[10]
         result_list.append(dict)
         del dict
