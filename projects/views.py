@@ -57,7 +57,7 @@ def search(request, *args, **kwargs):
                 'authorid': result.author.pk,
                 'pid': result.id,
                 'name': result.name,
-                'collaborators': [coll.pk for coll in result.collaborators],
+                'collaborators': [coll.pk for coll in result.collaborators.all()],
             }
             clean_results.append(clean_result)
 
@@ -273,7 +273,7 @@ def get_one(request, *args, **kwargs):
                     'prj_name': project.name,
                     'species': project.species,
                     'description': project.description,
-                    'collaborators': [coll.pk for coll in project.collaborators],
+                    'collaborators': [coll.pk for coll in project.collaborators.all()],
                 }
             data_dict = {'status': 'success', 'result': clean_result}
             return HttpResponse(json.dumps(data_dict))
