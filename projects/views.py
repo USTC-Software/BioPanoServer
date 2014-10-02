@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 from .models import Project
 from decorators import logged_in
+from django.http import QueryDict
 
 
 def search(request, *args, **kwargs):
@@ -280,10 +281,10 @@ def get_one(request, *args, **kwargs):
 
         else:
             return HttpResponse("{'status':'error', 'reason':'you should be logged in'}")
-    elif request.method == 'PATCH':
+    elif request.method == 'PUT':
         user = request.user
         prj_id = _get_prj_id_int(kwargs['prj_id'])
-        query = request.PUT
+        query = QueryDict(request.body)
         if not prj_id:
             return HttpResponse("{'status':'error', 'reason':'prj_id not found'}")
 
