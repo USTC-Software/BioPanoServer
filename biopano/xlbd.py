@@ -151,7 +151,7 @@ def id_parse(stdout):
             continue
         dict = {}
         log = db.u_t_r.find_one({'_id': bson.ObjectId(line.split()[1])})
-        dict['id'] = log['node_id']
+        dict['id'] = str(log['node_id'])
         dict['evalue'] = line.split()[10]
         result_list.append(dict)
         del dict
