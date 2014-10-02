@@ -280,7 +280,7 @@ def get_one(request, *args, **kwargs):
 
         else:
             return HttpResponse("{'status':'error', 'reason':'you should be logged in'}")
-    elif request.method == 'PUT':
+    elif request.method == 'PATCH':
         user = request.user
         prj_id = _get_prj_id_int(kwargs['prj_id'])
         query = request.PUT
