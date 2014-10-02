@@ -133,8 +133,8 @@ def blast_fasta_create():
     file.close()
 
 
-def check_blast_fasta():
-    if not os.path.exists(BLAST_PATH):
+def check_blast_fasta(rebuild_flat):
+    if not os.path.exists(BLAST_PATH) or rebuild_flat:
         blast_fasta_create()
         order = 'makeblastdb -in /tmp/sequence.fasta -dbtype nucl -title ustc_blast -parse_seqids -out /tmp/blast/ustc_blast'
         os.system(order)
@@ -160,7 +160,10 @@ def id_parse(stdout):
 
 def blast(request):
     if request.method == 'POST':
-        check_blast_fasta()
+        if 'rebuild' in request.POST.keys() and request.POST['rebuild'] is True:
+            check_blast_fasta(True)
+        else:
+            check_blast_fasta(False)
         if 'sequence' not in request.POST.keys() or 'user' not in request.POST.keys():
             key_list = str(request.POST.keys())
             return HttpResponse("{'status':'error', 'reason':'keyword sequence is not in request.', 'keys':" + key_list + "}")
