@@ -187,7 +187,7 @@ def del_collaborator(request, *args, **kwargs):
         if _is_author(prj_id, user):
             project = Project.objects.get(pk=prj_id)
             coll = User.objects.get(pk=uid)
-            if coll in project.collaborators:
+            if coll in project.collaborators.all():
                 project.collaborators.remove(coll)
                 return HttpResponse("{'status':'success'}")
             else:
@@ -275,7 +275,7 @@ def get_one(request, *args, **kwargs):
                 project = Project.objects.get(pk=prj_id)
             except ObjectDoesNotExist:
                 return HttpResponse("{'status':'error', 'reason':'cannot find project matching the given id'}")
-            if not (user == project.author or user in project.collaborators):
+            if not (user == project.author or user in project.collaborators.all()):
                 return HttpResponse("{'status':'error', 'reason':'you dont have the access to the whole profile'}")
             else:
                 clean_result = {
