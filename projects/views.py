@@ -232,7 +232,7 @@ def list_or_create(request, *args, **kwargs):
                 }
                 clean_results.append(clean_result)
 
-        data_dict = {'status': 'success', 'pids': clean_results}
+        data_dict = {'status': 'success', 'results': clean_results}
         return HttpResponse(json.dumps(data_dict))
 
     elif request.method == 'POST':
