@@ -138,46 +138,9 @@ def modify_project(request, *args, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'user not logged in'}")
 
 
-@logged_in
-def add_collaborator(request, *args, **kwargs):
-    """
-    add a collaborator to the user's own project
-    :param request:
-    :param args:
-    :param kwargs: kwargs['username'] kwargs['prj_id]
-    :return:
-
-    """
-    if request.method == 'POST':
-        user = request.user
-        prj_id = _get_prj_id_int(kwargs['prj_id'])
-        if not prj_id:
-            return HttpResponse("{'status':'error', 'reason':'prj_id should be a integer'}")
-
-        uid = int(request.POST['uid'])
-
-        if not _is_author(prj_id, user):
-            # the user is not the author of the project
-            return HttpResponse("{'status':'error', 'reason':'No access! Only the author of the project \
-                has the right to delete it'}")
-
-        if user.is_authenticated():
-
-            prj = Project.objects.get(id=prj_id)
-            try:
-                collaborator = User.objects.get(pk=uid)
-            except ObjectDoesNotExist:
-                return HttpResponse("{'status':'error', 'reason':'cannot find a user matching the input username'}")
-            prj.collaborators.add(collaborator)
-            return HttpResponse("{'status':'success'}")
-        else:
-            return HttpResponse("{'status':'error', 'reason':'user not logged in'}")
-    else:
-        return HttpResponse("{'status':'error', 'reason':'method not correct(should be POST)'}")
-
 
 @logged_in
-def del_collaborator(request, *args, **kwargs):
+def add_or_del_collaborator(request, *args, **kwargs):
     if request.method == 'DELETE':
         user = request.user
         prj_id = _get_prj_id_int(kwargs['prj_id'])
@@ -196,6 +159,30 @@ def del_collaborator(request, *args, **kwargs):
         else:
             return HttpResponse("{'status':'error', 'reason':'only author of the project have access to do this'}")
 
+    elif request.method == 'POST':
+        user = request.user
+        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        if not prj_id:
+            return HttpResponse("{'status':'error', 'reason':'prj_id should be a integer'}")
+
+        uid = int(kwargs['uid'])
+
+        if not _is_author(prj_id, user):
+            # the user is not the author of the project
+            return HttpResponse("{'status':'error', 'reason':'No access! Only the author of the project \
+                has the right to delete it'}")
+
+        if user.is_authenticated():
+
+            prj = Project.objects.get(id=prj_id)
+            try:
+                collaborator = User.objects.get(pk=uid)
+            except ObjectDoesNotExist:
+                return HttpResponse("{'status':'error', 'reason':'cannot find a user matching the input username'}")
+            prj.collaborators.add(collaborator)
+            return HttpResponse("{'status':'success'}")
+        else:
+            return HttpResponse("{'status':'error', 'reason':'user not logged in'}")
     else:
         return HttpResponse("{'status':'error', 'reason':'method not correct(should be DELETE)'}")
 
