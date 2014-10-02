@@ -272,7 +272,8 @@ def get_one(request, *args, **kwargs):
                     'prj_name': project.name,
                     'species': project.species,
                     'description': project.description,
-                    'collaborators': [coll.pk for coll in project.collaborators.all()],
+                    'collaborators': [{'uid': coll.pk, 'username': coll.username} for coll \
+                                      in project.collaborators.all()],
                 }
             data_dict = {'status': 'success', 'result': clean_result}
             return HttpResponse(json.dumps(data_dict))
