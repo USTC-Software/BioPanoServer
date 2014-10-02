@@ -61,7 +61,7 @@ def search(request, *args, **kwargs):
             }
             clean_results.append(clean_result)
 
-        data_dict =json.dumps(clean_results)
+        data_dict = {'status': 'success', 'results': clean_results}
         return HttpResponse(json.dumps(data_dict))
     else:
         return HttpResponse("{'status':'error', 'reason':'method not correct'}")
