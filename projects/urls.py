@@ -16,6 +16,6 @@ urlpatterns = patterns('',
     url(r'^project/(?P<prj_id>[^/]+)/collaborator/(?P<uid>[^/]+)/$', 'projects.views.del_collaborator'),
     url(r'^modify/(?P<prj_id>[^/]+)/$', 'projects.views.modify_project'),
     url(r'^project/$', 'projects.views.list_or_create'),
-    url(r'^project/(?P<prj_id>[^/]+)$','projects.views.get_one'),
+    url(r'^project/(?P<prj_id>[^/]+)/$','projects.views.get_one'),
     # url(r'^switch/(?P<prj_id>[^/]+)/$', 'projects.views.switch_project'),
 )
