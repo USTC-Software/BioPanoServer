@@ -208,19 +208,31 @@ def list_or_create(request, *args, **kwargs):
     """
     if request.method == 'GET':
         user = request.user
-        pids = []
+        clean_results = []
 
         results_author = user.projects_authored.all()
         for result in results_author:
             if result.is_active:
-                pids.append(result.pk)
+                clean_result = {
+                    'author': result.author.username,
+                    'authorid': result.author.pk,
+                    'pid': result.pk,
+                    'name': result.name,
+                }
+                clean_results.append(clean_result)
 
         results_collaborated = user.projects_collaborated.all()
         for result in results_collaborated:
             if result.is_active:
-                pids.append(result.pk)
+                clean_result = {
+                    'author': result.author.username,
+                    'authorid': result.author.pk,
+                    'pid': result.pk,
+                    'name': result.name,
+                }
+                clean_results.append(clean_result)
 
-        data_dict = {'status': 'success', 'pids': pids}
+        data_dict = {'status': 'success', 'pids': clean_results}
         return HttpResponse(json.dumps(data_dict))
 
     elif request.method == 'POST':
