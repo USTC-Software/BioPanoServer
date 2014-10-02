@@ -102,7 +102,7 @@ def blast_fasta_create():
     text = ''
 
     for utr in db.u_t_r.find({'TYPE': 'O_T_P'}):
-        id = str(utr['_id'])
+        id = str(utr['node_id'])
         sequence_5 = utr['SEQUENCE_5']
         sequence_3 = utr['SEQUENCE_3']
         id = '>' + id + '\n'
@@ -119,7 +119,7 @@ def blast_fasta_create():
     for node in db.u_t_r.find({'TYPE': {'$in': ['Gene', 'Terminator']}}):
         if 'SEQUENCE' in node.keys():
             if node['SEQUENCE']:
-                id = str(node['_id'])
+                id = str(node['node_id'])
                 id = '>' + id + '\n'
                 sequence = node['SEQUENCE']
                 text = ' '.join([id, sequence, '\n'])
@@ -134,7 +134,7 @@ def blast_fasta_create():
 
 
 def check_blast_fasta():
-    if not os.path.exists(r'/tmp/blast'):
+    if not os.path.exists(r'/tmp/blast') or True:
         blast_fasta_create()
         order = 'makeblastdb -in /tmp/sequence.fasta -dbtype nucl -title ustc_blast -parse_seqids -out /tmp/blast/ustc_blast'
         os.system(order)
