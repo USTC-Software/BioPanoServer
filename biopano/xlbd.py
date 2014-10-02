@@ -6,7 +6,7 @@ from Bio.Blast.Applications import NcbiblastnCommandline
 import os
 
 
-BLAST_PATH = r'/tmp/blast'
+BLAST_PATH = r'/tmp/blast1'
 db = MongoClient()['igemdata_new']
 
 ## unused after using blast
@@ -96,7 +96,7 @@ def main(request):
 
 def blast_fasta_create():
     db = MongoClient()['igemdata_new']
-    fp = r'/tmp/sequence.fasta'
+    fp = r'/tmp/sequence1.fasta'
     file = open(fp, 'w')
     text_list = []
     text = ''
@@ -136,7 +136,7 @@ def blast_fasta_create():
 def check_blast_fasta():
     if not os.path.exists(r'/tmp/blast1'):
         blast_fasta_create()
-        order = 'makeblastdb -in /tmp/sequence.fasta -dbtype nucl -title ustc_blast -parse_seqids -out /tmp/blast/ustc_blast'
+        order = 'makeblastdb -in /tmp/sequence1.fasta -dbtype nucl -title ustc_blast -parse_seqids -out /tmp/blast1/ustc_blast'
         os.system(order)
         return True
     else:
