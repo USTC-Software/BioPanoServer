@@ -120,7 +120,7 @@ def login_complete_baidu(request):
             'status': 'success',
             'token': str(token),
             'uid': user.pk,
-            'baiduid': user.username,
+            'baiduid': profile['username'],
         }
     else:
         data = {
