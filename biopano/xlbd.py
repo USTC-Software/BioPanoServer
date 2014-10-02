@@ -160,7 +160,7 @@ def id_parse(stdout):
 
 def blast(request):
     if request.method == 'POST':
-        if 'rebuild' in request.POST.keys() and request.POST['rebuild'] is True:
+        if 'rebuild' in request.POST.keys() and request.POST['rebuild'] == 'True':
             check_blast_fasta(True)
         else:
             check_blast_fasta(False)
