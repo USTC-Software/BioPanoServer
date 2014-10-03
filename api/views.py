@@ -8,6 +8,7 @@ from dict2xml import dict2xml
 from func_box import *
 from decorators import project_verified, logged_in, project_verified_exclude_get, logged_in_exclude_get
 from projects.models import Project
+from django.http import QueryDict
 
 # connect the database
 conn = Connection()
@@ -50,7 +51,12 @@ def add_node(request):
             db.node_ref.update({'_id': noderef_id}, {'$set': {'node_id': node_id}})
 
             # return the _id of this user's own record of this node
-            return HttpResponse({'ref_id': str(noderef_id)})
+            data = {
+                'status': 'success',
+                'ref_id': str(noderef_id),
+                'id': str(node_id),
+            }
+            return HttpResponse(json.dumps(data))
 
         else:
             # node info is incorrect
@@ -100,6 +106,7 @@ def get_del_addref_node(request, **kwargs):
         '''
             add a ref record in collection <node_ref>
         '''
+        paras = QueryDict(request.body)
         try:
             node = db.node.find_one({'_id': ObjectId(kwargs['id'])})
         except KeyError:
@@ -110,14 +117,15 @@ def get_del_addref_node(request, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'object not found'}")
 
         # node exists
-        noderef_id = db.node_ref.insert({'pid': int(request.POST['pid']) if 'pid' in request.POST.keys() else 0,
-                                         'x': request.POST['x'] if 'x' in request.POST.keys() else '0',
-                                         'y': request.POST['y'] if 'y' in request.POST.keys() else '0',
+        noderef_id = db.node_ref.insert({'pid': int(paras['pid']) if 'pid' in paras.keys() else 0,
+                                         'x': paras['x'] if 'x' in paras.keys() else '0',
+                                         'y': paras['y'] if 'y' in paras.keys() else '0',
                                          'node_id': node['_id']}
         )
 
         if noderef_id:
-            HttpResponse("{'status': 'success'}")
+            data = {'status': 'success', 'ref_id': str(noderef_id)}
+            HttpResponse(json.dumps(data))
         else:
             HttpResponse("{'status':'error', 'reason':'fail to insert data into database'}")
 
@@ -157,14 +165,11 @@ def get_del_addref_node(request, **kwargs):
         :param request.PATCH: a dict with keys(token, username, info), info is also a dict with keys(x, y, ref_id)
         :return data: {'status': 'success'} if everything goes right
         '''
+        paras = QueryDict(request.body)
         try:
-            info = request.PATCH['info']
-        except KeyError:
-            return HttpResponse("{'status': 'error','reason':'your paras should include the key named info'}")
-        try:
-            x = info['x']
-            y = info['y']
-            old_ref_id = info['ref_id']
+            x = paras['x']
+            y = paras['y']
+            old_ref_id = kwargs['id']
         except KeyError:
             return HttpResponse("{'status': 'error','reason':'your info should include keys: x, y, ref_id'}")
 
@@ -177,7 +182,7 @@ def get_del_addref_node(request, **kwargs):
 
         node = db.node_ref.find_one({'_id': ObjectId(old_ref_id)})
         if not node:
-            return HttpResponse("{'status': 'error','reason':'unable to find the record matching red_id given'}")
+            return HttpResponse("{'status': 'error','reason':'unable to find the record matching ref_id given'}")
         else:
             db.node_ref.update({'_id': ObjectId(old_ref_id)}, {'$set', {'x': x, 'y': y}})
             return HttpResponse("{'status': 'success}")
@@ -325,7 +330,12 @@ def add_link(request):
                                                               'id2': ObjectId(request.POST['id2'])}})
 
             # return the _id of this user's own record of this link
-            return HttpResponse({'ref_id': str(linkref_id)})
+            data = {
+                'status': 'success',
+                'ref_id': str(linkref_id),
+                'id': str(link_id),
+            }
+            return HttpResponse(json.dumps(data))
 
         else:
             # link info is incorrect
@@ -375,6 +385,7 @@ def get_del_addref_link(request, **kwargs):
         '''
             add a ref record in collection <node_ref>
         '''
+        paras = QueryDict(request.body)
         try:
             link = db.link.find_one({'_id': ObjectId(kwargs['id'])})
         except KeyError:
@@ -385,16 +396,17 @@ def get_del_addref_link(request, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'object not found'}")
 
         # link exists
-        db.link_ref.insert(
+        linkref_id = db.link_ref.insert(
             {
-                'pid': int(request.POST['pid']) if 'pid' in request.POST.keys() else 0,
-                'link_id': request.POST['_id'],
-                'id1': ObjectId(request.POST['id1']),
-                'id2': ObjectId(request.POST['id2'])
+                'pid': int(paras['pid']) if 'pid' in paras.keys() else 0,
+                'link_id': paras['_id'],
+                'id1': ObjectId(paras['id1']),
+                'id2': ObjectId(paras['id2'])
             }
         )
-
-        return HttpResponse("{'status': 'success'}")
+        if linkref_id:
+            data = {'status': 'success', 'ref_id': str(linkref_id)}
+            return HttpResponse(json.dumps(data))
 
     elif request.method == 'GET':
         '''

@@ -40,6 +40,9 @@ If anything goes south, you will get a error response:
 	GET		/data/(node|link)/<id>
 	POST	/data/(node|link)
 	DELETE	/data/(node|link)/<ref_id>
+	PATCH 	/data/node/<ref_id>
+	PUT		/data/(node|link)/<id>
+	
 >GET		/data/(node|link)/<ref_id>/link
 @zhaosensen
 	
@@ -222,6 +225,14 @@ request:
 		'NAME': 'trnL',
 		...
 	}
+	x: 123.123131
+	y: 321314.324
+	pid: 12
+	
+	----
+	PS:
+	x,y(float) is optional
+	pid,info are required
 		
 response:
 
@@ -234,18 +245,26 @@ response:
 
 request:
 
-	POST /data/(node|link)
+	PUT /data/(node|link)/<node\link_id>/
 	
-	'info':
-	{
-		'id': '123'
-	}
-
+	pid: 23
+	x: 123.123
+	y: -213.231
+	
 response:
 
 	{
 		'ref_id': '<ref_id>'	
 	}
+	
+## PATCH 
+request:
+
+	PATCH /data/(node|link)/<ref_id
+	
+	x: 1231.123
+	y: 232.234234
+	
 
 ## DELETE
 
