@@ -133,9 +133,9 @@ def get_del_addref_node(request, **kwargs):
 
 
         if noderef_id:
-            prj_id = db.project.find_one({'pid': int(request.POST['pid'])})
+            prj_id = db.project.find_one({'pid': int(QueryDict(request.body)['pid'])})
             if prj_id is None:
-                prj_id = db.project.insert({'pid': int(request.POST['pid']), 'node': [], 'link': []})
+                prj_id = db.project.insert({'pid': int(QueryDict(request.body)['pid']), 'node': [], 'link': []})
             else:
                 pass
             db.project.update({'_id': prj_id}, {'$push': {'node': noderef_id}})
@@ -428,9 +428,9 @@ def get_del_addref_link(request, **kwargs):
             }
         )
         if linkref_id:
-            prj_id = db.project.find_one({'pid': int(request.POST['pid'])})
+            prj_id = db.project.find_one({'pid': int(QueryDict(request.body)['pid'])})
             if prj_id is None:
-                prj_id = db.project.insert({'pid': int(request.POST['pid']), 'node': [], 'link': []})
+                prj_id = db.project.insert({'pid': int(QueryDict(request.body)['pid']), 'node': [], 'link': []})
             else:
                 pass
             db.project.update({'_id': prj_id}, {'$push': {'link': linkref_id}})
