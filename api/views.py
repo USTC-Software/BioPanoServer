@@ -32,7 +32,7 @@ def add_node(request):
             add a node id collection <node>
             request.POST is all information of the node
         '''
-        if validate_node(json.dumps(request.POST['info'])):
+        if validate_node(json.loads(request.POST['info'])):
             # all the information is valid(including the group)
             node_id = db.node.insert(json.loads(request.POST['info']))
             noderef_id = db.node_ref.insert(
@@ -310,7 +310,7 @@ def add_link(request):
     """
     if request.method == "POST":
         # request.POST is all information of the link
-        if validate_link(request.POST['info']):
+        if validate_link(json.loads(request.POST['info'])):
             # all the information is valid(including the group)
             link_id = db.link.insert(json.loads(request.POST['info']))
             linkref_id = db.link_ref.insert(
