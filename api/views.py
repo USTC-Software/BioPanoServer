@@ -125,9 +125,9 @@ def get_del_addref_node(request, **kwargs):
 
         if noderef_id:
             data = {'status': 'success', 'ref_id': str(noderef_id)}
-            HttpResponse(json.dumps(data))
+            return HttpResponse(json.dumps(data))
         else:
-            HttpResponse("{'status':'error', 'reason':'fail to insert data into database'}")
+            return HttpResponse("{'status':'error', 'reason':'fail to insert data into database'}")
 
     elif request.method == 'GET':
         '''
@@ -407,6 +407,8 @@ def get_del_addref_link(request, **kwargs):
         if linkref_id:
             data = {'status': 'success', 'ref_id': str(linkref_id)}
             return HttpResponse(json.dumps(data))
+        else:
+            return HttpResponse("{'status':'error', 'reason':'insert failed'}")
 
     elif request.method == 'GET':
         '''
