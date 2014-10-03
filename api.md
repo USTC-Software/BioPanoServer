@@ -43,6 +43,8 @@ If anything goes south, you will get a error response:
 	PATCH 	/data/node/<ref_id>
 	PUT		/data/(node|link)/<id>
 	
+	GET 	/data/project/<pid>
+	
 >GET		/data/(node|link)/<ref_id>/link
 @zhaosensen
 	
@@ -279,22 +281,24 @@ response:
 	}
 		
 
-## NODE TO LINK
+## LIST ALL DATA IN PROJECT
 
 request:
-
-	GET /data/node/<ref_id>/link
+		
+	GET 	/data/project/<pid>
 
 response:
-
+	
 	{
-		'links':
-		[
-			7dbd428f731428f703,
-			5f771b8d158d157063,
-			...
-		]
+		'status': 'success',
+		'node': [
+					{},{}...
+				],
+		'link': [
+					{},{}..
+				],
 	}
+
 	
 ## SEARCH NODE|LINK
 
