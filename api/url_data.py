@@ -13,5 +13,6 @@ urlpatterns = patterns('',
     url(r'^link/$', views.add_link),    # POST
     url(r'^link/(?P<id>[\w]+)/$', views.get_del_addref_link),  # DELETE / PUT / GET
 
+    url(r'^project/(?P<pid>[\w]+)/$', views.get_project),
     url(r'^test/$', views.test_prj)
 )

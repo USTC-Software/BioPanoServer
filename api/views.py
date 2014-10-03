@@ -42,6 +42,13 @@ def add_node(request):
                 }
             )
 
+            prj_id = db.project.find_one({'pid': request.POST['pid']})
+            if prj_id is None:
+                prj_id = db.project.insert({'pid': request.POST['pid'], 'node': [], 'link': []})
+            else:
+                pass
+            db.project.update({'_id': prj_id}, {'$push': {'node': noderef_id}})
+
             # fail to insert into database
             if not node_id or not noderef_id:
                 return HttpResponse("{'status':'error', 'reason':'insert failed'}")
@@ -123,7 +130,16 @@ def get_del_addref_node(request, **kwargs):
                                          'node_id': node['_id']}
         )
 
+
+
         if noderef_id:
+            prj_id = db.project.find_one({'pid': request.POST['pid']})
+            if prj_id is None:
+                prj_id = db.project.insert({'pid': request.POST['pid'], 'node': [], 'link': []})
+            else:
+                pass
+            db.project.update({'_id': prj_id}, {'$push': {'node': noderef_id}})
+
             data = {'status': 'success', 'ref_id': str(noderef_id)}
             return HttpResponse(json.dumps(data))
         else:
@@ -329,6 +345,13 @@ def add_link(request):
                                                               'id1': ObjectId(request.POST['id1']),
                                                               'id2': ObjectId(request.POST['id2'])}})
 
+            prj_id = db.project.find_one({'pid': request.POST['pid']})
+            if prj_id is None:
+                prj_id = db.project.insert({'pid': request.POST['pid'], 'node': [], 'link': []})
+            else:
+                pass
+            db.project.update({'_id': prj_id}, {'$push': {'link': linkref_id}})
+
             # return the _id of this user's own record of this link
             data = {
                 'status': 'success',
@@ -405,6 +428,14 @@ def get_del_addref_link(request, **kwargs):
             }
         )
         if linkref_id:
+            prj_id = db.project.find_one({'pid': request.POST['pid']})
+            if prj_id is None:
+                prj_id = db.project.insert({'pid': request.POST['pid'], 'node': [], 'link': []})
+            else:
+                pass
+            db.project.update({'_id': prj_id}, {'$push': {'link': linkref_id}})
+
+
             data = {'status': 'success', 'ref_id': str(linkref_id)}
             return HttpResponse(json.dumps(data))
         else:
@@ -539,6 +570,50 @@ def search_json_link(request, **kwargs):
     else:
         # method is not POST
         return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
+
+
+@logged_in
+@project_verified
+def get_project(request, **kwargs):
+    if request.method == 'GET':
+        pid = int(kwargs['pid'])
+        project = db.project.find_one({'pid': pid})
+        if project is None:
+            return HttpResponse("{'status': 'error','reason':'project not found'}")
+        nodeset = []
+        linkset = []
+        for noderef_id in project['node']:
+            noderef = db.node_ref.find_one({'_id': noderef_id})
+            node_id = noderef['node_id']
+            node = db.node.find_one({'_id': node_id})
+            data = {
+                '_id': str(node_id),
+                'ref_id': str(noderef_id),
+                'NAME': node['NAME'],
+                'TYPE': node['TYPE'],
+                'x': noderef['x'],
+                'y': noderef['y'],
+            }
+            nodeset.append(data)
+        for linkref_id in project['link']:
+            linkref = db.link_ref.find_one({'_id': linkref_id})
+            link_id = linkref['link_id']
+            link = db.link.find_one({'_id': link_id})
+            data = {
+                '_id': str(link_id),
+                'ref_id': str(linkref_id),
+                'NAME': link['NAME'],
+                'TYPE': link['TYPE'],
+                'id1': str(link['id1']),
+                'id2': str(link['id2']),
+            }
+            linkset.append(data)
+
+        data = {'status': 'success', 'node': nodeset, 'link': linkset}
+        return HttpResponse(json.dumps(data))
+    else:
+        return HttpResponse("{'status': 'error','reason':'pls use method GET'}")
+
 
 
 @logged_in
