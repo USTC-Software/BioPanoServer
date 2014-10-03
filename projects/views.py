@@ -302,9 +302,11 @@ def get_one(request, *args, **kwargs):
                     try:
                         exec("project.{0} = query['{1}']".format(key, key))
                         project.save()
-                        return HttpResponse("{'status':'success', 'prj_id':%d}" % project.pk)
                     except Exception as e:
                         return HttpResponse("{'status':'error', 'reason':'wrong key provided'}")
+
+                return HttpResponse("{'status':'success', 'prj_id':%d}" % project.pk)
+            
             else:
                 return HttpResponse("{'status':'error', 'reason':'No access! Only the author of the project \
                 has the right to delete it'}")
