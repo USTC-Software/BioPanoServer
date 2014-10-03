@@ -225,7 +225,7 @@ def list_or_create(request, *args, **kwargs):
 
     elif request.method == 'POST':
         user = request.user
-        paras = request.POST
+        paras = dict(request.POST)
         try:
             prj_name = paras['prj_name']
         except KeyError:
@@ -237,11 +237,13 @@ def list_or_create(request, *args, **kwargs):
             new_prj = Project(name=prj_name, author=user, is_active=True)
             new_prj.save()
             attrset = ['name', 'description', 'species']
+            if len(paras) == 0:
+                return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
             for key in paras:
                 if not key in attrset:
                     return HttpResponse("{'status':'error', 'reason':'attribution error'}")
                 else:
-                    exec("new_prj.{0} = paras['{1}']".format(key, key))
+                    exec("new_prj.%s = paras['%s']" % (key, key))
             new_prj.save()
 
             return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
