@@ -3,6 +3,7 @@ from Queue import Queue
 from django.shortcuts import HttpResponse
 from pymongo import *
 from datetime import *
+import bson
 
 
 def MakeArray(n):
@@ -64,7 +65,7 @@ def Relax(u,v,c):
 		return True
 	return False
 
-def SPFA(src):
+def SPFA(src, n):
 	global dis, point2, next2, ww, inf
 	global q
 
@@ -145,11 +146,10 @@ def a_star(request):
 			# ObjectId to int
 			AddEdge(node_pool[id1], node_pool[id2], 1, link_count)
 
-
-		s = request.POST['id1']
-		t = request.POST['id2']
-		k = request.POST['order']
-		SPFA(t)
+		s = node_pool[bson.ObjectId(request.POST['id1'])]
+		t = node_pool[bson.ObjectId(request.POST['id2'])]
+		k = int(request.POST['order'])
+		SPFA(t, node_count)
 
 		path = []
 		for j in Astar(s,t,k):
