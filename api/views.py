@@ -32,13 +32,13 @@ def add_node(request):
             add a node id collection <node>
             request.POST is all information of the node
         '''
-        if validate_node(request.POST['info']):
+        if validate_node(json.dumps(request.POST['info'])):
             # all the information is valid(including the group)
-            node_id = db.node.insert(request.POST['info'])
+            node_id = db.node.insert(json.dumps(request.POST['info']))
             noderef_id = db.node_ref.insert(
                 {'pid': int(request.POST['pid']) if 'pid' in request.POST.keys() else 0,
-                 'x': request.POST['x'] if 'x' in request.POST.keys() else '0',
-                 'y': request.POST['y'] if 'y' in request.POST.keys() else '0',
+                 'x': float(request.POST['x']) if 'x' in request.POST.keys() else '0',
+                 'y': float(request.POST['y']) if 'y' in request.POST.keys() else '0',
                 }
             )
 
