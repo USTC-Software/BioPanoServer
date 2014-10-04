@@ -38,7 +38,6 @@ def search(request, *args, **kwargs):
         except KeyError:
             prj_name = None
 
-
         if not author_id and not prj_name:
             return HttpResponse("{'status':'error', 'reason':'your query contains neither author nor name'}")
 
@@ -127,7 +126,7 @@ def modify_project(request, *args, **kwargs):
                     if key not in prj_attrs:
                         return HttpResponse("{'status':'error', 'reason':'field invalid!'}")
                     try:
-                        exec("project.{0} = query['{1}']".format(key, key))
+                        exec ("project.{0} = query['{1}']".format(key, key))
                         project.save()
                         return HttpResponse("{'status':'success', 'prj_id':%d}" % project.pk)
                     except Exception as e:
@@ -137,7 +136,6 @@ def modify_project(request, *args, **kwargs):
                 has the right to delete it'}")
         else:
             return HttpResponse("{'status':'error', 'reason':'user not logged in'}")
-
 
 
 @logged_in
@@ -202,10 +200,10 @@ def list_or_create(request, *args, **kwargs):
         for result in results_author:
             if result.is_active:
                 clean_result = {
-                    'author': result.author.username,
+                    'author': result.author.username.encode('ascii', 'replace'),
                     'authorid': result.author.pk,
                     'pid': result.pk,
-                    'name': result.name,
+                    'name': result.name.encode('ascii', 'replace'),
                 }
                 clean_results.append(clean_result)
 
@@ -213,10 +211,10 @@ def list_or_create(request, *args, **kwargs):
         for result in results_collaborated:
             if result.is_active:
                 clean_result = {
-                    'author': result.author.username,
+                    'author': result.author.username.encode('ascii', 'replace'),
                     'authorid': result.author.pk,
                     'pid': result.pk,
-                    'name': result.name,
+                    'name': result.name.encode('ascii', 'replace'),
                 }
                 clean_results.append(clean_result)
 
@@ -243,7 +241,7 @@ def list_or_create(request, *args, **kwargs):
                 if not key in attrset:
                     return HttpResponse("{'status':'error', 'reason':'attribution error'}")
                 else:
-                    exec("new_prj.%s = paras['%s']" % (key, key))
+                    exec ("new_prj.%s = paras['%s']" % (key, key))
             new_prj.save()
 
             return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
@@ -269,12 +267,12 @@ def get_one(request, *args, **kwargs):
                 return HttpResponse("{'status':'error', 'reason':'you dont have the access to the whole profile'}")
             else:
                 clean_result = {
-                    'author': project.author.username,
+                    'author': project.author.username.encode('ascii', 'replace'),
                     'authorid': project.author.pk,
                     'pid': project.id,
-                    'prj_name': project.name,
-                    'species': project.species,
-                    'description': project.description,
+                    'prj_name': project.name.encode('ascii', 'replace'),
+                    'species': project.species.encode('ascii', 'replace'),
+                    'description': project.description.encode('ascii', 'replace'),
                     'collaborators': [{'uid': coll.pk, 'username': coll.username} for coll \
                                       in project.collaborators.all()],
                 }
@@ -302,13 +300,13 @@ def get_one(request, *args, **kwargs):
                     if key not in prj_attrs:
                         return HttpResponse("{'status':'error', 'reason':'field invalid!'}")
                     try:
-                        exec("project.{0} = query['{1}']".format(key, key))
+                        exec ("project.{0} = query['{1}']".format(key, key))
                         project.save()
                     except Exception as e:
                         return HttpResponse("{'status':'error', 'reason':'wrong key provided'}")
 
                 return HttpResponse("{'status':'success', 'prj_id':%d}" % project.pk)
-            
+
             else:
                 return HttpResponse("{'status':'error', 'reason':'No access! Only the author of the project \
                 has the right to delete it'}")
@@ -370,9 +368,6 @@ def search_user(request, *args, **kwargs):
 
     else:
         return HttpResponse("{'status':'error', 'reason':'method not correct(should be POST)'}")
-
-
-
 
 
 '''
