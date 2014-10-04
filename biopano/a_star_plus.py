@@ -132,13 +132,15 @@ def a_star(request):
 				node_count += 1
 				node_pool[node['_id']] = node_count
 				search_dict[node_count] = node['_id']
+		n_count_time = datetime.now()
+		time_point['node counting'] = n_count_time - start_time
 		# count distinct link
 		for link_ref in db.link_ref.find():
 			if link_pool.get((link_ref['id1'], link_ref['id2'])) is None:
 				link_count += 1
 				link_pool[(link_ref['id1'], link_ref['id2'])] = True
-		count_time = datetime.now()
-		time_point['counting'] = count_time - start_time
+		l_count_time = datetime.now()
+		time_point['counting'] = l_count_time - n_count_time
 		# initial vars
 		edge = MakeArray(link_count*2)
 		edge2 = MakeArray(link_count*2)
@@ -150,7 +152,7 @@ def a_star(request):
 		dis = [inf for i in xrange(node_count + 1)]
 
 		initial_time = datetime.now()
-		time_point['initial'] = initial_time - count_time
+		time_point['initial'] = initial_time - l_count_time
 
 		# add in edge
 		link_count = 0
