@@ -230,7 +230,6 @@ def list_or_create(request, *args, **kwargs):
         except KeyError:
             return HttpResponse("{'status':'error', 'reason':'POST paras should include prj_name'}")
 
-        del paras['prj_name']
         try:
             if user.is_authenticated():
                 new_prj = Project.objects.create(name=prj_name, author=user, is_active=True)
@@ -246,8 +245,8 @@ def list_or_create(request, *args, **kwargs):
                         new_prj.save()
 
                 return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
-        except AttributeError as e:
-            raise e
+        except AttributeError:
+            raise AttributeError("hehe")
 
     else:
         return HttpResponse("{'status':'error', 'reason':'method not correct(GET or POST needed)'}")
