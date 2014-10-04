@@ -116,6 +116,7 @@ def a_star(request):
 		node_count = 0
 		link_pool = {}
 		node_pool = {}
+		search_dict = {}
 		time_point = {}
 		start_time = datetime.now()
 
@@ -124,6 +125,7 @@ def a_star(request):
 			if node_pool.get(node['_id']) is None:
 				node_count += 1
 				node_pool[node['_id']] = node_count
+				search_dict[node_count] = node['_id']
 		# count distinct link
 		for link_ref in db.link_ref.find():
 			if link_pool.get((link_ref['id1'], link_ref['id2'])) is None:
@@ -165,14 +167,17 @@ def a_star(request):
 		SPFA_time = datetime.now()
 		time_point['SPFA'] = SPFA_time - convert_time
 
-		path = []
-		for j in Astar(s,t,k):
-			path.append(j)
+		path_list = []
+		for j in Astar(s, t, k):
+			path = []
+			for node in j:
+				path.append(str(search_dict[node]))
+			path_list.append(path)
 
 		Astar_time = datetime.now()
 		time_point['Astar'] = Astar_time - SPFA_time
 
-		return HttpResponse(str(path) + str(time_point))
+		return HttpResponse(str(path_list) + '\n' + str(time_point))
 
 	elif request.method == 'GET':
 		return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
