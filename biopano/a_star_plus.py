@@ -116,6 +116,9 @@ def a_star(request):
 		node_count = 0
 		link_pool = {}
 		node_pool = {}
+		time_point = {}
+		start_time = datetime.now()
+
 		# count distinct node
 		for node in db.node.find():
 			if node_pool.get(node['_id']) is None:
@@ -126,7 +129,8 @@ def a_star(request):
 			if link_pool.get((link_ref['id1'], link_ref['id2'])) is None:
 				link_count += 1
 				link_pool[(link_ref['id1'], link_ref['id2'])] = True
-
+		count_time = datetime.now()
+		time_point['counting'] = count_time - start_time
 		# initial vars
 		edge = MakeArray(link_count)
 		edge2 = MakeArray(link_count)
@@ -136,6 +140,9 @@ def a_star(request):
 		point = MakeArray(node_count)
 		point2 = MakeArray(node_count)
 		dis = [inf for i in xrange(node_count)]
+
+		initial_time = datetime.now()
+		time_point['initial'] = initial_time - count_time
 
 		# add in edge
 		link_count = 0
@@ -149,12 +156,23 @@ def a_star(request):
 		s = node_pool[bson.ObjectId(request.POST['id1'])]
 		t = node_pool[bson.ObjectId(request.POST['id2'])]
 		k = int(request.POST['order'])
+
+		convert_time = datetime.now()
+		time_point['convert'] = convert_time - initial_time
+
 		SPFA(t, node_count)
+
+		SPFA_time = datetime.now()
+		time_point['SPFA'] = SPFA_time - convert_time
 
 		path = []
 		for j in Astar(s,t,k):
 			path.append(j)
-		return HttpResponse(str(path))
+
+		Astar_time = datetime.now()
+		time_point['Astar'] = Astar_time - SPFA_time
+
+		return HttpResponse(str(path) + str(time_point))
 
 	elif request.method == 'GET':
 		return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
