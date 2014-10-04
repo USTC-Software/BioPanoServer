@@ -241,7 +241,7 @@ def list_or_create(request, *args, **kwargs):
                 if not key in attrset:
                     return HttpResponse("{'status':'error', 'reason':'attribution error'}")
                 else:
-                    exec ("project.{0} = query['{1}']".format(key, key))
+                    exec ("new_prj.{0} = paras['{1}']".format(key, key))
             new_prj.save()
 
             return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
