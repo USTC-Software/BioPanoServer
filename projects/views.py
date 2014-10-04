@@ -232,8 +232,7 @@ def list_or_create(request, *args, **kwargs):
         del paras['prj_name']
 
         if user.is_authenticated():
-            new_prj = Project(name=prj_name, author=user, is_active=True)
-            new_prj.save()
+            new_prj = Project.objects.create(name=prj_name, author=user, is_active=True)
             attrset = ['description', 'species']
             if len(paras) == 0:
                 return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
