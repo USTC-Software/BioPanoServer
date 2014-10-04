@@ -94,6 +94,7 @@ def Astar(src, to, k):
 		yield -1
 		return
 	pq.put(state(dis[src], 0, src, [src]))
+	time_monitor = datetime.now()
 	while (not pq.empty()):
 		b = pq.qsize()
 		a = pq.get()
@@ -103,7 +104,6 @@ def Astar(src, to, k):
 			if (cnt == k):
 				break
 		i=point[a.now]
-		time_monitor = datetime.now()
 		while i!=0:
 
 			if not edge[i] in a.pre:
