@@ -224,7 +224,7 @@ def list_or_create(request, *args, **kwargs):
 
     elif request.method == 'POST':
         user = request.user
-        paras = QueryDict(request.body)
+        paras = request.POST
         try:
             prj_name = paras['prj_name']
         except KeyError:
@@ -235,14 +235,14 @@ def list_or_create(request, *args, **kwargs):
         if user.is_authenticated():
             new_prj = Project.objects.create(name=prj_name, author=user, is_active=True)
             attrset = ['description', 'species']
-            new_prj = Project.objects.get(pk=new_prj.pk)
-            if len(paras) == 0:
-                return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
+            # new_prj = Project.objects.get(pk=new_prj.pk)
+            # if len(paras) == 0:
+            #     return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
             for key in paras:
                 if not key in attrset:
                     return HttpResponse("{'status':'error', 'reason':'attribution error'}")
                 else:
-                    exec ("new_prj.{0} = paras['{1}']".format(key, key))
+                    exec("new_prj.{0} = paras['{1}']".format(key, key))
                     new_prj.save()
 
             return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
