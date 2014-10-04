@@ -121,7 +121,7 @@ def modify_project(request, *args, **kwargs):
                 except ObjectDoesNotExist as e:
                     return HttpResponse("{'status':'error', 'reason':'cannot find project with that id'}")
 
-                prj_attrs = ['author', 'collaborators', 'name', 'description', 'species']
+                prj_attrs = ['name', 'description', 'species']
                 for key in query.keys():
                     if key not in prj_attrs:
                         return HttpResponse("{'status':'error', 'reason':'field invalid!'}")
@@ -234,14 +234,14 @@ def list_or_create(request, *args, **kwargs):
         if user.is_authenticated():
             new_prj = Project(name=prj_name, author=user, is_active=True)
             new_prj.save()
-            attrset = ['name', 'description', 'species']
+            attrset = ['description', 'species']
             if len(paras) == 0:
                 return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
             for key in paras:
                 if not key in attrset:
                     return HttpResponse("{'status':'error', 'reason':'attribution error'}")
                 else:
-                    exec ("new_prj.%s = paras['%s']" % (key, key))
+                    exec ("project.{0} = query['{1}']".format(key, key))
             new_prj.save()
 
             return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
