@@ -224,7 +224,7 @@ def list_or_create(request, *args, **kwargs):
 
     elif request.method == 'POST':
         user = request.user
-        paras = request.POST
+        paras = QueryDict(request.body)
         try:
             prj_name = paras['prj_name']
         except KeyError:
