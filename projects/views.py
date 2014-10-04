@@ -231,21 +231,23 @@ def list_or_create(request, *args, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'POST paras should include prj_name'}")
 
         del paras['prj_name']
+        try:
+            if user.is_authenticated():
+                new_prj = Project.objects.create(name=prj_name, author=user, is_active=True)
+                attrset = ['description', 'species']
+                # new_prj = Project.objects.get(pk=new_prj.pk)
+                # if len(paras) == 0:
+                #     return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
+                for key in paras:
+                    if not key in attrset:
+                        return HttpResponse("{'status':'error', 'reason':'attribution error'}")
+                    else:
+                        exec("new_prj.{0} = paras['{1}']".format(key, key))
+                        new_prj.save()
 
-        if user.is_authenticated():
-            new_prj = Project.objects.create(name=prj_name, author=user, is_active=True)
-            attrset = ['description', 'species']
-            # new_prj = Project.objects.get(pk=new_prj.pk)
-            # if len(paras) == 0:
-            #     return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
-            for key in paras:
-                if not key in attrset:
-                    return HttpResponse("{'status':'error', 'reason':'attribution error'}")
-                else:
-                    exec("new_prj.{0} = paras['{1}']".format(key, key))
-                    new_prj.save()
-
-            return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
+                return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
+        except AttributeError as e:
+            raise e
 
     else:
         return HttpResponse("{'status':'error', 'reason':'method not correct(GET or POST needed)'}")
