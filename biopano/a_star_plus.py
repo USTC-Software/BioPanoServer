@@ -103,10 +103,17 @@ def Astar(src, to, k):
 			if (cnt == k):
 				break
 		i=point[a.now]
+		time_monitor = datetime.now()
 		while i!=0:
+
 			if not edge[i] in a.pre:
 				pq.put(state(a.g+ww[i]+dis[edge[i]], a.g+ww[i], edge[i], a.pre+[edge[i]]))
 			i=next[i]
+
+			if (datetime.now() - time_monitor).seconds > 5:
+				yield 0
+				return
+
 
 
 def a_star(request):
@@ -169,10 +176,21 @@ def a_star(request):
 
 		path_list = []
 		for j in Astar(s, t, k):
+			# not founded
+			if j == -1:
+				break
+
 			path = []
 			for node in j:
+				# time is too long
+				if node == 0:
+					path = []
+					break
 				path.append(str(search_dict[node]))
 			path_list.append(path)
+			if path == []:
+				path_list.pop()
+				break
 
 		Astar_time = datetime.now()
 		time_point['Astar'] = Astar_time - SPFA_time
