@@ -239,7 +239,7 @@ def list_or_create(request, *args, **kwargs):
                 #     return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
                 for key in paras:
                     if not key in attrset:
-                        if key == 'prj_nem':
+                        if key == 'prj_name':
                             pass
                         return HttpResponse("{'status':'error', 'reason':'attribution error'}")
                     else:
