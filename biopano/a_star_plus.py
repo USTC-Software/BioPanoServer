@@ -115,7 +115,6 @@ def Astar(src, to, k):
 				return
 
 
-
 def a_star(request):
 	global edge,edge2,next,next2,ww,point,point2,pre,dis
 	if request.method == 'POST':
@@ -141,11 +140,11 @@ def a_star(request):
 		count_time = datetime.now()
 		time_point['counting'] = count_time - start_time
 		# initial vars
-		edge = MakeArray(link_count)
-		edge2 = MakeArray(link_count)
-		next = MakeArray(link_count)
-		next2 = MakeArray(link_count)
-		ww = MakeArray(link_count)
+		edge = MakeArray(link_count*2)
+		edge2 = MakeArray(link_count*2)
+		next = MakeArray(link_count*2)
+		next2 = MakeArray(link_count*2)
+		ww = MakeArray(link_count*2)
 		point = MakeArray(node_count)
 		point2 = MakeArray(node_count)
 		dis = [inf for i in xrange(node_count + 1)]
@@ -156,15 +155,21 @@ def a_star(request):
 		# add in edge
 		link_count = 0
 		for distinct_link in link_pool:
-			link_count += 1
 			id1 = distinct_link[0]
 			id2 = distinct_link[1]
 			# ObjectId to int
+			link_count += 1
 			AddEdge(node_pool[id1], node_pool[id2], 1, link_count)
+			link_count += 1
+			AddEdge(node_pool[id2], node_pool[id1], 1, link_count)
 
 		s = node_pool[bson.ObjectId(request.POST['id1'])]
 		t = node_pool[bson.ObjectId(request.POST['id2'])]
-		k = int(request.POST['order'])
+		if 'order' not in request.POST.keys():
+			order = 14
+		else:
+			order = request.POST['order']
+		k = int(order)
 
 		convert_time = datetime.now()
 		time_point['convert'] = convert_time - initial_time
