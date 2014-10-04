@@ -180,17 +180,14 @@ def a_star(request):
 			if j == -1:
 				break
 
+			# overtime
+			if j == 0:
+				break
+
 			path = []
 			for node in j:
-				# time is too long
-				if node == 0:
-					path = []
-					break
 				path.append(str(search_dict[node]))
 			path_list.append(path)
-			if path == []:
-				path_list.pop()
-				break
 
 		Astar_time = datetime.now()
 		time_point['Astar'] = Astar_time - SPFA_time
