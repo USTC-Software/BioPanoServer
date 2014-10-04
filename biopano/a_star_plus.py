@@ -139,7 +139,7 @@ def a_star(request):
 		ww = MakeArray(link_count)
 		point = MakeArray(node_count)
 		point2 = MakeArray(node_count)
-		dis = [inf for i in xrange(node_count)]
+		dis = [inf for i in xrange(node_count + 1)]
 
 		initial_time = datetime.now()
 		time_point['initial'] = initial_time - count_time
