@@ -2,10 +2,15 @@ from pymongo import *
 from django.shortcuts import HttpResponse
 import bson
 from datetime import *
+from Bio.Blast.Applications import NcbiblastnCommandline
+import os
 
+
+BLAST_PATH = r'/tmp/blast'
 db = MongoClient()['igemdata_new']
 
-
+## unused after using blast
+'''
 def func(a, b):
     if a == b:
         return 1
@@ -86,3 +91,114 @@ def main(request):
     elif request.method == 'GET':
         #return HttpResponse('This is new!!!!')
         return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
+'''
+
+
+def blast_fasta_create():
+    db = MongoClient()['igemdata_new']
+    fp = r'/tmp/sequence.fasta'
+    file = open(fp, 'w')
+    text_list = []
+    text = ''
+
+    for utr in db.u_t_r.find({'TYPE': 'O_T_P'}):
+        id = str(utr['_id'])
+        sequence_5 = utr['SEQUENCE_5']
+        sequence_3 = utr['SEQUENCE_3']
+        id = '>' + id + '\n'
+        if sequence_5:
+            text = ' '.join([id, sequence_5, '\n'])
+            text_list.append(text)
+        '''
+        if sequence_3:
+            text = ' '.join([id, sequence_3, '\n'])
+            text_list.append(text)
+        '''
+    print 'Successfully read utr sequences'
+
+    for node in db.u_t_r.find({'TYPE': {'$in': ['Gene', 'Terminator']}}):
+        if 'SEQUENCE' in node.keys():
+            if node['SEQUENCE']:
+                id = str(node['_id'])
+                id = '>' + id + '\n'
+                sequence = node['SEQUENCE']
+                text = ' '.join([id, sequence, '\n'])
+                text_list.append(text)
+    print 'Successfully read node sequences'
+
+    for text in text_list:
+        file.write(text)
+    print 'Successfully write sequences'
+
+    file.close()
+
+
+def check_blast_fasta(rebuild_flat):
+    if not os.path.exists(BLAST_PATH) or rebuild_flat:
+        blast_fasta_create()
+        order = 'makeblastdb -in /tmp/sequence.fasta -dbtype nucl -title ustc_blast -parse_seqids -out /tmp/blast/ustc_blast'
+        os.system(order)
+        return True
+    else:
+        return True
+
+
+def id_parse(stdout):
+    line_list = stdout.split('\n')
+    result_list = []
+    for line in line_list:
+        if line == '':
+            continue
+        dict = {}
+        log = db.u_t_r.find_one({'_id': bson.ObjectId(line.split()[1])})
+        dict['id'] = str(log['node_id'])
+        dict['evalue'] = line.split()[10]
+        result_list.append(dict)
+        del dict
+    return result_list
+
+
+def blast(request):
+    if request.method == 'POST':
+        if 'rebuild' in request.POST.keys() and request.POST['rebuild'] == 'True':
+            check_blast_fasta(True)
+        else:
+            check_blast_fasta(False)
+        if 'sequence' not in request.POST.keys() or 'user' not in request.POST.keys():
+            key_list = str(request.POST.keys())
+            return HttpResponse("{'status':'error', 'reason':'keyword sequence is not in request.', 'keys':" + key_list + "}")
+
+        # input to fasta
+        if 'evalue' in request.POST.keys():
+            para_evalue = request.POST['evalue']
+        else:
+            para_evalue = 0.01
+
+        if 'format' in request.POST.keys():
+            para_format = request.POST['format']
+        else:
+            para_format = 6
+
+        '''
+        fasta_path should be appended with user name such as input_beibei.fasta
+        so that there wouldn't be conflict when multiuser use blast
+        '''
+        fasta_path = BLAST_PATH + '/input_' + request.POST['user'] +'.fasta'
+        fasta_fp = open(fasta_path, 'w')
+        fasta_fp.write('>query\n')
+        fasta_fp.write(request.POST['sequence'] + '\n')
+        fasta_fp.close()
+        cline = NcbiblastnCommandline(query=fasta_path, db='/tmp/blast/ustc_blast', strand='plus',
+                                      evalue=para_evalue, outfmt=para_format)
+
+        stdout, stderr = cline()
+        result_list = id_parse(stdout)
+
+        test_fp = open(BLAST_PATH + '/stdout.txt', 'w')
+        test_fp.write(stdout + '\n\n' + stderr)
+        test_fp.close()
+
+        return HttpResponse(str(result_list))
+
+    elif request.method == 'GET':
+        return HttpResponse("{'function':'blast', 'status':'error', 'reason':'no GET method setting'}")
