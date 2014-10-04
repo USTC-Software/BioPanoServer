@@ -186,8 +186,8 @@ def a_star(request):
 
 			path = []
 			for node in j:
-				# path.append(str(search_dict[node]))
-				path.append(db.node.find_one({'_id': search_dict[node]})['NAME'])
+				path.append(str(search_dict[node]))
+				# path.append(db.node.find_one({'_id': search_dict[node]})['NAME'])
 			path_list.append(path)
 
 		Astar_time = datetime.now()
