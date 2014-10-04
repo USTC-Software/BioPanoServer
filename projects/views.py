@@ -237,11 +237,11 @@ def list_or_create(request, *args, **kwargs):
                 # new_prj = Project.objects.get(pk=new_prj.pk)
                 # if len(paras) == 0:
                 #     return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
-                for key in paras:
+                for key in paras.keys():
                     if not key in attrset:
                         if key == 'prj_name':
                             pass
-                        return HttpResponse("{'status':'error', 'reason':'%s' %s}" % (str(paras), key))
+                        return HttpResponse("{'status':'error', 'reason':'attribute error'}")
                     else:
                         exec("new_prj.{0} = paras['{1}']".format(key, key))
                         new_prj.save()
