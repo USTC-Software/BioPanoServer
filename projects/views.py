@@ -241,7 +241,8 @@ def list_or_create(request, *args, **kwargs):
                     if not key in attrset:
                         if key == 'prj_name':
                             pass
-                        return HttpResponse("{'status':'error', 'reason':'attribute error'}")
+                        else:
+                            return HttpResponse("{'status':'error', 'reason':'attribute error'}")
                     else:
                         exec("new_prj.{0} = paras['{1}']".format(key, key))
                         new_prj.save()
