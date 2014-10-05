@@ -613,8 +613,8 @@ def get_project(request, **kwargs):
                 'ref_id': str(linkref_id),
                 'NAME': link['NAME'],
                 'TYPE': link['TYPE'],
-                'id1': str(link['id1']),
-                'id2': str(link['id2']),
+                'id1': str(linkref['id1']),
+                'id2': str(linkref['id2']),
             }
             linkset.append(data)
 

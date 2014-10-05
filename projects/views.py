@@ -251,7 +251,7 @@ def list_or_create(request, *args, **kwargs):
                         exec("new_prj.{0} = paras['{1}']".format(key, key))
                         new_prj.save()
                 db.project.insert({'pid': new_prj.pk, 'node': [], 'link': []})
-                
+
                 return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
         except AttributeError:
             raise AttributeError("hehe")
