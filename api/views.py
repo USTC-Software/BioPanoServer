@@ -47,14 +47,14 @@ def add_node(request):
                 prj_id = db.project.insert({'pid': int(request.POST['pid']), 'node': [], 'link': []})
             else:
                 pass
-            db.project.update({'_id': prj_id}, {'$push': {'node': noderef_id}})
+            db.project.update({'_id': prj_id}, {'$push': {'node': noderef_id}}, True)
 
             # fail to insert into database
             if not node_id or not noderef_id:
                 return HttpResponse("{'status':'error', 'reason':'insert failed'}")
 
             # add refs between two records
-            db.node.update({'_id': node_id}, {'$push': {'refs': noderef_id}})
+            db.node.update({'_id': node_id}, {'$push': {'refs': noderef_id}}, True)
             db.node_ref.update({'_id': noderef_id}, {'$set': {'node_id': node_id}})
 
             # return the _id of this user's own record of this node
@@ -135,10 +135,15 @@ def get_del_addref_node(request, **kwargs):
         if noderef_id:
             prj_id = db.project.find_one({'pid': int(QueryDict(request.body)['pid'])})
             if prj_id is None:
-                prj_id = db.project.insert({'pid': int(QueryDict(request.body)['pid'])})
+                prj_id = db.project.insert({
+                        'pid': int(QueryDict(request.body)['pid']),
+                        'node': [],
+                        'link': [],
+                    }
+                )
             else:
                 pass
-            db.project.update({'_id': prj_id}, {'$push': {'node': noderef_id}})
+            db.project.update({'_id': prj_id}, {'$push': {'node': noderef_id}}, True)
 
             data = {'status': 'success', 'ref_id': str(noderef_id)}
             return HttpResponse(json.dumps(data))
@@ -340,7 +345,7 @@ def add_link(request):
                 return HttpResponse("{'status':'error', 'reason':'insert failed'}")
 
             # add refs between two records
-            db.link.update({'_id': link_id}, {'$push': {'refs': linkref_id}})
+            db.link.update({'_id': link_id}, {'$push': {'refs': linkref_id}}, True)
             db.link_ref.update({'_id': linkref_id}, {'$set': {'link_id': link_id,
                                                               'id1': ObjectId(request.POST['id1']),
                                                               'id2': ObjectId(request.POST['id2'])}})
@@ -350,7 +355,7 @@ def add_link(request):
                 prj_id = db.project.insert({'pid': int(request.POST['pid']), 'node': [], 'link': []})
             else:
                 pass
-            db.project.update({'_id': prj_id}, {'$push': {'link': linkref_id}})
+            db.project.update({'_id': prj_id}, {'$push': {'link': linkref_id}}, True)
 
             # return the _id of this user's own record of this link
             data = {
@@ -433,7 +438,7 @@ def get_del_addref_link(request, **kwargs):
                 prj_id = db.project.insert({'pid': int(QueryDict(request.body)['pid']), 'node': [], 'link': []})
             else:
                 pass
-            db.project.update({'_id': prj_id}, {'$push': {'link': linkref_id}})
+            db.project.update({'_id': prj_id}, {'$push': {'link': linkref_id}}, True)
 
 
             data = {'status': 'success', 'ref_id': str(linkref_id)}
