@@ -115,6 +115,39 @@ def Astar(src, to, k):
 				return
 
 
+def build_store():
+	db = MongoClient()['igemdata_new']
+	db.drop_collection('boost_store')
+	collection = db['boost_store']
+	data_dict = {}
+	data_dict['last_update_time'] = datetime.now().day
+
+	link_count = 0
+	node_count = 0
+	link_pool = {}
+	node_pool = {}
+	search_dict = {}
+
+	for node in db.node.find():
+		if node_pool.get(node['_id']) is None:
+			node_count += 1
+			node_pool[node['_id']] = node_count
+			search_dict[node_count] = node['_id']
+
+	for link_ref in db.link_ref.find():
+		if link_pool.get((link_ref['id1'], link_ref['id2'])) is None:
+			link_count += 1
+			link_pool[(link_ref['id1'], link_ref['id2'])] = True
+
+	data_dict['node_count'] = node_count
+	data_dict['link_count'] = link_count
+	data_dict['node_pool'] = node_pool
+	data_dict['link_pool'] = link_pool
+	data_dict['search_dict'] = search_dict
+
+	collection.insert(data_dict)
+
+
 def a_star(request):
 	global edge,edge2,next,next2,ww,point,point2,pre,dis
 	if request.method == 'POST':
@@ -126,21 +159,25 @@ def a_star(request):
 		time_point = {}
 		start_time = datetime.now()
 
+		# boost by database saving
+		db = MongoClient()['igemdata_new']
+		last_update_time = db.boost_store.find_one({'last_update_time': {'$exists': 1}})
+		if (last_update_time is None) or (last_update_time['value'] != datetime.now().day):
+			build_store()
+		information = db.boost_store.find_one()
+
 		# count distinct node
-		for node in db.node.find():
-			if node_pool.get(node['_id']) is None:
-				node_count += 1
-				node_pool[node['_id']] = node_count
-				search_dict[node_count] = node['_id']
+		node_count = information['node_count']
+		node_pool = information['node_pool']
+		search_dict = information['search_dict']
 		n_count_time = datetime.now()
 		time_point['node counting'] = n_count_time - start_time
 		# count distinct link
-		for link_ref in db.link_ref.find():
-			if link_pool.get((link_ref['id1'], link_ref['id2'])) is None:
-				link_count += 1
-				link_pool[(link_ref['id1'], link_ref['id2'])] = True
+		link_count = information['link_count']
+		link_pool = information['link_pool']
 		l_count_time = datetime.now()
-		time_point['counting'] = l_count_time - n_count_time
+		time_point['link_counting'] = l_count_time - n_count_time
+
 		# initial vars
 		edge = MakeArray(link_count*2)
 		edge2 = MakeArray(link_count*2)
