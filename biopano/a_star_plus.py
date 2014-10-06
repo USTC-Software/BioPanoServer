@@ -4,6 +4,7 @@ from django.shortcuts import HttpResponse
 from pymongo import *
 from datetime import *
 import bson
+import json
 
 
 def MakeArray(n):
@@ -186,14 +187,18 @@ def a_star(request):
 
 			path = []
 			for node in j:
-				path.append(str(search_dict[node]))
+				result = {'_id': str(search_dict[node])}
+				node = db.node.find_one({'_id': search_dict[node]})
+				result['NAME'] = node['NAME']
+				result['TYPE'] = node['TYPE']
+				path.append(result)
 				# path.append(db.node.find_one({'_id': search_dict[node]})['NAME'])
 			path_list.append(path)
-
+		
 		Astar_time = datetime.now()
 		time_point['Astar'] = Astar_time - SPFA_time
-
-		return HttpResponse(str(path_list))
+		result_text = json.dumps(path_list)
+		return HttpResponse(result_text)
 
 	elif request.method == 'GET':
 		return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
