@@ -119,10 +119,11 @@ def Astar(src, to, k):
 def build_store():
 	db = MongoClient()['igemdata_new']
 	db.drop_collection('boost_store')
+	db.drop_collection('node_pool')
+	db.drop_collection('link_pool')
 	collection = db['boost_store']
 	data_dict = {}
 	data_dict['last_update_time'] = datetime.now().day
-	data_dict['HEAD'] = 1
 
 	link_count = 0
 	node_count = 0
@@ -133,12 +134,16 @@ def build_store():
 	for node in db.node.find():
 		if node_pool.get(str(node['_id'])) is None:
 			node_count += 1
+			db.node_pool.insert({'node_id': node['_id'], 'node_count': node_count})
 			node_pool[str(node['_id'])] = node_count
 			search_dict[str(node_count)] = str(node['_id'])
+	db.node_pool.create_index('node_id')
+	db.node_pool.create_index('node_count')
 
 	for link_ref in db.link_ref.find():
-		if link_pool.get((link_ref['id1'], link_ref['id2'])) is None:
+		if link_pool.get(str(link_ref['id1']+str(link_ref['id2']))) is None:
 			link_count += 1
+			db.link_pool.insert({'id1': link_ref['id1'], 'id2': link_ref['id2']})
 			link_pool[str(link_ref['id1'])+str(link_ref['id2'])] = True
 
 	data_dict['node_count'] = node_count
@@ -249,7 +254,7 @@ def a_star(request):
 		Astar_time = datetime.now()
 		time_point['Astar'] = Astar_time - SPFA_time
 		result_text = json.dumps(path_list)
-		return HttpResponse(result_text)
+		return HttpResponse(result_text + str(time_point))
 
 	elif request.method == 'GET':
 		return HttpResponse("{'status':'error', 'reason':'no GET method setting'}")
