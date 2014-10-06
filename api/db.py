@@ -167,6 +167,67 @@ def fork_link(db, node_id, pid, id1, id2):
     return link['_id'], linkref_id
 
 
+def change_loc(db, noderef_id, x=0, y=0):
+    """ merely change th location of the node_ref
+
+    @param noderef_id: str or ObjectId
+    @return: ObjectId if everything goes right, otherwise a dict with error info
+    """
+
+    # standarlize the type of noderef_id(to string)
+    if isinstance(noderef_id, ObjectId):
+        noderef_id = str(noderef_id)
+
+    # get the node_ref
+    node_ref = db.node_ref.find_one({'_id': ObjectId(noderef_id)})
+    if node_ref is None:
+        return {'error': 'cannot find the node_ref mathcing that id'}
+    # change its location
+    db.node_ref.update({'_id': ObjectId(noderef_id)}, {'$set': {'x': float(x), 'y': float(y)}})
+    # return
+    return ObjectId(noderef_id)
+
+
+def delete(db, coll_name, ref_id):
+    """ delete a ref
+
+    :param coll_name: 'link' or 'node'
+    :param ref_id: string or ObjectId
+    :return: None if everything goes right, otherwise a dict containing err info
+    """
+    # verify collname
+    if coll_name not in ['node', 'link']:
+        return {'error': 'coll_name is invalid!'}
+
+    # standarlize the type of noderef_id(to string)
+    if isinstance(ref_id, ObjectId):
+        ref_id = str(ref_id)
+
+    # get the reference object
+    query = {'_id': ObjectId(ref_id)}
+    ref = None
+    exec("ref = db.{0}_ref.find_one(query)".format(coll_name))
+    if ref is None:
+        return {'error': 'cannot find the ref matching that id'}
+
+    # get the original object
+    query = {'_id': ref['node_id'] if coll_name == 'node' else ref['link_id']}
+    obj = None
+    exec("obj = db.{}.find_one(query)".format(coll_name))
+    if obj is None:
+        return {'error': 'cannot find the node/link matching that id'}
+
+    # remove ref from the original object
+    exec("db.%s.update({'_id': obj['_id']}, {'$pull': {'refs': ref['_id']}}, True)" % coll_name)
+
+    # remove the reference object
+    exec("db.%s_ref.remove({'_id': ObjectId(ref_id)})" % coll_name)
+    # return
+
+    return None
+
+
+
 
 
 
