@@ -122,6 +122,7 @@ def build_store():
 	collection = db['boost_store']
 	data_dict = {}
 	data_dict['last_update_time'] = datetime.now().day
+	data_dict['HEAD'] = 1
 
 	link_count = 0
 	node_count = 0
