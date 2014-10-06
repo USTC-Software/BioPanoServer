@@ -130,15 +130,15 @@ def build_store():
 	search_dict = {}
 
 	for node in db.node.find():
-		if node_pool.get(node['_id']) is None:
+		if node_pool.get(str(node['_id'])) is None:
 			node_count += 1
-			node_pool[node['_id']] = node_count
-			search_dict[node_count] = node['_id']
+			node_pool[str(node['_id'])] = node_count
+			search_dict[str(node_count)] = str(node['_id'])
 
 	for link_ref in db.link_ref.find():
 		if link_pool.get((link_ref['id1'], link_ref['id2'])) is None:
 			link_count += 1
-			link_pool[(link_ref['id1'], link_ref['id2'])] = True
+			link_pool[str(link_ref['id1'])+str(link_ref['id2'])] = True
 
 	data_dict['node_count'] = node_count
 	data_dict['link_count'] = link_count
@@ -201,16 +201,16 @@ def a_star(request):
 		# add in edge
 		link_count = 0
 		for distinct_link in link_pool:
-			id1 = distinct_link[0]
-			id2 = distinct_link[1]
+			id1 = distinct_link[0:24]
+			id2 = distinct_link[24:]
 			# ObjectId to int
 			link_count += 1
 			AddEdge(node_pool[id1], node_pool[id2], 1, link_count)
 			link_count += 1
 			AddEdge(node_pool[id2], node_pool[id1], 1, link_count)
 
-		s = node_pool[bson.ObjectId(request.POST['id1'])]
-		t = node_pool[bson.ObjectId(request.POST['id2'])]
+		s = node_pool[request.POST['id1']]
+		t = node_pool[request.POST['id2']]
 		if 'order' not in request.POST.keys():
 			order = 14
 		else:
@@ -237,7 +237,7 @@ def a_star(request):
 
 			path = []
 			for node in j:
-				path.append(str(search_dict[node]))
+				path.append(search_dict[node])
 				# path.append(db.node.find_one({'_id': search_dict[node]})['NAME'])
 			path_list.append(path)
 
