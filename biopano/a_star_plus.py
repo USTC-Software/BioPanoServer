@@ -4,6 +4,7 @@ from django.shortcuts import HttpResponse
 from pymongo import *
 from datetime import *
 import bson
+import json
 
 
 def MakeArray(n):
@@ -141,10 +142,10 @@ def build_store():
 
 	data_dict['node_count'] = node_count
 	data_dict['link_count'] = link_count
-	data_dict['node_pool'] = node_pool
-	data_dict['link_pool'] = link_pool
-	data_dict['search_dict'] = search_dict
-
+	text = ''
+	text = '\n'.join([text, json.dumps(node_pool), json.dumps(search_dict), json.dumps(link_pool)])
+	fp = open('/tmp/boost_path/store', 'w')
+	fp.write(text)
 	collection.insert(data_dict)
 
 
@@ -165,16 +166,22 @@ def a_star(request):
 		if (last_update_time is None) or (last_update_time['value'] != datetime.now().day):
 			build_store()
 		information = db.boost_store.find_one()
-
+		database_saving = datetime.now()
+		time_point['database_saving'] = database_saving - start_time
 		# count distinct node
 		node_count = information['node_count']
-		node_pool = information['node_pool']
-		search_dict = information['search_dict']
+
+		fp = open(r'/tmp/boost_path/store', 'r')
+		node_text = fp.readline().pop()
+		node_pool = json.loads(node_text)
+		search_text = fp.readline().pop()
+		search_dict = json.loads(search_text)
 		n_count_time = datetime.now()
-		time_point['node counting'] = n_count_time - start_time
+		time_point['node counting'] = n_count_time - database_saving
 		# count distinct link
 		link_count = information['link_count']
-		link_pool = information['link_pool']
+		link_text = fp.readline().pop()
+		link_pool = json.loads(link_text)
 		l_count_time = datetime.now()
 		time_point['link_counting'] = l_count_time - n_count_time
 
