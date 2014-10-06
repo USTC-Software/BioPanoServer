@@ -141,7 +141,7 @@ def build_store():
 	db.node_pool.create_index('node_count')
 
 	for link_ref in db.link_ref.find():
-		if link_pool.get(str(link_ref['id1']+str(link_ref['id2']))) is None:
+		if link_pool.get(str(link_ref['id1'])+str(link_ref['id2'])) is None:
 			link_count += 1
 			db.link_pool.insert({'id1': link_ref['id1'], 'id2': link_ref['id2']})
 			link_pool[str(link_ref['id1'])+str(link_ref['id2'])] = True
