@@ -17,3 +17,6 @@ def validate_link(dic):
     """
 
     return True
+
+def validate(dic):
+    return True

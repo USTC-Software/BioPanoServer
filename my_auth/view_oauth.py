@@ -10,8 +10,8 @@ import json
 from urllib import urlencode
 from OAuthClient import OAuthClientGoogle
 from socialoauth import SocialSites, SocialAPIError
-import socialoauth.sites.baidu
 from .settings import SOCIALOAUTH_SITES
+
 
 def login_start_google(request):
     """ a method that loads config and redirect to Google
@@ -52,6 +52,7 @@ def login_complete_google(request):
 
     profile = oauthclientgoogle.get_info(access_token)
     # print(str(profile))
+    profile['username'] = profile['email']
     profile['uid'] = profile['email']
     # login the user
     # return HttpResponse('profile get\n' + str(profile))
@@ -61,7 +62,8 @@ def login_complete_google(request):
         data = {
             'status': 'success',
             'token': str(token),
-            'user': user.pk,
+            'uid': user.pk,
+            'googleid': user.username,
         }
     else:
         data = {
@@ -96,6 +98,7 @@ def login_complete_baidu(request):
         }
         return HttpResponse(json.dumps(data))
     site = SocialSites(SOCIALOAUTH_SITES).get_site_object_by_name('baidu')
+
     try:
         site.get_access_token(code)
     except SocialAPIError as e:
@@ -104,9 +107,11 @@ def login_complete_baidu(request):
             'reason': e.error_msg,
         }
         return HttpResponse(json.dumps(data))
-    profile = {}
+
+    profile = dict()
+    profile['username'] = site.name
     profile['uid'] = site.uid
-    profile['given_name'] = site.name
+    profile['given_name'] = ''
     profile['family_name'] = ''
     profile['email'] = ''
     (user, token) = _get_user_and_token(profile)
@@ -114,7 +119,8 @@ def login_complete_baidu(request):
         data = {
             'status': 'success',
             'token': str(token),
-            'user': user.pk,
+            'uid': user.pk,
+            'baiduName': profile['username'],
         }
     else:
         data = {
@@ -132,7 +138,7 @@ def _get_user_and_token(profile):
     :return: it will be a tuple of (user, token) if everything goes right, otherwise None
     """
 
-    user, created = User.objects.get_or_create(username=profile['uid'])
+    user, created = User.objects.get_or_create(username=profile['username'])
     _update_user(user, profile)
     token, created = Token.objects.get_or_create(user=user)
     return (user, token) if user else (None, None)

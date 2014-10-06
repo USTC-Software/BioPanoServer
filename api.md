@@ -2,15 +2,15 @@
 
 ## Instruction
 
-All the following API(expect OAUTH) must have access_token parameter. 
+All the following API(expect OAUTH) must have Authorization parameter in Http Header. 
 
-For GET request, it should be added in URL, like:
 
-	GET /projects&access_token=7dbd428f731035f771b8d15063f61864
 
-For POST request, it should be added as a POST form parameter in request body.
+		Authorization:  Token 13sdfs32fsadf 
 
-The default response is in json, if you want the response in other format, please add parameter "format=XML", "format=YAML", etc. 
+
+
+>The default response is in json, if you want the response in other format, please add parameter "format=XML", "format=YAML", etc. 
 
 If anything goes south, you will get a error response:
 	
@@ -23,22 +23,35 @@ If anything goes south, you will get a error response:
 
 	POST	/auth/oauth/(baidu|google)/login
 	GET		/auth/oauth/(baidu|google)/complete&...
-	GET		/user/<uid>
-	GET		/project
-	POST	/project
-	GET		/project/<pid>
-	POST	/project/<pid>/collaborator
+	#GET    /user/<uid>
+	
+	
+	GET		/project/project  # list my project
+	POST	/project/project  # add
+	
+	GET		/project/<pid>  # login
+	PUT     /project<pid>  # modify
+	DELETE  /project<pid>  # delete
+	
+	POST	/project/<pid>/collaborator/<uid> 
 	DELETE	/project/<pid>/collaborator/<uid>
-	GET		/species
-	POST	/species
-	GET		/species/<sid>
-	GET		/data/(node|link)/<ref_id>
+	
+	
+	GET		/data/(node|link)/<id>
 	POST	/data/(node|link)
 	DELETE	/data/(node|link)/<ref_id>
-	GET		/data/(node|link)/<ref_id>/link
+	PATCH 	/data/node/<ref_id>
+	PUT		/data/(node|link)/<id>
+	
+	GET 	/data/project/<pid>
+	
+>GET		/data/(node|link)/<ref_id>/link
+@zhaosensen
+	
 	POST	/search/(node|link)
 	POST	/search/user
 	POST	/search/project
+	
 	POST	/algorithm/shortestpath
 	POST	/algorithm/blastn
 
@@ -61,21 +74,24 @@ success :
 	{
 		"status": "success",
 	 	"token": "16517d0809f225b7b65a79ef1dc8c552441bf58a", 
-	 	"uid": 8
+	 	"uid": 8,
+	 	"googleid": "zhoulong6@gmail.com",
+	 	[或者"baiduid": "347238434"]
 	}	
 	
 ## LIST PROJECT
 
 request:
 
-	GET /project
+	GET .org/project/project (**没有s**)
 
 response:
 
-	{
-		'projects':
+	{	
+		'status':'success',
+		'resultes': 
 		[
-			<pid>
+			...
 		]
 	}
 
@@ -84,15 +100,16 @@ response:
 
 request:
 
-	POST /project
+	POST .org/project/project
 	
-	project_name:<string>
-	species:<string>
-	description:<string>
+	prj_name:<string>
+	[species:<string>]
+	[description:<string>]
 
 response:
 
 	{
+		'status':'success',
 		'pid':...
 	}
 
@@ -101,38 +118,56 @@ response:
 
 request:
 
-	GET /project/<pid>
+	GET .org/project/<pid>
 
 success response:
 
 	{
-		'pid':....,
-		'prooject_name':...,
-		'species':...,
-		'description':...,
-		'collaborators':
-		[
-		]
+		'status': 'success',
+		'result':
+		{
+			'pid':....,
+			'prj_name':...,
+			'author':...,
+			'authorid':...,
+			'species':...,
+			'description':...,
+			'collaborators':
+			[1, 5, ...
+			]
+		}
 	}
 
 ## DELETE PROJECT
 
 request:
 
-	DELETE /project/<pid>
+	DELETE .org/project/<pid>
 
 response:
 
 	{
 		'status':'success'
 	}
+	
+## MODIFY PROJECT
+request:
+	
+	PUT .org/project/<pid>
+	request体(类似POST):
+	
+	name : ...,
+	species: ...,
+	description:...
+	
+	
 
 ## ADD COLLABORATOR
 
 request:
 
-	POST /project/<pid>/collaborator
-	collaborator:<uid>
+	POST .org/project/<pid>/collaborator
+	uid:<uid>
 
 response:
 
@@ -144,7 +179,7 @@ response:
 
 request:
 
-	DELETE /project/<pid>/collaborator/<uid>
+	DELETE .org/project/<pid>/collaborator/<uid>
 
 response:
 
@@ -152,49 +187,12 @@ response:
 		'status':'success'
 	}
 
-## LIST SPECIES
 
-request:
-
-	GET /species
-
-response:
-
-	{
-		'species':
-		[
-			{
-				'species_id': <string>,
-				'species_name':'Ecolo'
-			},
-			{
-				'species_id': <string>,
-				'species_name':'Pseudomonas'
-			}
-		]
-	}
-
-
-## ADD SPECIES
-
-request:
-
-	POST /species
-	
-	species_name: <string>
-
-response:
-
-	{
-		'species_id': <string>
-	}
-
-	
 ## LOGOUT:
 
 request:
 	
-	POST /auth/logout
+	POST .org/auth/logout
 
 response:
 
@@ -229,6 +227,14 @@ request:
 		'NAME': 'trnL',
 		...
 	}
+	x: 123.123131
+	y: 321314.324
+	pid: 12
+	
+	----
+	PS:
+	x,y(float) is optional
+	pid,info are required
 		
 response:
 
@@ -241,18 +247,26 @@ response:
 
 request:
 
-	POST /data/(node|link)
+	PUT /data/(node|link)/<node\link_id>/
 	
-	'info':
-	{
-		'id': '123'
-	}
-
+	pid: 23
+	x: 123.123
+	y: -213.231
+	
 response:
 
 	{
 		'ref_id': '<ref_id>'	
 	}
+	
+## PATCH 
+request:
+
+	PATCH /data/(node|link)/<ref_id
+	
+	x: 1231.123
+	y: 232.234234
+	
 
 ## DELETE
 
@@ -267,22 +281,24 @@ response:
 	}
 		
 
-## NODE TO LINK
+## LIST ALL DATA IN PROJECT
 
 request:
-
-	GET /data/node/<ref_id>/link
+		
+	GET 	/data/project/<pid>
 
 response:
-
+	
 	{
-		'links':
-		[
-			7dbd428f731428f703,
-			5f771b8d158d157063,
-			...
-		]
+		'status': 'success',
+		'node': [
+					{},{}...
+				],
+		'link': [
+					{},{}..
+				],
 	}
+
 	
 ## SEARCH NODE|LINK
 
@@ -409,10 +425,29 @@ request:
 request:
 
 	POST /search/user
+	name: <name>
 	
+	----
+	PS: It will be fuzzy search
+	eg:
+		POST /search/user
+		name: zhoulo
+		
 response:
 
-	//TODO
+	{
+		'status': 'success', 
+		'results': 
+		[
+			{
+				'username': <username>,
+                'first_name': <first_name>,
+                'last_name': <last_name>,
+               	'id':<uid>,
+			},
+			{}...
+		]
+	}
 
 
 ## SEARCH PROJECT
@@ -420,10 +455,29 @@ response:
 request:
 
 	POST /search/project
-
+	query: <query>
+	
+	PS: query must conform the json format, and all the fields are shown as following:
+	 'name','author','authorid',
+	
 response:
 
-	//TODO
+	{
+		'status': 'success',
+		'results': 
+		{
+			{
+				'pid':...,
+				'name':...,
+				'authorid':...,
+				'collaborators':
+				[
+					2,412,4...
+				]
+			},
+			{}...
+		}
+	}
 
 ## SHORTESTPATH
 
