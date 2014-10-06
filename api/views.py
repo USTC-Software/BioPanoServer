@@ -1,5 +1,6 @@
-import json
+__author__ = 'feiyicheng'
 
+import json
 from django.shortcuts import HttpResponse
 from pymongo import Connection
 from bson.objectid import ObjectId
