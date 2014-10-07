@@ -5,6 +5,6 @@ from django.shortcuts import HttpResponse
 
 
 def node_relocate(request):
-	
+
 	pass
 
