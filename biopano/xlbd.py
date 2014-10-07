@@ -185,7 +185,7 @@ def blast(request):
         fasta_path should be appended with user name such as input_beibei.fasta
         so that there wouldn't be conflict when multiuser use blast
         '''
-        fasta_path = BLAST_PATH + '/input_' + str(datetime.nows().microsecond) +'.fasta'
+        fasta_path = BLAST_PATH + '/input_' + str(datetime.now().microsecond) +'.fasta'
         fasta_fp = open(fasta_path, 'w')
         fasta_fp.write('>query\n')
         fasta_fp.write(request.POST['sequence'] + '\n')
