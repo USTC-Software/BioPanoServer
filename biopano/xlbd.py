@@ -152,6 +152,8 @@ def id_parse(stdout):
         dict = {}
         log = db.u_t_r.find_one({'_id': bson.ObjectId(line.split()[1])})
         dict['id'] = str(log['node_id'])
+        dict['NAME'] = db.node.find_one({'_id': log['node_id']})['NAME']
+        dict['TYPE'] = db.node.find_one({'_id': log['node_id']})['TYPE']
         dict['evalue'] = line.split()[10]
         result_list.append(dict)
         del dict
@@ -164,7 +166,7 @@ def blast(request):
             check_blast_fasta(True)
         else:
             check_blast_fasta(False)
-        if 'sequence' not in request.POST.keys() or 'user' not in request.POST.keys():
+        if 'sequence' not in request.POST.keys():
             key_list = str(request.POST.keys())
             return HttpResponse("{'status':'error', 'reason':'keyword sequence is not in request.', 'keys':" + key_list + "}")
 
@@ -183,7 +185,7 @@ def blast(request):
         fasta_path should be appended with user name such as input_beibei.fasta
         so that there wouldn't be conflict when multiuser use blast
         '''
-        fasta_path = BLAST_PATH + '/input_' + request.POST['user'] +'.fasta'
+        fasta_path = BLAST_PATH + '/input_' + str(datetime.nows().microsecond) +'.fasta'
         fasta_fp = open(fasta_path, 'w')
         fasta_fp.write('>query\n')
         fasta_fp.write(request.POST['sequence'] + '\n')
@@ -193,7 +195,7 @@ def blast(request):
 
         stdout, stderr = cline()
         result_list = id_parse(stdout)
-
+        os.remove(fasta_path)
         test_fp = open(BLAST_PATH + '/stdout.txt', 'w')
         test_fp.write(stdout + '\n\n' + stderr)
         test_fp.close()
