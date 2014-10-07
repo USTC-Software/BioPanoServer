@@ -1,6 +1,7 @@
 from pymongo import *
 from django.shortcuts import HttpResponse
 import bson
+import json
 from datetime import *
 from Bio.Blast.Applications import NcbiblastnCommandline
 import os
@@ -195,12 +196,13 @@ def blast(request):
 
         stdout, stderr = cline()
         result_list = id_parse(stdout)
+        result_list = json.dumps(result_list)
         os.remove(fasta_path)
         test_fp = open(BLAST_PATH + '/stdout.txt', 'w')
         test_fp.write(stdout + '\n\n' + stderr)
         test_fp.close()
 
-        return HttpResponse(str(result_list))
+        return HttpResponse(result_list)
 
     elif request.method == 'GET':
         return HttpResponse("{'function':'blast', 'status':'error', 'reason':'no GET method setting'}")
