@@ -23,3 +23,12 @@ def node_relocate(request):
 			return HttpResponse("{'status': 'error', 'id': " + id + "}")
 	return HttpResponse("{'status': 'success}")
 
+
+def node_add(request):
+	if request.method != 'POST':
+		return HttpResponse('{"function": "node_add_batch", "error": "POST method is requested"}')
+	para_list = request.POST['para_list']
+	para_list = json.loads(para_list)
+
+
+
