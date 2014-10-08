@@ -135,7 +135,7 @@ def build_store():
 	node_pool = {}
 	search_dict = {}
 	H2O_id = db.node.find_one({'NAME': 'H2O'})['_id']
-	for node in db.node.find({'_id': {'$not': H2O_id}}):
+	for node in db.node.find({'_id': {'$neg': H2O_id}}):
 		if node_pool.get(node['_id']) is None:
 			node_count += 1
 			db.node_pool.insert({'node_id': node['_id'], 'node_count': node_count})
