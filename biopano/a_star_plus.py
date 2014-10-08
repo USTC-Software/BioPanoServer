@@ -133,9 +133,8 @@ def build_store():
 	node_count = 0
 	link_pool = {}
 	node_pool = {}
-	search_dict = {}
 	H2O_id = db.node.find_one({'NAME': 'H2O'})['_id']
-	for node in db.node.find({'_id': {'$neg': H2O_id}}):
+	for node in db.node.find({'_id': {'$ne': H2O_id}}):
 		if node_pool.get(node['_id']) is None:
 			node_count += 1
 			db.node_pool.insert({'node_id': node['_id'], 'node_count': node_count})
@@ -143,7 +142,7 @@ def build_store():
 	db.node_pool.create_index('node_id')
 	db.node_pool.create_index('node_count')
 
-	for link_ref in db.link_ref.find({'$and': [{'id1': {'$not': H2O_id}}, {'id2': {'$not': H2O_id}}]}):
+	for link_ref in db.link_ref.find({'$and': [{'id1': {'$ne': H2O_id}}, {'id2': {'$ne': H2O_id}}]}):
 		if link_pool.get(str(link_ref['id1'])+str(link_ref['id2'])) is None:
 			link_count += 1
 			db.link_pool.insert({'id1': link_ref['id1'], 'id2': link_ref['id2']})
@@ -151,19 +150,12 @@ def build_store():
 
 	data_dict['node_count'] = node_count
 	data_dict['link_count'] = link_count
-	text = ''
-	text = '\n'.join([text, json.dumps(node_pool), json.dumps(search_dict), json.dumps(link_pool)])
-	fp = open('/tmp/boost_path/store', 'w')
-	fp.write(text)
 	collection.insert(data_dict)
 
 
 def a_star(request):
 	global edge,edge2,next,next2,ww,point,point2,pre,dis
 	if request.method == 'POST':
-		link_count = 0
-		node_count = 0
-		link_pool = []
 		node_pool = {}
 		time_point = {}
 		start_time = datetime.now()
