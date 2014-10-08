@@ -26,9 +26,35 @@ def node_relocate(request):
 
 def node_add(request):
 	if request.method != 'POST':
-		return HttpResponse('{"function": "node_add_batch", "error": "POST method is requested"}')
+		return HttpResponse('{"function": "add_batch", "error": "POST method is requested"}')
 	para_list = request.POST['para_list']
 	para_list = json.loads(para_list)
+	result_list = []
+	for para in para_list:
+		sub_request = request
+		sub_request.POST = para
+
+		receiver = api.views.add_node(sub_request)
+		result_list.append(json.laads(receiver.content))
+	result_text = json.dumps(result_list)
+	return HttpResponse(result_text)
+
+
+def link_add(request):
+	if request.method != 'POST':
+		return HttpResponse('{"function": "add_batch", "error": "POST method is requested"}')
+	para_list = request.POST['para_list']
+	para_list = json.loads(para_list)
+	result_list = []
+	for para in para_list:
+		sub_request = request
+		sub_request.POST = para
+
+		receiver = api.views.add_link(sub_request)
+		result_list.append(json.laads(receiver.content))
+	result_text = json.dumps(result_list)
+	return HttpResponse(result_text)
+
 
 
 

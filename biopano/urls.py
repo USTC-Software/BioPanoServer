@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     url(r'^find_way/$', a_star_plus.a_star),   # POST
     url(r'^node/batch_relocate/$', batch.node_relocate),  # PATCH
     url(r'^node/batch_add/&', batch.node_add),  # POST
+    url(r'^link/batch_add/&', batch.link_add)
     #url(r'^')
 
 )
