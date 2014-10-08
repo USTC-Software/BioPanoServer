@@ -49,6 +49,7 @@ point2 = []
 pre = []
 dis = []
 
+
 def AddEdge(u,v,w,ee):
 	global edge, edge2, ww, next, next2, point, point2
 	edge[ee]=v
@@ -59,12 +60,14 @@ def AddEdge(u,v,w,ee):
 	next2[ee]=point2[v]
 	point2[v]=ee
 
+
 def Relax(u,v,c):
 	global dis
 	if dis[v]>dis[u]+c:
 		dis[v]=dis[u]+c
 		return True
 	return False
+
 
 def SPFA(src, n):
 	global dis, point2, next2, ww, inf
@@ -83,6 +86,7 @@ def SPFA(src, n):
 				q.put(v)
 				vis[v] = True
 			i = next2[i]
+
 
 def Astar(src, to, k):
 	global dis
@@ -159,9 +163,8 @@ def a_star(request):
 	if request.method == 'POST':
 		link_count = 0
 		node_count = 0
-		link_pool = {}
+		link_pool = []
 		node_pool = {}
-		search_dict = {}
 		time_point = {}
 		start_time = datetime.now()
 
@@ -184,13 +187,6 @@ def a_star(request):
 		time_point['node counting'] = n_count_time - database_saving
 		# count distinct link
 		link_count = information['link_count']
-		for link in db.link_pool.find():
-			link_pool['id1'] = link['id1']
-			link_pool['id2'] = link['id2']
-
-		l_count_time = datetime.now()
-		time_point['link_counting'] = l_count_time - n_count_time
-
 		# initial vars
 		edge = MakeArray(link_count*2)
 		edge2 = MakeArray(link_count*2)
@@ -202,13 +198,13 @@ def a_star(request):
 		dis = [inf for i in xrange(node_count + 1)]
 
 		initial_time = datetime.now()
-		time_point['initial'] = initial_time - l_count_time
+		time_point['initial'] = initial_time - n_count_time
 
 		# add in edge
 		link_count = 0
-		for distinct_link in link_pool:
-			id1 = distinct_link[0:24]
-			id2 = distinct_link[24:]
+		for link in db.link_pool.find():
+			id1 = link['id1']
+			id2 = link['id2']
 			# ObjectId to int
 			link_count += 1
 			AddEdge(node_pool[id1], node_pool[id2], 1, link_count)
@@ -243,11 +239,13 @@ def a_star(request):
 
 			path = []
 			for node in j:
-				result = {'_id': str(search_dict[node])}
-				node = db.node.find_one({'_id': search_dict[node]})
+
+				node = db.node.find_one({'_id': db.node_pool.find_one({'node_count': node})['node_id']})
+				result = {'_id': node['_id']}
 				result['NAME'] = node['NAME']
 				result['TYPE'] = node['TYPE']
 				path.append(result)
+				del result
 				# path.append(db.node.find_one({'_id': search_dict[node]})['NAME'])
 			path_list.append(path)
 		
