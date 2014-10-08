@@ -147,11 +147,15 @@ def check_blast_fasta(rebuild_flat):
 def id_parse(stdout):
     line_list = stdout.split('\n')
     result_list = []
+    exist_id = {}
     for line in line_list:
         if line == '':
             continue
         dict = {}
         log = db.u_t_r.find_one({'_id': bson.ObjectId(line.split()[1])})
+        if exist_id.get(log['node_id']) is not None:
+            continue
+        exist_id[log['node_id']] = 1
         dict['id'] = str(log['node_id'])
         dict['NAME'] = db.node.find_one({'_id': log['node_id']})['NAME']
         dict['TYPE'] = db.node.find_one({'_id': log['node_id']})['TYPE']

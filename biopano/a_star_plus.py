@@ -130,17 +130,16 @@ def build_store():
 	link_pool = {}
 	node_pool = {}
 	search_dict = {}
-
-	for node in db.node.find():
-		if node_pool.get(str(node['_id'])) is None:
+	H2O_id = db.node.find_one({'NAME': 'H2O'})['_id']
+	for node in db.node.find({'_id': {'$not': H2O_id}}):
+		if node_pool.get(node['_id']) is None:
 			node_count += 1
 			db.node_pool.insert({'node_id': node['_id'], 'node_count': node_count})
-			node_pool[str(node['_id'])] = node_count
-			search_dict[str(node_count)] = str(node['_id'])
+			node_pool[node['_id']] = node_count
 	db.node_pool.create_index('node_id')
 	db.node_pool.create_index('node_count')
 
-	for link_ref in db.link_ref.find():
+	for link_ref in db.link_ref.find({'$and': [{'id1': {'$not': H2O_id}}, {'id2': {'$not': H2O_id}}]}):
 		if link_pool.get(str(link_ref['id1'])+str(link_ref['id2'])) is None:
 			link_count += 1
 			db.link_pool.insert({'id1': link_ref['id1'], 'id2': link_ref['id2']})
@@ -178,17 +177,17 @@ def a_star(request):
 		# count distinct node
 		node_count = information['node_count']
 
-		fp = open(r'/tmp/boost_path/store', 'r')
-		node_text = fp.readline().pop()
-		node_pool = json.loads(node_text)
-		search_text = fp.readline().pop()
-		search_dict = json.loads(search_text)
+		for node in db.node_pool.find():
+			node_pool[node['node_id']] = node['node_count']
+
 		n_count_time = datetime.now()
 		time_point['node counting'] = n_count_time - database_saving
 		# count distinct link
 		link_count = information['link_count']
-		link_text = fp.readline().pop()
-		link_pool = json.loads(link_text)
+		for link in db.link_pool.find():
+			link_pool['id1'] = link['id1']
+			link_pool['id2'] = link['id2']
+
 		l_count_time = datetime.now()
 		time_point['link_counting'] = l_count_time - n_count_time
 
