@@ -164,8 +164,8 @@ def a_star(request):
 
 		# boost by database saving
 		db = MongoClient()['igemdata_new']
-		last_update_time = db.boost_store.find_one({'last_update_time': {'$exists': 1}})
-		if (last_update_time is None) or (last_update_time['value'] != datetime.now().day):
+		information = db.boost_store.find_one({'last_update_time': {'$exists': 1}})
+		if (information is None) or (information['last_update_time'] != datetime.now().day):
 			build_store()
 		#build_store()
 		information = db.boost_store.find_one()
