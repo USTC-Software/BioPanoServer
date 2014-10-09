@@ -203,8 +203,8 @@ def a_star(request):
 			link_count += 1
 			AddEdge(node_pool[id2], node_pool[id1], 1, link_count)
 
-		s = node_pool[request.POST['id1']]
-		t = node_pool[request.POST['id2']]
+		s = node_pool[bson.ObjectId(request.POST['id1'])]
+		t = node_pool[bson.ObjectId(request.POST['id2'])]
 		if 'order' not in request.POST.keys():
 			order = 14
 		else:
