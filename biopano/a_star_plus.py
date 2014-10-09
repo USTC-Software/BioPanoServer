@@ -135,17 +135,17 @@ def build_store():
 	node_pool = {}
 	H2O_id = db.node.find_one({'NAME': 'H2O'})['_id']
 	for node in db.node.find({'_id': {'$ne': H2O_id}}):
-		if node_pool.get(node['_id']) is None:
+		if node_pool.get(str(node['_id'])) is None:
 			node_count += 1
-			db.node_pool.insert({'node_id': node['_id'], 'node_count': node_count})
-			node_pool[node['_id']] = node_count
+			db.node_pool.insert({'node_id': str(node['_id']), 'node_count': node_count})
+			node_pool[str(node['_id'])] = node_count
 	db.node_pool.create_index('node_id')
 	db.node_pool.create_index('node_count')
 
 	for link_ref in db.link_ref.find({'$and': [{'id1': {'$ne': H2O_id}}, {'id2': {'$ne': H2O_id}}]}):
 		if link_pool.get(str(link_ref['id1'])+str(link_ref['id2'])) is None:
 			link_count += 1
-			db.link_pool.insert({'id1': link_ref['id1'], 'id2': link_ref['id2']})
+			db.link_pool.insert({'id1': str(link_ref['id1']), 'id2': str(link_ref['id2'])})
 			link_pool[str(link_ref['id1'])+str(link_ref['id2'])] = True
 
 	data_dict['node_count'] = node_count
@@ -157,6 +157,8 @@ def a_star(request):
 	global edge,edge2,next,next2,ww,point,point2,pre,dis
 	if request.method == 'POST':
 		node_pool = {}
+		link_pool = []
+		search_pool = {}
 		time_point = {}
 		start_time = datetime.now()
 
@@ -169,16 +171,18 @@ def a_star(request):
 		information = db.boost_store.find_one()
 		database_saving = datetime.now()
 		time_point['database_saving'] = database_saving - start_time
-		# count distinct node
+		# count and read database to memory
 		node_count = information['node_count']
-
+		link_count = information['link_count']
 		for node in db.node_pool.find():
 			node_pool[node['node_id']] = node['node_count']
+			search_pool[node['node_count']] = node['node_id']
+		for link in db.link_pool.find():
+			link_pool.append((link['id1'], link['id2']))
 
 		n_count_time = datetime.now()
-		time_point['node counting'] = n_count_time - database_saving
-		# count distinct link
-		link_count = information['link_count']
+		time_point['database reading'] = n_count_time - database_saving
+
 		# initial vars
 		edge = MakeArray(link_count*2)
 		edge2 = MakeArray(link_count*2)
@@ -194,17 +198,19 @@ def a_star(request):
 
 		# add in edge
 		link_count = 0
-		for link in db.link_pool.find():
-			id1 = link['id1']
-			id2 = link['id2']
+		for link in link_pool:
+			id1 = link[0]
+			id2 = link[1]
 			# ObjectId to int
 			link_count += 1
-			AddEdge(node_pool[id1], node_pool[id2], 1, link_count)
+			num_id1 = node_pool[id1]
+			num_id2 = node_pool[id2]
+			AddEdge(num_id1, num_id2, 1, link_count)
 			link_count += 1
-			AddEdge(node_pool[id2], node_pool[id1], 1, link_count)
+			AddEdge(num_id2, num_id1, 1, link_count)
 
-		s = node_pool[bson.ObjectId(request.POST['id1'])]
-		t = node_pool[bson.ObjectId(request.POST['id2'])]
+		s = node_pool[request.POST['id1']]
+		t = node_pool[request.POST['id2']]
 		if 'order' not in request.POST.keys():
 			order = 14
 		else:
@@ -231,11 +237,10 @@ def a_star(request):
 
 			path = []
 			for node in j:
-
-				node = db.node.find_one({'_id': db.node_pool.find_one({'node_count': node})['node_id']})
-				result = {'_id': str(node['_id'])}
-				result['NAME'] = node['NAME']
-				result['TYPE'] = node['TYPE']
+				result = {'_id': search_pool[node]}
+				object_node = db.node.find_one({'_id': bson.ObjectId(result['_id'])})
+				result['NAME'] = object_node['NAME']
+				result['TYPE'] = object_node['TYPE']
 				path.append(result)
 				del result
 				# path.append(db.node.find_one({'_id': search_dict[node]})['NAME'])
