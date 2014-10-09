@@ -233,7 +233,7 @@ def a_star(request):
 			for node in j:
 
 				node = db.node.find_one({'_id': db.node_pool.find_one({'node_count': node})['node_id']})
-				result = {'_id': node['_id']}
+				result = {'_id': str(node['_id'])}
 				result['NAME'] = node['NAME']
 				result['TYPE'] = node['TYPE']
 				path.append(result)
