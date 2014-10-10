@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     url(r'^alignment/$', xlbd.blast),     # POST
     url(r'^find_way/$', a_star_plus.a_star),   # POST
     url(r'^node/batch/$', batch.node_batch),  # PATCH, POST, DELETE, PUT
-    url(r'^link/batch/$', batch.link_add),  # POST, DELETE
+    url(r'^link/batch/$', batch.link_batch),  # POST, DELETE
     #url(r'^')
 
 )
