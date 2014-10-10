@@ -154,8 +154,11 @@ def build_store():
 
 
 def a_star(request):
-	global edge,edge2,next,next2,ww,point,point2,pre,dis
+	global edge,edge2,next,next2,ww,point,point2,dis,q,pq
+
 	if request.method == 'POST':
+		q = Queue()
+		pq = PriorityQueue()
 		node_pool = {}
 		link_pool = []
 		search_pool = {}

@@ -2,6 +2,7 @@ __author__ = 'Beibeihome'
 
 from pymongo import *
 from django.shortcuts import HttpResponse
+from django.http import QueryDict
 import bson
 import json
 
@@ -60,3 +61,13 @@ def look_around(request, **kwargs):
 
     elif request.method == 'POST':
         return HttpResponse("{'status':'error', 'reason':'no POST method setting'}")
+
+
+def request_show(request):
+    body = request.body
+    paras = QueryDict(body)
+
+    #paras.get('id1')
+    result = 'body:\t ' + body + '\nparas:\n' + str(paras) + '\nid1:\t' + str(paras.get('id1')) + '\nrequest:\n' + str(request)
+
+    return HttpResponse(result)
