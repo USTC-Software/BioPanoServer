@@ -66,6 +66,6 @@ def look_around(request, **kwargs):
 def request_show(request):
     body = request.body
     paras = QueryDict(body)
-    result = 'body:\t ' + body + '\nrequest:\n' + str(request)
+    result = 'body:\t ' + body + '\nparas:\n' + str(paras) + '\nrequest:\n' + str(request)
 
     return HttpResponse(result)
