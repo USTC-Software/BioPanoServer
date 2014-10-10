@@ -3,7 +3,7 @@ from django.contrib import admin
 import views
 import xlbd
 import a_star_plus
-#import batch
+import batch
 from django.conf import settings
 from django.conf.urls.static import static
 admin.autodiscover()
@@ -16,8 +16,8 @@ urlpatterns = patterns('',
     url(r'^node/(?P<obj_id>[\w]+)/link/$', views.look_around),    # POST
     url(r'^alignment/$', xlbd.blast),     # POST
     url(r'^find_way/$', a_star_plus.a_star),   # POST
-    #url(r'^node/batch/$', batch.node_batch),  # PATCH, POST, DELETE, PUT
-    #url(r'^link/batch/&', batch.link_add),  # POST, DELETE
+    url(r'^node/batch/$', batch.node_batch),  # PATCH, POST, DELETE, PUT
+    url(r'^link/batch/$', batch.link_add),  # POST, DELETE
     #url(r'^')
 
 )
