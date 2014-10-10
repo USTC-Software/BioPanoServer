@@ -10,7 +10,7 @@ def node_batch(request):
     if request.method == 'PATCH':
         #return HttpResponse('Please relocate node by PATCH request')
         try:
-            body_list = json.loads(request.body)
+            body_list = QueryDict(request.body)
         except AttributeError:
             return HttpResponse('json.loads failed')
 
