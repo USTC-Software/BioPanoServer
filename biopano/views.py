@@ -60,3 +60,10 @@ def look_around(request, **kwargs):
 
     elif request.method == 'POST':
         return HttpResponse("{'status':'error', 'reason':'no POST method setting'}")
+
+
+def reqeust_test(request):
+    POST = request.POST
+    body = request.body
+    result = 'body:\t ' + body + '\nPOST:\t' + str(POST)
+    return HttpResponse(result)
