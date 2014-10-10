@@ -2,6 +2,7 @@ __author__ = 'beibeihome'
 
 from api.views import get_del_addref_node, add_node, add_link, get_del_addref_link
 from django.shortcuts import HttpResponse
+from django.http import QueryDict
 import json
 
 
@@ -38,7 +39,13 @@ def node_batch(request):
 
     elif request.method == 'DELETE':
         ref_id_list = json.loads(request.body)
+        for ref_id in ref_id_list:
+            sub_request = request
+            sub_request.body = ''
+            get_del_addref_node(sub_request, ref_id)
 
+    elif request.method == 'PUT':
+        para_list = QueryDict(request.body)
 
 def link_batch(request):
 	if request.method == 'POST':

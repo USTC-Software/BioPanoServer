@@ -2,6 +2,7 @@ __author__ = 'Beibeihome'
 
 from pymongo import *
 from django.shortcuts import HttpResponse
+from django.http import QueryDict
 import bson
 import json
 
@@ -63,8 +64,8 @@ def look_around(request, **kwargs):
 
 
 def request_show(request):
-    POST = request.POST
     body = request.body
-    result = 'body:\t ' + body + '\nPOST:\t' + str(POST) + '\nrequest:\n' + str(request)
+    paras = QueryDict(body)
+    result = 'body:\t ' + body + '\nrequest:\n' + str(request)
 
     return HttpResponse(result)
