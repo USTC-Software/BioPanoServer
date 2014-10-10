@@ -65,5 +65,6 @@ def look_around(request, **kwargs):
 def request_show(request):
     POST = request.POST
     body = request.body
-    result = 'body:\t ' + body + '\nPOST:\t' + str(POST)
+    result = 'body:\t ' + body + '\nPOST:\t' + str(POST) + '\nrequest:\n' + str(request)
+
     return HttpResponse(result)
