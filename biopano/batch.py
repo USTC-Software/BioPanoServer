@@ -1,6 +1,6 @@
 __author__ = 'beibeihome'
 
-import api
+from api.views import *
 from django.shortcuts import HttpResponse
 import json
 
@@ -18,7 +18,7 @@ def node_batch(request):
 			sub_request.body = body
 			id = body['id']
 
-			receiver = api.views.get_del_addref_node(sub_request, id)
+			receiver = get_del_addref_node(sub_request, id)
 			if receiver.content != "{'status': 'success}":
 				return HttpResponse("{'status': 'error', 'id': " + id + "}")
 		return HttpResponse("{'status': 'success}")
@@ -31,7 +31,7 @@ def node_batch(request):
 			sub_request = request
 			sub_request.POST = para
 
-			receiver = api.views.add_node(sub_request)
+			receiver = add_node(sub_request)
 			result_list.append(json.loads(receiver.content))
 		result_text = json.dumps(result_list)
 		return HttpResponse(result_text)
@@ -52,7 +52,7 @@ def link_batch(request):
 			sub_request = request
 			sub_request.POST = para
 
-			receiver = api.views.add_link(sub_request)
+			receiver = add_link(sub_request)
 			result_list.append(json.laads(receiver.content))
 		result_text = json.dumps(result_list)
 		return HttpResponse(result_text)
