@@ -62,7 +62,7 @@ def look_around(request, **kwargs):
         return HttpResponse("{'status':'error', 'reason':'no POST method setting'}")
 
 
-def reqeust_show(request):
+def request_show(request):
     POST = request.POST
     body = request.body
     result = 'body:\t ' + body + '\nPOST:\t' + str(POST)
