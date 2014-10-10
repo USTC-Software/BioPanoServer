@@ -1,4 +1,5 @@
-docker run --name mysqlex --link biopano:mysql -e MYSQL_ROOT_PASSWORD=SyntheticBiology -d mysql
+# docker run --name mysqlex --link biopano:mysql -e MYSQL_ROOT_PASSWORD=SyntheticBiology -d mysql
+docker run --name mysqlex -e MYSQL_ROOT_PASSWORD=mysecretpassword -v /srv/biopano/mysql:/var/lib/mysql -d mysql
 
 docker run --name mongoex --link biopano:mongo -d mongo
 
@@ -9,7 +10,7 @@ docker run --name nginxex -v /some/nginx.conf:/etc/nginx.conf:ro -d nginx
 
 apt-get install mysql-server libmysqld-dev python python-dev python-pip mongodb git
 
-pip install django MySQL-python django-social-auth dict2xml pymongo
+pip install django MySQL-python django-social-auth dict2xml pymongo djangorestframework
 
 CREATE USER 'master'@'localhost' IDENTIFIED BY 'SyntheticBiology';
 

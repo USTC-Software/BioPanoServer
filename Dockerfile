@@ -9,7 +9,10 @@ RUN apt-get install -y mongodb
 RUN apt-get install -y nginx
 
 # install openLDAP
-RUN apt-get install slapd libldap2-dev libsasl2-dev libssl-dev
+RUN apt-get install libsasl2-dev libssl-dev libmysqlclient-dev libpq-dev
 
 # install python
-RUN apt-get install -y python python-dev python-pip build-essential
+RUN apt-get install -y python python-dev python-pip build-essential libmysqlclient-dev libpq-dev
+
+
+EXPOSE 8000
