@@ -1,6 +1,6 @@
 __author__ = 'beibeihome'
 
-from api.views import *
+from api.views import get_del_addref_node, add_node, add_link, get_del_addref_link
 from django.shortcuts import HttpResponse
 import json
 
