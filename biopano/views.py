@@ -5,6 +5,7 @@ from django.shortcuts import HttpResponse
 from django.http import QueryDict
 import bson
 import json
+import urllib
 
 
 db = MongoClient()['igemdata_new']
@@ -66,7 +67,15 @@ def look_around(request, **kwargs):
 def request_show(request):
     body = request.body
     paras = QueryDict(body)
-
+    body = QueryDict(request.body)
+    para_list = json.loads(body['para_list'])
+    result_list = []
+    for para in para_list:
+        sub_request = request
+        sub_request.body = urllib.urlencode(para)
+        result_list.append(json.loads(receiver.content))
+    result_text = json.dumps(result_list)
+    return HttpResponse(result_text)
     #paras.get('id1')
     result = 'body:\t ' + body + '\nparas:\n' + str(paras) + '\nid1:\t' + str(paras.get('id1')) + '\nrequest:\n' + str(request)
 
