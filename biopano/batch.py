@@ -88,7 +88,7 @@ def batch(request):
             for para in para_list:
                 sub_request = request
                 sub_request.POST = para
-                sub_request.method = 'PUT's
+                sub_request.method = 'PUT'
                 receiver = get_del_addref_link(sub_request, ID=str(para['ID']))
                 #one_order_result.append(json.loads(receiver.content))
             #result_list.append(one_order_result)
