@@ -22,8 +22,8 @@ def batch(request):
                 sub_request.method = 'PATCH'
 
                 receiver = get_del_addref_node(sub_request, ID=str(para['ID']))
-                one_order_result.append(json.loads(receiver.content))
-            result_list.append(one_order_result)
+                #one_order_result.append(json.loads(receiver.content))
+            #result_list.append(one_order_result)
 
         elif 'ADD_NODE' in order.keys():
             para_list = order['ADD_NODE']
@@ -33,8 +33,8 @@ def batch(request):
                 sub_request.POST = para
 
                 receiver = add_node(sub_request)
-                one_order_result.append(json.loads(receiver.content))
-            result_list.append(one_order_result)
+                #one_order_result.append(json.loads(receiver.content))
+            #result_list.append(one_order_result)
 
         elif 'DELETE_NODE' in order.keys():
             ref_id_list = order['DELETE_NODE']
@@ -44,8 +44,8 @@ def batch(request):
                 sub_request.POST = {}
                 sub_request.method = 'DELETE'
                 receiver = get_del_addref_node(sub_request, ID=str(ref_id['ID']))
-                one_order_result.append(json.loads(receiver.content))
-            result_list.append(one_order_result)
+                #one_order_result.append(json.loads(receiver.content))
+            #result_list.append(one_order_result)
 
         elif 'PUT_NODE'in order.keys():
             para_list = order['PUT_NODE']
@@ -55,9 +55,9 @@ def batch(request):
                 sub_request.POST = para
                 sub_request.method = 'PUT'
                 receiver = get_del_addref_node(sub_request, ID=str(para['ID']))
-                one_order_result.append(json.loads(receiver.content))
+                #one_order_result.append(json.loads(receiver.content))
 
-            result_list.append(one_order_result)
+            #result_list.append(one_order_result)
 
         elif 'ADD_LINK' in order.keys():
             #return HttpResponse('{"function": "add_batch", "error": "POST method is requested"}')
@@ -68,8 +68,8 @@ def batch(request):
                 sub_request.POST = para
 
                 receiver = add_link(sub_request)
-                one_order_result.append(json.loads(receiver.content))
-            result_list.append(one_order_result)
+                #one_order_result.append(json.loads(receiver.content))
+            #result_list.append(one_order_result)
 
         elif 'DELETE_LINK'in order.keys():
             para_list = order['DELETE_LINK']
@@ -79,8 +79,8 @@ def batch(request):
                 sub_request.POST = para
                 sub_request.method = 'DELETE'
                 receiver = get_del_addref_link(sub_request, ID=str(para['ID']))
-                one_order_result.append(json.loads(receiver.content))
-            result_list.append(one_order_result)
+                #one_order_result.append(json.loads(receiver.content))
+            #result_list.append(one_order_result)
 
         elif 'PUT_LINK' in order.keys():
             para_list = order['PUT_LINK']
@@ -88,12 +88,12 @@ def batch(request):
             for para in para_list:
                 sub_request = request
                 sub_request.POST = para
-                sub_request.method = 'PUT'
+                sub_request.method = 'PUT's
                 receiver = get_del_addref_link(sub_request, ID=str(para['ID']))
-                one_order_result.append(json.loads(receiver.content))
-            result_list.append(one_order_result)
-    result_text = json.dumps(result_list)
-    return HttpResponse(result_text)
+                #one_order_result.append(json.loads(receiver.content))
+            #result_list.append(one_order_result)
+    #result_text = json.dumps(result_list)
+    return HttpResponse('Celebrate!!!!')
 
 
 
