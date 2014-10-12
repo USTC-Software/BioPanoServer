@@ -18,7 +18,7 @@ def batch(request):
             para_list = order['PATCH_NODE']
             for para in para_list:
                 sub_request = request
-                sub_request.setAttribute('body', urllib.urlencode(para))
+                sub_request.POST = para
                 sub_request.method = 'PATCH'
                 ID = para['ID']
 
@@ -42,7 +42,7 @@ def batch(request):
             one_order_result = []
             for ref_id in ref_id_list:
                 sub_request = request
-                sub_request.body = ''
+                sub_request.POST = {}
                 sub_request.method = 'DELETE'
                 receiver = get_del_addref_node(sub_request, ID=ref_id['ID'])
                 one_order_result.append(json.loads(receiver.content))
@@ -53,7 +53,7 @@ def batch(request):
             one_order_result = []
             for para in para_list:
                 sub_request = request
-                sub_request.body = urllib.urlencode(para)
+                sub_request.POST = para
                 sub_request.method = 'PUT'
                 receiver = get_del_addref_node(sub_request, ID=para['ID'])
                 one_order_result.append(json.loads(receiver.content))
@@ -77,7 +77,7 @@ def batch(request):
             one_order_result = []
             for para in para_list:
                 sub_request = request
-                sub_request.body = urllib.urlencode(para)
+                sub_request.POST = para
                 sub_request.method = 'DELETE'
                 receiver = get_del_addref_link(sub_request, ID=para['ID'])
                 one_order_result.append(json.loads(receiver.content))
@@ -88,7 +88,7 @@ def batch(request):
             one_order_result = []
             for para in para_list:
                 sub_request = request
-                sub_request.body = urllib.urlencode(para)
+                sub_request.POST = para
                 sub_request.method = 'PUT'
                 receiver = get_del_addref_link(sub_request, ID=para['ID'])
                 one_order_result.append(json.loads(receiver.content))
