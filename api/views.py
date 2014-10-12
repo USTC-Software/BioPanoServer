@@ -97,7 +97,7 @@ def get_del_addref_node(request, **kwargs):
             DELETE A REF IN COLLECTION<node_ref>
         '''
 
-        noderef = db.node_ref.find_one({'_id': ObjectId(kwargs['id'])})
+        noderef = db.node_ref.find_one({'_id': ObjectId(kwargs['ID'])})
 
         # not found
         if noderef is None:
@@ -117,7 +117,7 @@ def get_del_addref_node(request, **kwargs):
         '''
         paras = QueryDict(request.body)
         try:
-            node = db.node.find_one({'_id': ObjectId(kwargs['id'])})
+            node = db.node.find_one({'_id': ObjectId(kwargs['ID'])})
         except KeyError:
             return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
 
@@ -160,7 +160,7 @@ def get_del_addref_node(request, **kwargs):
         '''
         BANNED_ATTRI = {'_id': 0, 'REF': 0, 'REF_COUNT': 0, 'ID': 0, 'FATHER': 0, 'CHILD': 0}
         try:
-            node = db.node.find_one({'_id': ObjectId(kwargs['id'])}, BANNED_ATTRI)
+            node = db.node.find_one({'_id': ObjectId(kwargs['ID'])}, BANNED_ATTRI)
         except KeyError:
             return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
 
@@ -193,7 +193,7 @@ def get_del_addref_node(request, **kwargs):
         try:
             x = paras['x']
             y = paras['y']
-            old_ref_id = kwargs['id']
+            old_ref_id = kwargs['ID']
         except KeyError:
             return HttpResponse("{'status': 'error','reason':'your info should include keys: x, y, ref_id'}")
 
@@ -399,7 +399,7 @@ def get_del_addref_link(request, **kwargs):
             DELETE A REF IN COLLECTION<link_ref>
         '''
 
-        linkref = db.link_ref.find_one({'_id': ObjectId(kwargs['id'])})
+        linkref = db.link_ref.find_one({'_id': ObjectId(kwargs['ID'])})
 
         # not found
         if linkref is None:
@@ -419,7 +419,7 @@ def get_del_addref_link(request, **kwargs):
         '''
         paras = QueryDict(request.body)
         try:
-            link = db.link.find_one({'_id': ObjectId(kwargs['id'])})
+            link = db.link.find_one({'_id': ObjectId(kwargs['ID'])})
         except KeyError:
             return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
 
@@ -456,7 +456,7 @@ def get_del_addref_link(request, **kwargs):
         get the detail info of a record
         '''
         try:
-            link = db.link.find_one({'_id': ObjectId(kwargs['id'])})
+            link = db.link.find_one({'_id': ObjectId(kwargs['ID'])})
         except KeyError:
             return HttpResponse("{'status':'error', 'reason':'key <_id> does not exist'}")
 
