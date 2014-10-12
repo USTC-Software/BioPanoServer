@@ -18,7 +18,7 @@ def batch(request):
             para_list = order['PATCH_NODE']
             for para in para_list:
                 sub_request = request
-                sub_request.body = urllib.urlencode(para)
+                sub_request.setAttribute('body', urllib.urlencode(para))
                 sub_request.method = 'PATCH'
                 ID = para['ID']
 
