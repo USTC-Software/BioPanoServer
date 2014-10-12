@@ -68,7 +68,7 @@ def request_show(request):
     if request.method == 'PATCH':
         body = request.body
         paras = QueryDict(body)
-        para_list = json.loads(paras['para_list'])
+        para_list = json.loads(paras['paralist'])
         result = 'body:\t ' + body + '\nparas:\n' + str(paras) + '\npara_list:\t' + str(type(para_list)) + '\t' + str(para_list)
         return HttpResponse(result)
     else:
