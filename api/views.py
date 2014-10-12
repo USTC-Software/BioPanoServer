@@ -208,7 +208,7 @@ def get_del_addref_node(request, **kwargs):
         if not node:
             return HttpResponse("{'status': 'error','reason':'unable to find the record matching ref_id given'}")
         else:
-            db.node_ref.update({'_id': ObjectId(old_ref_id)}, {'$set', {'x': x, 'y': y}})
+            db.node_ref.update({'_id': ObjectId(old_ref_id)}, {'$set': {'x': x, 'y': y}})
             return HttpResponse("{'status': 'success}")
 
     else:
