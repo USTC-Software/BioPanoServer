@@ -93,6 +93,8 @@ def batch(request):
                 receiver = get_del_addref_link(sub_request, ID=para['ID'])
                 one_order_result.append(json.loads(receiver.content))
             result_list.append(one_order_result)
+    result_text = json.dumps(result_list)
+    return HttpResponse(result_text)
 
 
 

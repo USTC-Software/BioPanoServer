@@ -65,7 +65,7 @@ def look_around(request, **kwargs):
 
 
 def request_show(request):
-    if request.method == 'PATCH':
+    if request.method == 'POST':
         body = request.body
         paras = QueryDict(body)
         para_list = json.loads(paras['paralist'])
