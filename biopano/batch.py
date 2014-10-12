@@ -26,8 +26,8 @@ def batch(request):
                 one_order_result.append(json.loads(receiver.content))
             result_list.append(one_order_result)
 
-        elif 'POST_NODE' in order.keys():
-            para_list = order['POST_NODE']
+        elif 'ADD_NODE' in order.keys():
+            para_list = order['ADD_NODE']
             one_order_result = []
             for para in para_list:
                 sub_request = request
@@ -60,9 +60,9 @@ def batch(request):
 
             result_list.append(one_order_result)
 
-        elif 'POST_LINK' in order.keys():
+        elif 'ADD_LINK' in order.keys():
             #return HttpResponse('{"function": "add_batch", "error": "POST method is requested"}')
-            para_list = order['POST_LINK']
+            para_list = order['ADD_LINK']
             one_order_result = []
             for para in para_list:
                 sub_request = request
