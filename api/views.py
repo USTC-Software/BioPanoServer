@@ -115,7 +115,7 @@ def get_del_addref_node(request, **kwargs):
         '''
             add a ref record in collection <node_ref>
         '''
-        paras = QueryDict(request.body)
+        paras = request.POST
         try:
             node = db.node.find_one({'_id': ObjectId(kwargs['ID'])})
         except KeyError:
@@ -189,7 +189,7 @@ def get_del_addref_node(request, **kwargs):
         :param request.PATCH: a dict with keys(token, username, info), info is also a dict with keys(x, y, ref_id)
         :return data: {'status': 'success'} if everything goes right
         '''
-        paras = QueryDict(request.body)
+        paras = request.POST
         #try:
         x = paras['x']
         y = paras['y']
@@ -417,7 +417,7 @@ def get_del_addref_link(request, **kwargs):
         '''
             add a ref record in collection <node_ref>
         '''
-        paras = QueryDict(request.body)
+        paras = request.POST
         try:
             link = db.link.find_one({'_id': ObjectId(kwargs['ID'])})
         except KeyError:
