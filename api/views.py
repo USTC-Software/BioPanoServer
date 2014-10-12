@@ -190,12 +190,12 @@ def get_del_addref_node(request, **kwargs):
         :return data: {'status': 'success'} if everything goes right
         '''
         paras = QueryDict(request.body)
-        try:
-            x = paras['x']
-            y = paras['y']
-            old_ref_id = kwargs['ID']
-        except KeyError:
-            return HttpResponse("{'status': 'error','reason':'your info should include keys: x, y, ref_id'}")
+        #try:
+        x = paras['x']
+        y = paras['y']
+        old_ref_id = kwargs['ID']
+        #except KeyError:
+        #    return HttpResponse("{'status': 'error','reason':'your info should include keys: x, y, ref_id'}")
 
         # x,y should be able to convert to a float number
         try:

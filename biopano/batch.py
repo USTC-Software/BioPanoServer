@@ -20,7 +20,6 @@ def batch(request):
                 sub_request = request
                 sub_request.POST = para
                 sub_request.method = 'PATCH'
-                ID = para['ID']
 
                 receiver = get_del_addref_node(sub_request, ID=para['ID'])
                 one_order_result.append(json.loads(receiver.content))
