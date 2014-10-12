@@ -21,7 +21,7 @@ def batch(request):
                 sub_request.POST = para
                 sub_request.method = 'PATCH'
 
-                receiver = get_del_addref_node(sub_request, ID=para['ID'])
+                receiver = get_del_addref_node(sub_request, ID=str(para['ID']))
                 one_order_result.append(json.loads(receiver.content))
             result_list.append(one_order_result)
 
@@ -43,7 +43,7 @@ def batch(request):
                 sub_request = request
                 sub_request.POST = {}
                 sub_request.method = 'DELETE'
-                receiver = get_del_addref_node(sub_request, ID=ref_id['ID'])
+                receiver = get_del_addref_node(sub_request, ID=str(ref_id['ID']))
                 one_order_result.append(json.loads(receiver.content))
             result_list.append(one_order_result)
 
@@ -54,7 +54,7 @@ def batch(request):
                 sub_request = request
                 sub_request.POST = para
                 sub_request.method = 'PUT'
-                receiver = get_del_addref_node(sub_request, ID=para['ID'])
+                receiver = get_del_addref_node(sub_request, ID=str(para['ID']))
                 one_order_result.append(json.loads(receiver.content))
 
             result_list.append(one_order_result)
@@ -78,7 +78,7 @@ def batch(request):
                 sub_request = request
                 sub_request.POST = para
                 sub_request.method = 'DELETE'
-                receiver = get_del_addref_link(sub_request, ID=para['ID'])
+                receiver = get_del_addref_link(sub_request, ID=str(para['ID']))
                 one_order_result.append(json.loads(receiver.content))
             result_list.append(one_order_result)
 
@@ -89,7 +89,7 @@ def batch(request):
                 sub_request = request
                 sub_request.POST = para
                 sub_request.method = 'PUT'
-                receiver = get_del_addref_link(sub_request, ID=para['ID'])
+                receiver = get_del_addref_link(sub_request, ID=str(para['ID']))
                 one_order_result.append(json.loads(receiver.content))
             result_list.append(one_order_result)
     result_text = json.dumps(result_list)
