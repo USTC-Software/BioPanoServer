@@ -12,7 +12,7 @@ def node_batch(request):
         #return HttpResponse('Please relocate node by PATCH request')
         body = request.body
         paras = QueryDict(body)
-        para_list = json.loads(paras['para_list'])
+        para_list = json.loads(paras['paralist'])
         for para in para_list:
             sub_request = request
             sub_request.body = urllib.urlencode(para)
@@ -24,7 +24,7 @@ def node_batch(request):
         return HttpResponse("{'status': 'success}")
 
     elif request.method == 'POST':
-        para_list = request.POST['para_list']
+        para_list = request.POST['paralist']
         para_list = json.loads(para_list)
         result_list = []
         for para in para_list:
@@ -38,7 +38,7 @@ def node_batch(request):
 
     elif request.method == 'DELETE':
         body = QueryDict(request.body)
-        ref_id_list = json.loads(body['para_list'])
+        ref_id_list = json.loads(body['paralist'])
         for ref_id in ref_id_list:
             sub_request = request
             sub_request.body = ''
@@ -46,7 +46,7 @@ def node_batch(request):
 
     elif request.method == 'PUT':
         body = QueryDict(request.body)
-        para_list = json.loads(body['para_list'])
+        para_list = json.loads(body['paralist'])
         result_list = []
         for para in para_list:
             sub_request = request
@@ -60,7 +60,7 @@ def node_batch(request):
 def link_batch(request):
     if request.method == 'POST':
         #return HttpResponse('{"function": "add_batch", "error": "POST method is requested"}')
-        para_list = request.POST['para_list']
+        para_list = request.POST['paralist']
         para_list = json.loads(para_list)
         result_list = []
         for para in para_list:
@@ -74,7 +74,7 @@ def link_batch(request):
 
     elif request.method == 'DELETE':
         body = QueryDict(request.body)
-        para_list = json.loads(body['para_list'])
+        para_list = json.loads(body['paralist'])
         result_list = []
         for para in para_list:
             sub_request = request
@@ -86,7 +86,7 @@ def link_batch(request):
 
     elif request.method == 'PUT':
         body = QueryDict(request.body)
-        para_list = json.loads(body['para_list'])
+        para_list = json.loads(body['paralist'])
         result_list = []
         for para in para_list:
             sub_request = request
