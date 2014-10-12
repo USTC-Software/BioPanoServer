@@ -7,7 +7,7 @@ import json
 import urllib
 
 
-def node_batch(request):
+def batch(request):
     order_list_str = request.POST['orderlist']
     order_list = json.loads(order_list_str)
     result_list = []
