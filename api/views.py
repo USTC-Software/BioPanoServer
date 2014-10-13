@@ -104,7 +104,7 @@ def get_del_addref_node(request, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'no record match that id'}")
 
         # remove ref in specific node record
-        db.node.update({'_id': noderef['node_id']}, {'$pull', {"node_refs", noderef['_id']}})
+        db.node.update({'_id': noderef['node_id']}, {'$pull': {"node_refs": noderef['_id']}})
 
         # remove node_ref record
         db.node_ref.remove({'_id': noderef['_id']})
@@ -135,10 +135,10 @@ def get_del_addref_node(request, **kwargs):
 
 
         if noderef_id:
-            prj_id = db.project.find_one({'pid': int(QueryDict(request.body)['pid'])})
+            prj_id = db.project.find_one({'pid': int(request.POST['pid'])})
             if prj_id is None:
                 prj_id = db.project.insert({
-                        'pid': int(QueryDict(request.body)['pid']),
+                        'pid': int(request.POST['pid']),
                         'node': [],
                         'link': [],
                     }
