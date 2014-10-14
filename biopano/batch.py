@@ -41,7 +41,7 @@ def batch(request):
             one_order_result = []
             for ref_id in ref_id_list:
                 sub_request = request
-                sub_request.POST = {}
+                sub_request.POST = ref_id
                 sub_request.method = 'DELETE'
                 receiver = get_del_addref_node(sub_request, ID=str(ref_id['ID']))
                 #one_order_result.append(json.loads(receiver.content))
