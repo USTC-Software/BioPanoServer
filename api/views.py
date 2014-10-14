@@ -617,7 +617,7 @@ def get_project(request, **kwargs):
             data = {
                 '_id': str(link_id),
                 'ref_id': str(linkref_id),
-                'NAME': link['NAME'],
+                'NAME': link.get('NAME'),
                 'TYPE': link['TYPE'],
                 'id1': str(linkref['id1']),
                 'id2': str(linkref['id2']),
