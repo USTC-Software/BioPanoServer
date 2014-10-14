@@ -93,7 +93,7 @@ def batch(request):
                 #one_order_result.append(json.loads(receiver.content))
             #result_list.append(one_order_result)
     #result_text = json.dumps(result_list)
-    return HttpResponse('Celebrate!!!!')
+    return HttpResponse(result_list)
 
 
 
