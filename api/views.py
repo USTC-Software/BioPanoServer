@@ -96,7 +96,7 @@ def get_del_addref_node(request, **kwargs):
         '''
             DELETE A REF IN COLLECTION<node_ref>
         '''
-        paras = QueryDict(request.body)
+        paras = request.POST
         project = db.project.find_one({'pid': int(paras['pid'])})
         noderef = db.node_ref.find_one({'_id': ObjectId(kwargs['ID'])})
 
@@ -400,7 +400,7 @@ def get_del_addref_link(request, **kwargs):
         '''
             DELETE A REF IN COLLECTION<link_ref>
         '''
-        paras = QueryDict(request.body)
+        paras = request.POST
         project = db.project.find_one({'pid': int(paras['pid'])})
         linkref = db.link_ref.find_one({'_id': ObjectId(kwargs['ID'])})
 
