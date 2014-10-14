@@ -96,18 +96,22 @@ def get_del_addref_node(request, **kwargs):
         '''
             DELETE A REF IN COLLECTION<node_ref>
         '''
-
+        paras = QueryDict(request.body)
+        project = db.project.find_one({'pid': int(paras['pid'])})
         noderef = db.node_ref.find_one({'_id': ObjectId(kwargs['ID'])})
 
         # not found
         if noderef is None:
             return HttpResponse("{'status':'error', 'reason':'no record match that id'}")
+        if project is None:
+            return HttpResponse("{'status':'error', 'reason':'project not found'}")
 
         # remove ref in specific node record
         db.node.update({'_id': noderef['node_id']}, {'$pull': {"node_refs": noderef['_id']}})
 
         # remove node_ref record
         db.node_ref.remove({'_id': noderef['_id']})
+        db.project.update({'_id': project['_id']}, {'$pull': {"node": noderef['_id']}})
 
         return HttpResponse("{'status': 'success'}")
 
@@ -132,16 +136,14 @@ def get_del_addref_node(request, **kwargs):
                                          'node_id': node['_id']}
         )
 
-
-
         if noderef_id:
             prj_id = db.project.find_one({'pid': int(request.POST['pid'])})
             if prj_id is None:
                 prj_id = db.project.insert({
-                        'pid': int(request.POST['pid']),
-                        'node': [],
-                        'link': [],
-                    }
+                    'pid': int(request.POST['pid']),
+                    'node': [],
+                    'link': [],
+                }
                 )
                 prj_id = db.project.find_one({'_id': prj_id})
             else:
@@ -190,7 +192,7 @@ def get_del_addref_node(request, **kwargs):
         :return data: {'status': 'success'} if everything goes right
         '''
         paras = request.POST
-        #try:
+        # try:
         x = paras['x']
         y = paras['y']
         old_ref_id = kwargs['ID']
@@ -398,18 +400,22 @@ def get_del_addref_link(request, **kwargs):
         '''
             DELETE A REF IN COLLECTION<link_ref>
         '''
-
+        paras = QueryDict(request.body)
+        project = db.project.find_one({'pid': int(paras['pid'])})
         linkref = db.link_ref.find_one({'_id': ObjectId(kwargs['ID'])})
 
         # not found
         if linkref is None:
             return HttpResponse("{'status':'error', 'reason':'no record match that id'}")
+        if project is None:
+            return HttpResponse("{'status':'error', 'reason':'project not found'}")
 
         # remove ref in specific node record
         db.link.update({'_id': linkref['link_id']}, {'$pull', {"link_refs", linkref['_id']}})
 
         # remove node_ref record
         db.link_ref.remove({'_id': linkref['_id']})
+        db.project.update({'_id': project['_id']}, {'$pull': {"link": linkref['_id']}})
 
         return HttpResponse("{'status': 'success'}")
 
@@ -444,7 +450,6 @@ def get_del_addref_link(request, **kwargs):
             else:
                 pass
             db.project.update({'_id': prj_id['_id']}, {'$push': {'link': linkref_id}}, True)
-
 
             data = {'status': 'success', 'ref_id': str(linkref_id)}
             return HttpResponse(json.dumps(data))
@@ -623,7 +628,6 @@ def get_project(request, **kwargs):
         return HttpResponse(json.dumps(data))
     else:
         return HttpResponse("{'status': 'error','reason':'pls use method GET'}")
-
 
 
 @logged_in
