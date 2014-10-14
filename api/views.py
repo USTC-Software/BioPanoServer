@@ -411,7 +411,7 @@ def get_del_addref_link(request, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'project not found'}")
 
         # remove ref in specific node record
-        db.link.update({'_id': linkref['link_id']}, {'$pull', {"link_refs", linkref['_id']}})
+        db.link.update({'_id': linkref['link_id']}, {'$pull': {"link_refs": linkref['_id']}})
 
         # remove node_ref record
         db.link_ref.remove({'_id': linkref['_id']})
@@ -443,9 +443,9 @@ def get_del_addref_link(request, **kwargs):
             }
         )
         if linkref_id:
-            prj_id = db.project.find_one({'pid': int(QueryDict(request.body)['pid'])})
+            prj_id = db.project.find_one({'pid': int(request.POST['pid'])})
             if prj_id is None:
-                prj_id = db.project.insert({'pid': int(QueryDict(request.body)['pid']), 'node': [], 'link': []})
+                prj_id = db.project.insert({'pid': int(request.POST['pid']), 'node': [], 'link': []})
                 prj_id = db.project.find_one({'_id': prj_id})
             else:
                 pass
