@@ -69,11 +69,11 @@ def add_node(request):
 
         else:
             # node info is incorrect
-            return HttpResponse("{'status':'error', 'reason':'node info invalid'}")
+            return HttpResponse('{"status":"error", "reason":"node info invalid"}')
 
     else:
         # not using method POST
-        return HttpResponse("{'status':'error', 'reason':'pls use method POST'}")
+        return HttpResponse('{"status":"error", "reason":"pls use method POST"}')
 
 
 @logged_in_exclude_get
@@ -373,11 +373,11 @@ def add_link(request):
 
         else:
             # link info is incorrect
-            return HttpResponse("{'status':'error', 'reason':'link info invalid'}")
+            return HttpResponse('{"status":"error", "reason":"link info invalid"}')
 
     else:
         # method is not POST
-        return HttpResponse("{'status':'error', 'reason':'pls use POST method'}")
+        return HttpResponse('{"status":"error", "reason":"pls use POST method"}')
 
 
 @logged_in_exclude_get
@@ -437,7 +437,7 @@ def get_del_addref_link(request, **kwargs):
         linkref_id = db.link_ref.insert(
             {
                 'pid': int(paras['pid']) if 'pid' in paras.keys() else 0,
-                'link_id': paras['_id'],
+                'link_id': ObjectId(kwargs['ID']),
                 'id1': ObjectId(paras['id1']),
                 'id2': ObjectId(paras['id2'])
             }

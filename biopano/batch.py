@@ -33,8 +33,8 @@ def batch(request):
                 sub_request.POST = para
 
                 receiver = add_node(sub_request)
-                #one_order_result.append(json.loads(receiver.content))
-            #result_list.append(one_order_result)
+                one_order_result.append(json.loads(receiver.content))
+            result_list.append(one_order_result)
 
         elif 'DELETE_NODE' in order.keys():
             ref_id_list = order['DELETE_NODE']
@@ -68,8 +68,8 @@ def batch(request):
                 sub_request.POST = para
 
                 receiver = add_link(sub_request)
-                #one_order_result.append(json.loads(receiver.content))
-            #result_list.append(one_order_result)
+                one_order_result.append(json.loads(receiver.content))
+            result_list.append(one_order_result)
 
         elif 'DELETE_LINK'in order.keys():
             para_list = order['DELETE_LINK']
