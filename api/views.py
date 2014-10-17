@@ -9,15 +9,9 @@ from dict2xml import dict2xml
 from func_box import *
 from decorators import project_verified, logged_in, project_verified_exclude_get, logged_in_exclude_get
 from projects.models import Project
-from IGEMServer.settings import MONGO_WRITE_URI
+from IGEMServer.settings import db_write, db_read
 from django.http import QueryDict
 
-# connect the database
-client_readonly = MongoClient('localhost', 27017)
-uri = MONGO_WRITE_URI
-client_write = MongoClient(uri)
-db_write = client_write.igemdata_new
-db_read = client_readonly.igemdata_new
 
 
 @logged_in
