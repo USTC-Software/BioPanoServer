@@ -2,7 +2,8 @@ __author__ = 'feiyicheng'
 
 from pymongo import MongoClient
 from django.shortcuts import HttpResponse
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from mongoengine.django.auth import User
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 import json

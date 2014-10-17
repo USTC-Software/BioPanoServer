@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 from pymongo import MongoClient
+from mongoengine import register_connection, connect
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -39,15 +40,16 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
-    # 'mongoengine.django.mongo_auth',
+    'mongoengine.django.mongo_auth',
     'api',
     'IGEMServer',
     'biopano',
     'projects',
 )
 
-# AUTH_USER_MODEL = 'mongo_auth.MongoUser'
-# MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
+AUTH_USER_MODEL = 'mongo_auth.MongoUser'
+MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
+connect("igemdata_new")
 # connect the database
 # MONGO_WRITE_URI = "mongodb://biopano_product:7723e1129b8df052d0fa02b9c60124c0@primary.db.biopano.org/igemdata_new"
 # uri = MONGO_WRITE_URI
