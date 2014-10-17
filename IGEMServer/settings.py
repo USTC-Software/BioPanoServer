@@ -39,20 +39,20 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
-    'mongoengine.django.mongo_auth',
+    # 'mongoengine.django.mongo_auth',
     'api',
     'IGEMServer',
     'biopano',
     'projects',
 )
 
-AUTH_USER_MODEL = 'mongo_auth.MongoUser'
+# AUTH_USER_MODEL = 'mongo_auth.MongoUser'
 # MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
 # connect the database
-MONGO_WRITE_URI = "mongodb://biopano_product:7723e1129b8df052d0fa02b9c60124c0@primary.db.biopano.org/igemdata_new"
+# MONGO_WRITE_URI = "mongodb://biopano_product:7723e1129b8df052d0fa02b9c60124c0@primary.db.biopano.org/igemdata_new"
+# uri = MONGO_WRITE_URI
 client_readonly = MongoClient('localhost', 27017)
-uri = MONGO_WRITE_URI
-client_write = MongoClient(uri)
+client_write = MongoClient('localhost', 27017)
 db_write = client_write.igemdata_new
 db_read = client_readonly.igemdata_new
 
