@@ -3,6 +3,7 @@ __author__ = 'feiyicheng'
 from django.shortcuts import HttpResponse, HttpResponsePermanentRedirect
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
+from my_auth.models import Token_mongo
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import json
 from urllib import urlencode
@@ -138,7 +139,7 @@ def _get_user_and_token(profile):
 
     user, created = User.objects.get_or_create(username=profile['username'])
     _update_user(user, profile)
-    token, created = Token.objects.get_or_create(user=user)
+    token, created = Token_mongo.objects.get_or_create(user=user)
     return (user, token) if user else (None, None)
 
 

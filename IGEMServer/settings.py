@@ -103,27 +103,22 @@ WSGI_APPLICATION = 'IGEMServer.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+#         'NAME': 'backend_master',  # Or path to database file if using sqlite3.
+#         # The following settings are not used with sqlite3:
+#         'USER': 'master',
+#         'PASSWORD': 'SyntheticBiology',
+#         'HOST': 'mysql',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+#         'PORT': '3306',  # Set to empty string for default.
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'backend_master',  # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
-        'USER': 'master',
-        'PASSWORD': 'SyntheticBiology',
-        'HOST': 'mysql',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '3306',  # Set to empty string for default.
-    }
+        'ENGINE': '',
+    },
 }
-'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-'''
-# Internationalization
-# https://docs.djangoproject.com/en/1.6/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 

@@ -1,7 +1,7 @@
 __author__ = 'feiyicheng'
 
-from rest_framework.authtoken.models import Token
-# from django.contrib.auth.models import User, AnonymousUser
+# from rest_framework.authtoken.models import Token
+from my_auth.models import Token_mongo
 from mongoengine.django.auth import User, AnonymousUser
 from django.shortcuts import HttpResponse
 from django.http import QueryDict

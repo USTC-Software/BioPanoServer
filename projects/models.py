@@ -1,8 +1,11 @@
 __author__ = 'feiyicheng'
 
 from django.db import models
+from mongoengine.document import Document
+import mongoengine.fields as fields
 # from django.contrib.auth.models import User
 from mongoengine.django.auth import User
+
 
 class Project(models.Model):
     """
@@ -19,6 +22,19 @@ class Project(models.Model):
 
     def __unicode__(self):
         return "name:" + self.name + " author:" + self.author
+
+
+class ProjectMongo(Document):
+    """
+    a class that represents a project in which user can cooperate together
+
+    """
+    author = fields.ReferenceField(User, required=True)
+    collaborators = fields.ListField(field=User)
+    name = fields.StringField(max_length=40)
+    description = fields.StringField(max_length=1000)
+    species = fields.StringField(max_length=100)
+    is_active = fields.BooleanField(default=True)
 
 
 class UserProfile(models.Model):
