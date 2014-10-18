@@ -1,12 +1,12 @@
 __author__ = 'feiyicheng'
 
 # from rest_framework.authtoken.models import Token
-from my_auth.models import Token_mongo
 from mongoengine.django.auth import User, AnonymousUser
 from django.shortcuts import HttpResponse
 from django.http import QueryDict
-from projects.models import Project
+from projects.models import ProjectFile
 from django.core.exceptions import ObjectDoesNotExist
+from bson.objectid import ObjectId
 
 
 def logged_in(func):
@@ -27,7 +27,6 @@ def logged_in(func):
                 raise TypeError('user type should be either User or AnonymousUser')
         except AttributeError:
             raise AttributeError('request does not has attribute user')
-
 
     wrap.__doc__ = func.__doc__
     wrap.__name__ = func.__name__
@@ -52,7 +51,7 @@ def project_verified(func):
             return func(request, *args, **kwargs)
         else:
             try:
-                prj = Project.objects.get(pk=data['pid'])
+                prj = ProjectFile.objects.get(pk=ObjectId(*['pid']))
             except ObjectDoesNotExist:
                 return HttpResponse("{'status':'error', 'reason':'cannot find a project matching given pid'}")
             else:
@@ -110,7 +109,7 @@ def project_verified_exclude_get(func):
             return func(request, *args, **kwargs)
         else:
             try:
-                prj = Project.objects.get(pk=data['pid'])
+                prj = ProjectFile.objects.get(pk=ObjectId(['pid']))
             except ObjectDoesNotExist:
                 return HttpResponse("{'status':'error', 'reason':'cannot find a project matching given pid'}")
             else:

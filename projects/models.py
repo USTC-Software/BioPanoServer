@@ -21,19 +21,19 @@ class Project(models.Model):
                                         # still all the time
 
     def __unicode__(self):
-        return "name:" + self.name + " author:" + self.author
+        return "name:" + self.name + " author:" + self.author['username']
 
 
-class ProjectMongo(Document):
+class ProjectFile(Document):
     """
     a class that represents a project in which user can cooperate together
 
     """
     author = fields.ReferenceField(User, required=True)
-    collaborators = fields.ListField(field=User)
-    name = fields.StringField(max_length=40)
-    description = fields.StringField(max_length=1000)
-    species = fields.StringField(max_length=100)
+    collaborators = fields.ListField(fields.ReferenceField(User))
+    name = fields.StringField(max_length=40, required=True)
+    description = fields.StringField(max_length=1000, default="")
+    species = fields.StringField(max_length=100, default="")
     is_active = fields.BooleanField(default=True)
 
 

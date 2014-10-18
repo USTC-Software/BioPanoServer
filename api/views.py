@@ -8,7 +8,7 @@ import bson
 from dict2xml import dict2xml
 from func_box import *
 from decorators import project_verified, logged_in, project_verified_exclude_get, logged_in_exclude_get
-from projects.models import Project
+from projects.models import ProjectFile
 from IGEMServer.settings import db_write, db_read
 from django.http import QueryDict
 
@@ -633,7 +633,7 @@ def get_project(request, **kwargs):
 @logged_in
 @project_verified
 def test_prj(request):
-    prj = Project.objects.get(pk=request.POST['pid'])
+    prj = ProjectFile.objects.get(pk=ObjectId(request.POST['pid']))
     return HttpResponse(prj.name + ' ' + prj.author.username)
 
 

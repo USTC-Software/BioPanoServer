@@ -8,9 +8,11 @@ from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 import json
 from .models import Project
+from .models import ProjectFile
 from decorators import logged_in
 from django.http import QueryDict
 from IGEMServer.settings import db_write
+from bson.objectid import ObjectId
 
 
 def search(request, *args, **kwargs):
@@ -46,21 +48,21 @@ def search(request, *args, **kwargs):
 
         if author_id:
             if prj_name:
-                results = Project.objects.filter(name__icontains=prj_name,
+                results = ProjectFile.objects.filter(name__icontains=prj_name,
                                                  author=User.objects.get(pk=author_id))
             else:
-                results = Project.objects.filter(author=User.objects.get(pk=author_id))
+                results = ProjectFile.objects.filter(author=User.objects.get(pk=author_id))
         else:
-            results = Project.objects.filter(name__icontains=prj_name)
+            results = ProjectFile.objects.filter(name__icontains=prj_name)
 
         clean_results = []
         for result in results:
             clean_result = {
                 'author': result.author.username,
                 'authorid': result.author.pk,
-                'pid': result.id,
+                'pid': str(result.id),
                 'name': result.name,
-                'collaborators': [coll.pk for coll in result.collaborators.all()],
+                'collaborators': [str(coll.pk) for coll in result.collaborators.all()],
             }
             clean_results.append(clean_result)
 
@@ -88,7 +90,7 @@ def del_project(request, *args, **kwargs):
         if user.is_authenticated():
             if _is_author(prj_id, user):
                 # the user operating is the author of the project, he/she has the power to delete id
-                Project.objects.get(id=prj_id).delete()
+                ProjectFile.objects.get(pk=ObjectId(prj_id)).delete()
                 return HttpResponse("{'status':'success'}")
 
             else:
@@ -120,7 +122,7 @@ def modify_project(request, *args, **kwargs):
         if user.is_authenticated():
             if _is_author(prj_id, user):
                 try:
-                    project = Project.objects.get(id=prj_id)
+                    project = ProjectFile.objects.get(id=ObjectId(prj_id))
                 except ObjectDoesNotExist as e:
                     return HttpResponse("{'status':'error', 'reason':'cannot find project with that id'}")
 
@@ -151,8 +153,8 @@ def add_or_del_collaborator(request, *args, **kwargs):
         if prj_id is None:
             return HttpResponse("{'status':'error', 'reason':'prj id should be a integer'}")
         if _is_author(prj_id, user):
-            project = Project.objects.get(pk=prj_id)
-            coll = User.objects.get(pk=uid)
+            project = ProjectFile.objects.get(pk=ObjectId(prj_id))
+            coll = User.objects.get(pk=ObjectId(uid))
             if coll in project.collaborators.all():
                 project.collaborators.remove(coll)
                 return HttpResponse("{'status':'success'}")
@@ -177,9 +179,9 @@ def add_or_del_collaborator(request, *args, **kwargs):
 
         if user.is_authenticated():
 
-            prj = Project.objects.get(id=prj_id)
+            prj = ProjectFile.objects.get(id=ObjectId(prj_id))
             try:
-                collaborator = User.objects.get(pk=uid)
+                collaborator = User.objects.get(pk=ObjectId(uid))
             except ObjectDoesNotExist:
                 return HttpResponse("{'status':'error', 'reason':'cannot find a user matching the input username'}")
             prj.collaborators.add(collaborator)
@@ -235,11 +237,9 @@ def list_or_create(request, *args, **kwargs):
 
         try:
             if user.is_authenticated():
-                new_prj = Project.objects.create(name=prj_name, author=user, is_active=True)
+                new_prj = ProjectFile.objects.create(name=prj_name, author=user, is_active=True)
                 attrset = ['description', 'species']
-                # new_prj = Project.objects.get(pk=new_prj.pk)
-                # if len(paras) == 0:
-                #     return HttpResponse("{'status':'success','pid':'%d'}" % (new_prj.pk, ))
+
                 for key in paras.keys():
                     if not key in attrset:
                         if key == 'prj_name':
@@ -269,7 +269,7 @@ def get_one(request, *args, **kwargs):
 
         if user.is_authenticated():
             try:
-                project = Project.objects.get(pk=prj_id)
+                project = ProjectFile.objects.get(pk=ObjectId(prj_id))
             except ObjectDoesNotExist:
                 return HttpResponse("{'status':'error', 'reason':'cannot find project matching the given id'}")
             if not (user == project.author or user in project.collaborators.all()):
@@ -300,7 +300,7 @@ def get_one(request, *args, **kwargs):
         if user.is_authenticated():
             if _is_author(prj_id, user):
                 try:
-                    project = Project.objects.get(id=prj_id)
+                    project = ProjectFile.objects.get(id=ObjectId(prj_id))
                 except ObjectDoesNotExist as e:
                     return HttpResponse("{'status':'error', 'reason':'cannot find project with that id'}")
 
@@ -331,7 +331,7 @@ def get_one(request, *args, **kwargs):
         if user.is_authenticated():
             if _is_author(prj_id, user):
                 # the user operating is the author of the project, he/she has the power to delete id
-                Project.objects.get(id=prj_id).delete()
+                ProjectFile.objects.get(id=ObjectId(prj_id)).delete()
                 return HttpResponse("{'status':'success'}")
 
             else:
@@ -412,7 +412,7 @@ def _is_author(prj_id, user):
     :param user:  the user object
     :return: True if the user is the author of the project else False
     """
-    prj = Project.objects.get(id=prj_id)
+    prj = ProjectFile.objects.get(id=ObjectId(prj_id))
     if user == prj.author:
         return True
     else:
