@@ -1,8 +1,9 @@
 __author__ = 'feiyicheng'
 
 from django.shortcuts import HttpResponse, HttpResponsePermanentRedirect
-from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
+# from django.contrib.auth.models import User
+from mongoengine.django.auth import User
+# from rest_framework.authtoken.models import Token
 from my_auth.models import Token_mongo
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import json
