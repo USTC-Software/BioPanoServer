@@ -11,6 +11,7 @@ from urllib import urlencode
 from OAuthClient import OAuthClientGoogle
 from socialoauth import SocialSites, SocialAPIError
 from .settings import SOCIALOAUTH_SITES
+from my_auth.models import genPassword
 
 
 def login_start_google(request):
@@ -140,7 +141,7 @@ def _get_user_and_token(profile):
 
     user, created = User.objects.get_or_create(username=profile['username'])
     _update_user(user, profile)
-    token, created = Token_mongo.objects.get_or_create(user=user)
+    token, created = Token_mongo.objects.get_or_create(user=user, token=genPassword(20))
     return (user, token) if user else (None, None)
 
 
