@@ -62,8 +62,8 @@ def login_complete_google(request):
     if user:
         data = {
             'status': 'success',
-            'token': str(token),
-            'uid': user.pk,
+            'token': token.token,
+            'uid': str(user.pk),
             'googleid': user.username,
         }
     else:
@@ -119,8 +119,8 @@ def login_complete_baidu(request):
     if user:
         data = {
             'status': 'success',
-            'token': str(token),
-            'uid': user.pk,
+            'token': token.token,
+            'uid': str(user.pk),
             'baiduName': profile['username'],
         }
     else:
