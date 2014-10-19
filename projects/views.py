@@ -4,7 +4,7 @@ from pymongo import MongoClient
 from django.shortcuts import HttpResponse
 # from django.contrib.auth.models import User
 from mongoengine.django.auth import User
-from django.db.models import Q
+from mongoengine.queryset import Q
 from django.core.exceptions import ObjectDoesNotExist
 import json
 # from .models import Project
