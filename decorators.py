@@ -16,17 +16,17 @@ def logged_in(func):
     """
 
     def wrap(request, *args, **kwargs):
-        try:
-            if isinstance(request.user, AnonymousUser):
-                # user not logged in
-                return HttpResponse("{'status':'error','reason':'this operation need the user to be logged in'}")
-            elif isinstance(request.user, User):
-                # user already logged in
-                return func(request, *args, **kwargs)
-            else:
-                raise TypeError('user type should be either User or AnonymousUser')
-        except AttributeError:
-            raise AttributeError('request does not has attribute user')
+        # try:
+        if isinstance(request.user, AnonymousUser):
+            # user not logged in
+            return HttpResponse("{'status':'error','reason':'this operation need the user to be logged in'}")
+        elif isinstance(request.user, User):
+            # user already logged in
+            return func(request, *args, **kwargs)
+        else:
+            raise TypeError('user type should be either User or AnonymousUser')
+            # except AttributeError:
+            # raise AttributeError('request does not has attribute user')
 
     wrap.__doc__ = func.__doc__
     wrap.__name__ = func.__name__
