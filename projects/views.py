@@ -200,7 +200,7 @@ def list_or_create(request, *args, **kwargs):
         user = request.user
         clean_results = []
 
-        results_author = user.projects_authored.all()
+        results_author = [project for project in ProjectFile.objects.all() if project.author == user]
         for result in results_author:
             if result.is_active:
                 clean_result = {
@@ -211,7 +211,7 @@ def list_or_create(request, *args, **kwargs):
                 }
                 clean_results.append(clean_result)
 
-        results_collaborated = user.projects_collaborated.all()
+        results_collaborated = [project for project in ProjectFile.objects.all() if user in project.collaborators]
         for result in results_collaborated:
             if result.is_active:
                 clean_result = {
