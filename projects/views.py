@@ -60,7 +60,7 @@ def search(request, *args, **kwargs):
                 'authorid': str(result.author.pk),
                 'pid': str(result.pk),
                 'name': result.name,
-                'collaborators': [str(coll.pk) for coll in result.collaborators.all()],
+                'collaborators': [str(coll.pk) for coll in result.collaborators],
             }
             clean_results.append(clean_result)
 
@@ -153,7 +153,7 @@ def add_or_del_collaborator(request, *args, **kwargs):
         if _is_author(prj_id, user):
             project = ProjectFile.objects.get(pk=ObjectId(prj_id))
             coll = User.objects.get(pk=ObjectId(uid))
-            if coll in project.collaborators.all():
+            if coll in project.collaborators:
                 project.collaborators.remove(coll)
                 return HttpResponse("{'status':'success'}")
             else:
@@ -182,7 +182,7 @@ def add_or_del_collaborator(request, *args, **kwargs):
                 collaborator = User.objects.get(pk=ObjectId(uid))
             except ObjectDoesNotExist:
                 return HttpResponse("{'status':'error', 'reason':'cannot find a user matching the input username'}")
-            prj.collaborators.add(collaborator)
+            prj.collaborators.append(collaborator)
             return HttpResponse("{'status':'success'}")
         else:
             return HttpResponse("{'status':'error', 'reason':'user not logged in'}")
@@ -270,7 +270,7 @@ def get_one(request, *args, **kwargs):
                 project = ProjectFile.objects.get(pk=ObjectId(prj_id))
             except ObjectDoesNotExist:
                 return HttpResponse("{'status':'error', 'reason':'cannot find project matching the given id'}")
-            if not (user == project.author or user in project.collaborators.all()):
+            if not (user == project.author or user in project.collaborators):
                 return HttpResponse("{'status':'error', 'reason':'you dont have the access to the whole profile'}")
             else:
                 clean_result = {
@@ -281,7 +281,7 @@ def get_one(request, *args, **kwargs):
                     'species': project.species.encode('ascii', 'replace'),
                     'description': project.description.encode('ascii', 'replace'),
                     'collaborators': [{'uid': str(coll.pk), 'username': coll.username} for coll \
-                                      in project.collaborators.all()],
+                                      in project.collaborators],
                 }
             data_dict = {'status': 'success', 'result': clean_result}
             return HttpResponse(json.dumps(data_dict))
