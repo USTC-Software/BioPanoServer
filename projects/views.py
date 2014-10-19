@@ -7,7 +7,7 @@ from mongoengine.django.auth import User
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 import json
-from .models import Project
+# from .models import Project
 from .models import ProjectFile
 from decorators import logged_in
 from django.http import QueryDict
