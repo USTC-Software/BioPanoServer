@@ -81,7 +81,7 @@ def del_project(request, *args, **kwargs):
     """
     if request.method == 'GET':
         user = request.user
-        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        prj_id = kwargs['prj_id']
         if not prj_id:
             return HttpResponse("{'status':'error', 'reason':'prj_id not found'}")
 
@@ -112,7 +112,7 @@ def modify_project(request, *args, **kwargs):
     # POST paras should cover all fields expected to be modified
     if request.method == 'PUT':
         user = request.user
-        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        prj_id = kwargs['prj_id']
         query = request.POST
         if not prj_id:
             return HttpResponse("{'status':'error', 'reason':'prj_id not found'}")
@@ -146,7 +146,7 @@ def modify_project(request, *args, **kwargs):
 def add_or_del_collaborator(request, *args, **kwargs):
     if request.method == 'DELETE':
         user = request.user
-        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        prj_id = kwargs['prj_id']
         uid = int(kwargs['uid'])
         if prj_id is None:
             return HttpResponse("{'status':'error', 'reason':'prj id should be a integer'}")
@@ -164,7 +164,7 @@ def add_or_del_collaborator(request, *args, **kwargs):
 
     elif request.method == 'POST':
         user = request.user
-        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        prj_id = kwargs['prj_id']
         if not prj_id:
             return HttpResponse("{'status':'error', 'reason':'prj_id should be a integer'}")
 
@@ -261,7 +261,7 @@ def list_or_create(request, *args, **kwargs):
 def get_one(request, *args, **kwargs):
     if request.method == 'GET':
         user = request.user
-        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        prj_id = kwargs['prj_id']
         if not prj_id:
             return HttpResponse("{'status':'error', 'reason':'prj_id not found'}")
 
@@ -290,7 +290,7 @@ def get_one(request, *args, **kwargs):
             return HttpResponse("{'status':'error', 'reason':'you should be logged in'}")
     elif request.method == 'PUT':
         user = request.user
-        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        prj_id = kwargs['prj_id']
         query = QueryDict(request.body)
         if not prj_id:
             return HttpResponse("{'status':'error', 'reason':'prj_id not found'}")
@@ -322,7 +322,7 @@ def get_one(request, *args, **kwargs):
 
     elif request.method == 'DELETE':
         user = request.user
-        prj_id = _get_prj_id_int(kwargs['prj_id'])
+        prj_id = kwargs['prj_id']
         if not prj_id:
             return HttpResponse("{'status':'error', 'reason':'prj_id not found'}")
 
@@ -388,19 +388,19 @@ def switch_project(request, *args, **kwargs):
         return HttpResponse("{'status':'success', 'id':'%d'}" % (prj.id, ))
 '''
 
-
-def _get_prj_id_int(prj_id_str):
-    """
-    convert a string to in else return None
-    :param prj_id_str: a number in string format
-    :return:
-    """
-    try:
-        prj_id = int(prj_id_str)
-    except ValueError:
-        return None
-    else:
-        return prj_id
+#
+# def _get_prj_id_int(prj_id_str):
+#     """
+#     convert a string to in else return None
+#     :param prj_id_str: a number in string format
+#     :return:
+#     """
+#     try:
+#         prj_id = int(prj_id_str)
+#     except ValueError:
+#         return None
+#     else:
+#         return prj_id
 
 
 def _is_author(prj_id, user):
