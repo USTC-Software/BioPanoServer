@@ -4,7 +4,6 @@ __author__ = 'feiyicheng'
 from my_auth.models import Token_mongo
 from django.shortcuts import HttpResponse
 from rest_framework import HTTP_HEADER_ENCODING, exceptions
-# from django.contrib.auth.models import AnonymousUser
 from mongoengine.django.auth import User, AnonymousUser
 from django.http import QueryDict
 
