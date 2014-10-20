@@ -49,7 +49,7 @@ INSTALLED_APPS = (
 
 AUTH_USER_MODEL = 'mongo_auth.MongoUser'
 MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
-uri = 'mongodb://product:ab43cce881365602ca64955f57cf88aad883904c@10.10.11.242/dump_new,mongodb://product:ab43cce881365602ca64955f57cf88aad883904c@10.10.6.185/dump_new,mongodb://product:ab43cce881365602ca64955f57cf88aad883904c@10.10.11.238/dump_new'
+uri = 'mongodb://product:passwd@10.10.11.242/dump_new,mongodb://product:passwd@10.10.6.185/dump_new,mongodb://product:passwd@10.10.11.238/dump_new'
 connect('dump_new', host=uri, replicaSet='repset')
 # connect the database
 # MONGO_WRITE_URI = "mongodb://biopano_product:7723e1129b8df052d0fa02b9c60124c0@primary.db.biopano.org/igemdata_new"
