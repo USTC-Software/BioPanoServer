@@ -49,14 +49,14 @@ INSTALLED_APPS = (
 
 AUTH_USER_MODEL = 'mongo_auth.MongoUser'
 MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
-connect("igemdata_new")
+uri = 'mongodb://product:ab43cce881365602ca64955f57cf88aad883904c@10.10.11.242/dump_new,mongodb://product:ab43cce881365602ca64955f57cf88aad883904c@10.10.6.185/dump_new,mongodb://product:ab43cce881365602ca64955f57cf88aad883904c@10.10.11.238/dump_new'
+connect('dump_new', host=uri, replicaSet='repset')
 # connect the database
 # MONGO_WRITE_URI = "mongodb://biopano_product:7723e1129b8df052d0fa02b9c60124c0@primary.db.biopano.org/igemdata_new"
 # uri = MONGO_WRITE_URI
-client_readonly = MongoClient('localhost', 27017)
-client_write = MongoClient('localhost', 27017)
-db_write = client_write.igemdata_new
-db_read = client_readonly.igemdata_new
+client = MongoClient(uri)
+#client = MongoClient('localhost', 27017)
+db = client.igemdata_new
 
 
 MIDDLEWARE_CLASSES = (
