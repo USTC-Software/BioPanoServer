@@ -9,7 +9,7 @@ from dict2xml import dict2xml
 from func_box import *
 from decorators import project_verified, logged_in, project_verified_exclude_get, logged_in_exclude_get
 from projects.models import ProjectFile
-from IGEMServer.settings import db, db
+from IGEMServer.settings import db
 from django.http import QueryDict
 
 
