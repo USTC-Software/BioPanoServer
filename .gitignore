@@ -4,3 +4,4 @@
 *.log
 db.sqlite3
 *.orig
+IGEMServer/settings.py
