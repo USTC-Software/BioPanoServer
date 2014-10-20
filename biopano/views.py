@@ -3,12 +3,13 @@ __author__ = 'Beibeihome'
 from pymongo import *
 from django.shortcuts import HttpResponse
 from django.http import QueryDict
+from IGEMServer.settings import db
 import bson
 import json
 import urllib
 
 
-db = MongoClient()['igemdata_new']
+# db = MongoClient()['igemdata_new']
 
 
 def look_around(request, **kwargs):
