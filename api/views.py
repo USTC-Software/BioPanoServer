@@ -55,6 +55,7 @@ def add_node(request):
 
             # add refs between two records
             db_write.node.update({'_id': node_id}, {'$push': {'REF': noderef_id}}, True)
+            db_write.node.update({'_id': node_id}, {'$set': {'author': request.user['_id']}}, True)
             db_write.node_ref.update({'_id': noderef_id}, {'$set': {'node_id': node_id}})
 
             # return the _id of this user's own record of this node
@@ -247,7 +248,7 @@ def search_json_node(request):
             filterinstance = json.loads(request.POST['fields'])
         except KeyError:
             # set a default value
-            filterinstance = {'_id': 1, 'NAME': 1, 'TYPE': 1}
+            filterinstance = {'_id': 1, 'NAME': 1, 'TYPE': 1, 'author': 1}
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'filter not conform to JSON format'}")
 
@@ -277,7 +278,7 @@ def search_json_node(request):
 
         # vague search
 
-        results = db_read.node.find(queryinstance, filterinstance).limit(limit).sort({"node": -1})
+        results = db_read.node.find(queryinstance, filterinstance).limit(limit).sort({"REF": -1})
 
         if 'format' in request.POST.keys():
             # noinspection PyDictCreation
@@ -347,6 +348,7 @@ def add_link(request):
 
             # add refs between two records
             db_write.link.update({'_id': link_id}, {'$push': {'REF': linkref_id}}, True)
+            db_write.link.update({'_id': link_id}, {'$set': {'author': request.user['_id']}}, True)
             db_write.link_ref.update({'_id': linkref_id}, {'$set': {'link_id': link_id,
                                                               'id1': ObjectId(request.POST['id1']),
                                                               'id2': ObjectId(request.POST['id2'])}})
@@ -518,7 +520,7 @@ def search_json_link(request):
             filterinstance = json.loads(request.POST['fields'])
         except KeyError:
             # set a default value
-            filterinstance = {'TYPE1': 1, 'TYPE2': 1, '_id': 1}
+            filterinstance = {'TYPE1': 1, 'TYPE2': 1, '_id': 1, 'author': 1}
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'filter not conform to JSON format'}")
 
@@ -545,7 +547,7 @@ def search_json_link(request):
                         item['_id'] = ObjectId(item['_id'])
                     new.append(item)
                 queryinstance[key] = new
-        results = db_read.link.find(queryinstance, filterinstance).limit(limit).sort({'link': -1})
+        results = db_read.link.find(queryinstance, filterinstance).limit(limit).sort({'REF': -1})
 
         if 'format' in request.POST.keys():
             if request.POST['format'] == 'xml':
