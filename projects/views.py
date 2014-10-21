@@ -11,7 +11,7 @@ import json
 from .models import ProjectFile
 from decorators import logged_in
 from django.http import QueryDict
-from IGEMServer.settings import db_write
+from IGEMServer.settings import db_write, db_read
 from bson.objectid import ObjectId
 
 
@@ -88,6 +88,20 @@ def del_project(request, *args, **kwargs):
         if user.is_authenticated():
             if _is_author(prj_id, user):
                 # the user operating is the author of the project, he/she has the power to delete id
+                project = db_read.project.find_one({'pid': ObjectId(prj_id)})
+                if project is None:
+                    return HttpResponse("{'status':'error', 'reason':'project matching prj_id not found'}")
+                for link in project['link']:
+                    link = db_write.link_ref.find_one({'_id': link})
+                    if link is None:
+                        return HttpResponse("{'status':'error', 'reason':'link not found'}")
+                    db_write.link_ref.delete({'_id': link['_id']})
+                for node in project['node']:
+                    node = db_write.node_ref.find_one({'_id': node})
+                    if node is None:
+                        return HttpResponse("{'status':'error', 'reason':'node not found'}")
+                    db_write.node_ref.delete({'_id': node['_id']})
+
                 ProjectFile.objects.get(pk=ObjectId(prj_id)).delete()
                 return HttpResponse("{'status':'success'}")
 

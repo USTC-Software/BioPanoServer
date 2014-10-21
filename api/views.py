@@ -276,10 +276,8 @@ def search_json_node(request):
                 queryinstance[key] = new
 
         # vague search
-        # for key in queryinstance.keys():
-        # if key == 'NAME' or key == "TYPE":
-        # queryinstance[key] = {"$regex": queryinstance[key]}
-        results = db_read.node.find(queryinstance, filterinstance).limit(limit)
+
+        results = db_read.node.find(queryinstance, filterinstance).limit(limit).sort({"node": -1})
 
         if 'format' in request.POST.keys():
             # noinspection PyDictCreation
@@ -547,7 +545,7 @@ def search_json_link(request):
                         item['_id'] = ObjectId(item['_id'])
                     new.append(item)
                 queryinstance[key] = new
-        results = db_read.link.find(queryinstance, filterinstance).limit(limit)
+        results = db_read.link.find(queryinstance, filterinstance).limit(limit).sort({'link': -1})
 
         if 'format' in request.POST.keys():
             if request.POST['format'] == 'xml':
