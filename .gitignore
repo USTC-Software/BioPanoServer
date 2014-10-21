@@ -5,3 +5,5 @@
 db.sqlite3
 *.orig
 IGEMServer/settings.py
+pid
+socket
