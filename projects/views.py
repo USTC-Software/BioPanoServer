@@ -91,17 +91,29 @@ def del_project(request, *args, **kwargs):
                 project = db_read.project.find_one({'pid': ObjectId(prj_id)})
                 if project is None:
                     return HttpResponse("{'status':'error', 'reason':'project matching prj_id not found'}")
-                for link in project['link']:
-                    link = db_write.link_ref.find_one({'_id': link})
+                # delete link and linkrefs
+                for linkref in project['link']:
+                    linkref = db_write.link_ref.find_one({'_id': linkref})
+                    if linkref is None:
+                        return HttpResponse("{'status':'error', 'reason':'link ref not found'}")
+                    link = db_write.link.find_one({'_id': linkref['link_id']})
                     if link is None:
                         return HttpResponse("{'status':'error', 'reason':'link not found'}")
-                    db_write.link_ref.delete({'_id': link['_id']})
-                for node in project['node']:
-                    node = db_write.node_ref.find_one({'_id': node})
+
+                    db_write.link.update({'_id': link['-id']}, {'$pull': {"link": linkref['_id']}})
+                    db_write.link_ref.delete({'_id': linkref['_id']})
+                # delete node and noderefs
+                for noderef in project['node']:
+                    noderef = db_write.node_ref.find_one({'_id': noderef})
+                    if noderef is None:
+                        return HttpResponse("{'status':'error', 'reason':'node ref not found'}")
+                    node = db_write.node.find_one({'_id': noderef['node_id']})
                     if node is None:
                         return HttpResponse("{'status':'error', 'reason':'node not found'}")
-                    db_write.node_ref.delete({'_id': node['_id']})
 
+                    db_write.node.update({'_id': node['-id']}, {'$pull': {"node": noderef['_id']}})
+                    db_write.node_ref.delete({'_id': noderef['_id']})
+                # delete the project itself
                 ProjectFile.objects.get(pk=ObjectId(prj_id)).delete()
                 return HttpResponse("{'status':'success'}")
 
