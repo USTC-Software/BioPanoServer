@@ -10,6 +10,7 @@ from func_box import *
 from decorators import project_verified, logged_in, project_verified_exclude_get, logged_in_exclude_get
 from projects.models import ProjectFile
 from IGEMServer.settings import db
+from mongoengine.django.auth import User
 from django.http import QueryDict
 
 
@@ -56,7 +57,7 @@ def add_node(request):
             # add refs between two records
 
             db.node.update({'_id': node_id}, {'$push': {'REF': noderef_id}}, True)
-            db.node.update({'_id': node_id}, {'$set': {'author': request.user['_id']}}, True)
+            db.node.update({'_id': node_id}, {'$set': {'author': request.user.pk}}, True)
             db.node_ref.update({'_id': noderef_id}, {'$set': {'node_id': node_id}})
 
 
@@ -184,7 +185,15 @@ def get_del_addref_node(request, **kwargs):
                         newrefs.append(str(refid))
                     node_dic[key] = newrefs
 
-            return HttpResponse(json.dumps(node_dic))
+            result_copy = node_dic.copy()
+            if 'author' in result_copy.keys():
+                result_copy['author'] = User.objects.get(pk=result_copy['author']).username
+            try:
+                result_copy['cite'] = len(result_copy['REF'])
+            except:
+                result_copy['cite'] = 0
+
+            return HttpResponse(json.dumps(result_copy))
 
     elif request.method == 'PATCH':
         '''
@@ -250,7 +259,7 @@ def search_json_node(request):
             filterinstance = json.loads(request.POST['fields'])
         except KeyError:
             # set a default value
-            filterinstance = {'_id': 1, 'NAME': 1, 'TYPE': 1, 'author': 1}
+            filterinstance = {'_id': 1, 'NAME': 1, 'TYPE': 1, 'author': 1, 'REF': 1}
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'filter not conform to JSON format'}")
 
@@ -280,7 +289,7 @@ def search_json_node(request):
 
         # vague search
 
-        results = db.node.find(queryinstance, filterinstance).sort([('REF', -1), ]).limit(limit)
+        results = db.node.find(queryinstance, filterinstance).sort([('NAME', 1), ('REF', -1)]).limit(limit)
 
         if 'format' in request.POST.keys():
             # noinspection PyDictCreation
@@ -310,7 +319,15 @@ def search_json_node(request):
                         for refid in result[key]:
                             newrefs.append(str(refid))
                         result[key] = newrefs
-                results_data.append(result)
+
+                result_copy = result.copy()
+                if 'author' in result_copy.keys():
+                    result_copy['author'] = User.objects.get(pk=result_copy['author']).username
+                try:
+                    result_copy['cite'] = len(result_copy['REF'])
+                except:
+                    result_copy['cite'] = 0
+                results_data.append(result_copy)
 
             data = json.dumps({'result': results_data})
 
@@ -350,7 +367,7 @@ def add_link(request):
 
             # add refs between two records
             db.link.update({'_id': link_id}, {'$push': {'REF': linkref_id}}, True)
-            db.link.update({'_id': link_id}, {'$set': {'author': request.user['_id']}}, True)
+            db.link.update({'_id': link_id}, {'$set': {'author': request.user.pk}}, True)
             db.link_ref.update({'_id': linkref_id}, {'$set': {'link_id': link_id,
 
                                                               'id1': ObjectId(request.POST['id1']),
@@ -474,6 +491,8 @@ def get_del_addref_link(request, **kwargs):
         else:
             # the node exists
             link_dic = link
+            if 'author' in link_dic.keys():
+                    link_dic['author'] = User.objects.get(pk=link_dic['author']).username
             for key in link_dic.keys():
                 if isinstance(link_dic[key], bson.objectid.ObjectId):
                     link_dic[key] = str(link_dic[key])
@@ -484,7 +503,12 @@ def get_del_addref_link(request, **kwargs):
                         newrefs.append(str(refid))
                     link_dic[key] = newrefs
 
-            return HttpResponse(json.dumps(link_dic))
+            result_copy = link_dic.copy()
+            if 'author' in result_copy.keys():
+                result_copy['author'] = User.objects.get(pk=result_copy['author']).username
+            result_copy['cite'] = len(result_copy['REF'])
+
+            return HttpResponse(json.dumps(result_copy))
 
     else:
         # method incorrect
@@ -523,7 +547,7 @@ def search_json_link(request):
             filterinstance = json.loads(request.POST['fields'])
         except KeyError:
             # set a default value
-            filterinstance = {'TYPE1': 1, 'TYPE2': 1, '_id': 1, 'author': 1}
+            filterinstance = {'TYPE1': 1, 'TYPE2': 1, '_id': 1, 'author': 1, 'REF': 1}
         except ValueError:
             return HttpResponse("{'status':'error', 'reason':'filter not conform to JSON format'}")
 
@@ -580,7 +604,13 @@ def search_json_link(request):
                         for refid in result[key]:
                             newrefs.append(str(refid))
                         result[key] = newrefs
-                results_data.append(result)
+
+                result_copy = result.copy()
+                if 'author' in result_copy.keys():
+                    result_copy['author'] = User.objects.get(pk=result_copy['author']).username
+                result_copy['cite'] = len(result_copy['REF'])
+
+                results_data.append(result_copy)
             data = json.dumps({'result': results_data})
 
         return HttpResponse(data)
