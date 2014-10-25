@@ -186,9 +186,12 @@ def get_del_addref_node(request, **kwargs):
                     node_dic[key] = newrefs
 
             result_copy = node_dic.copy()
-            if "author" in result_copy.keys():
-                result_copy["author"] = User.objects.get(pk=result_copy["author"]).username
-            result_copy["cite"] = len(result_copy["REF"])
+            if 'author' in result_copy.keys():
+                result_copy['author'] = User.objects.get(pk=result_copy['author']).username
+            try:
+                result_copy['cite'] = len(result_copy['REF'])
+            except:
+                result_copy['cite'] = 0
 
             return HttpResponse(json.dumps(result_copy))
 
@@ -318,9 +321,12 @@ def search_json_node(request):
                         result[key] = newrefs
 
                 result_copy = result.copy()
-                if "author" in result_copy.keys():
-                    result_copy["author"] = User.objects.get(pk=result_copy["author"]).username
-                result_copy["cite"] = len(result_copy["REF"])
+                if 'author' in result_copy.keys():
+                    result_copy['author'] = User.objects.get(pk=result_copy['author']).username
+                try:
+                    result_copy['cite'] = len(result_copy['REF'])
+                except:
+                    result_copy['cite'] = 0
                 results_data.append(result_copy)
 
             data = json.dumps({"result": results_data})
