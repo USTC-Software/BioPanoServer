@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+apk update
+apk add python py-pip
+apk add --virtual build-dependencies build-base python-dev 
+
+cd /opt/biopano
+pip install -r requirements.txt
+
+apk del --purge build-dependencies
+rm -rf /var/cache/apk/*
